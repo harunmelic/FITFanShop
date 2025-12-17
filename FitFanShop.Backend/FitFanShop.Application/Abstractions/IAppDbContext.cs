@@ -16,13 +16,13 @@ public interface IAppDbContext
     DbSet<CategoryEntity> Categories { get; }
     DbSet<ProductEntity> Products { get; }
     DbSet<ProductCategoryEntity> ProductCategories { get; }
+    DbSet<ProductVariantEntity> ProductVariants { get; }
 
     DbSet<RoleEntity> Roles { get; }
     DbSet<FitFanShopUserEntity> Users { get; }
     DbSet<RefreshTokenEntity> RefreshTokens { get; }
 
     DbSet<MemberEntity> Members { get; }
-    DbSet<MembershipEntity> Memberships { get; }
 
     DbSet<CartEntity> Carts { get; }
     DbSet<CartItemEntity> CartItems { get; }
@@ -43,6 +43,7 @@ public interface IAppDbContext
     DbSet<ActivityLogEntity> ActivityLogs { get; }
 
     DbSet<EventEntity> Events { get; }
+    DbSet<TicketTypeEntity> TicketTypes { get; }
     DbSet<TicketEntity> Tickets { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct);
