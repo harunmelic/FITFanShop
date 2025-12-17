@@ -23,3 +23,4 @@ public class OrderEntity : BaseEntity
     public ICollection<TicketEntity> Tickets { get; private set; } = new List<TicketEntity>();
 }
 
+
