@@ -12,17 +12,23 @@ public sealed class EventEntityConfiguration : IEntityTypeConfiguration<EventEnt
 
         builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(EventEntity.Constraints.NameMaxLength);
 
         builder.Property(x => x.Description)
-            .HasMaxLength(2000);
+            .HasMaxLength(EventEntity.Constraints.DescriptionMaxLength);
 
-        builder.Property(x => x.TicketPrice)
-            .HasPrecision(18, 2);
+        builder.Property(x => x.Location)
+            .IsRequired()
+            .HasMaxLength(EventEntity.Constraints.LocationMaxLength);
+
+        builder.HasMany(x => x.TicketTypes)
+            .WithOne(x => x.Event)
+            .HasForeignKey(x => x.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Tickets)
             .WithOne(x => x.Event)
             .HasForeignKey(x => x.EventId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

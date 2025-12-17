@@ -13,9 +13,9 @@ public sealed class OrderItemConfiguration : IEntityTypeConfiguration<OrderItemE
         builder.Property(x => x.UnitPrice)
             .HasPrecision(18, 2);
 
-        builder.HasOne(x => x.Product)
+        builder.HasOne(x => x.ProductVariant)
             .WithMany(x => x.OrderItems)
-            .HasForeignKey(x => x.ProductId)
+            .HasForeignKey(x => x.ProductVariantId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.Order)

@@ -15,13 +15,9 @@ public sealed class MemberEntityConfiguration : IEntityTypeConfiguration<MemberE
         builder.HasIndex(x => x.UserId)
             .IsUnique();
 
-        builder.Property(x => x.MembershipStatus)
-            .IsRequired()
-            .HasMaxLength(50);
+        builder.Property(x => x.PricePaid)
+            .HasPrecision(18, 2);
 
-        builder.HasMany(x => x.Memberships)
-            .WithOne(x => x.Member)
-            .HasForeignKey(x => x.MemberId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // Relationship is configured in UserEntityConfiguration (One-to-One)
     }
 }

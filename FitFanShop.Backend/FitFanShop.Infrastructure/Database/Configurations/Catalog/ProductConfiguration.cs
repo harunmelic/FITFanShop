@@ -20,9 +20,6 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<ProductEntit
         builder.Property(x => x.Price)
             .HasPrecision(18, 2);
 
-        builder.Property(x => x.StockQuantity)
-            .IsRequired();
-
         builder.Property(x => x.Image)
             .HasMaxLength(500);
 
@@ -37,9 +34,9 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<ProductEntit
             .HasForeignKey(x => x.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(x => x.OrderItems)
+        builder.HasMany(x => x.Variants)
             .WithOne(x => x.Product)
             .HasForeignKey(x => x.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

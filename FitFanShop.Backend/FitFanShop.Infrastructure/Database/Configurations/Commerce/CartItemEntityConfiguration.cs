@@ -10,14 +10,25 @@ public sealed class CartItemEntityConfiguration : IEntityTypeConfiguration<CartI
     {
         builder.ToTable("CartItems");
 
+        // Check constraint: Must have either ProductVariantId OR TicketTypeId, not both
+        builder.ToTable(t => t.HasCheckConstraint(
+            "CK_CartItem_OneType",
+            "(ProductVariantId IS NOT NULL AND TicketTypeId IS NULL) OR (ProductVariantId IS NULL AND TicketTypeId IS NOT NULL)"
+        ));
+
         builder.HasOne(x => x.Cart)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.CartId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(x => x.Product)
+        builder.HasOne(x => x.ProductVariant)
             .WithMany(x => x.CartItems)
-            .HasForeignKey(x => x.ProductId)
+            .HasForeignKey(x => x.ProductVariantId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.TicketType)
+            .WithMany(x => x.CartItems)
+            .HasForeignKey(x => x.TicketTypeId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
