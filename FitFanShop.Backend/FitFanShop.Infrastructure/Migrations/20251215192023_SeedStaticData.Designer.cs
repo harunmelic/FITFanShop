@@ -4,6 +4,7 @@ using FitFanShop.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitFanShop.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251215192023_SeedStaticData")]
+    partial class SeedStaticData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,50 +138,12 @@ namespace FitFanShop.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Products", (string)null);
-                });
-
-            modelBuilder.Entity("FitFanShop.Domain.Entities.Catalog.ProductVariantEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Sku")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Sku");
-
-                    b.HasIndex("ProductId", "Size");
-
-                    b.ToTable("ProductVariants", (string)null);
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Commerce.CartEntity", b =>
@@ -229,27 +194,19 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ProductVariantId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TicketTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CartId");
 
-                    b.HasIndex("ProductVariantId");
+                    b.HasIndex("ProductId");
 
-                    b.HasIndex("TicketTypeId");
-
-                    b.ToTable("CartItems", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_CartItem_OneType", "(ProductVariantId IS NOT NULL AND TicketTypeId IS NULL) OR (ProductVariantId IS NULL AND TicketTypeId IS NOT NULL)");
-                        });
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Commerce.WishlistEntity", b =>
@@ -558,12 +515,13 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("MembershipStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<DateTime?>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal>("PricePaid")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -577,6 +535,48 @@ namespace FitFanShop.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Members", (string)null);
+                });
+
+            modelBuilder.Entity("FitFanShop.Domain.Entities.Memberships.MembershipEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ActivationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("Memberships", (string)null);
                 });
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Notifications.ActivityLogEntity", b =>
@@ -766,7 +766,7 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductVariantId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -780,7 +780,7 @@ namespace FitFanShop.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductVariantId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems", (string)null);
                 });
@@ -899,19 +899,14 @@ namespace FitFanShop.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime?>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
@@ -920,6 +915,10 @@ namespace FitFanShop.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("TicketPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -949,32 +948,15 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("PricePaid")
+                    b.Property<bool>("Presale")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("QRCode")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SeatNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("TicketTypeId")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("UsedAtUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -985,57 +967,9 @@ namespace FitFanShop.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("QRCode")
-                        .IsUnique();
-
-                    b.HasIndex("TicketTypeId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Tickets", (string)null);
-                });
-
-            modelBuilder.Entity("FitFanShop.Domain.Entities.Tickets.TicketTypeEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("TotalAvailable")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("TicketTypes", (string)null);
                 });
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Catalog.ProductCategoryEntity", b =>
@@ -1053,17 +987,6 @@ namespace FitFanShop.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("FitFanShop.Domain.Entities.Catalog.ProductVariantEntity", b =>
-                {
-                    b.HasOne("FitFanShop.Domain.Entities.Catalog.ProductEntity", "Product")
-                        .WithMany("Variants")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Product");
                 });
@@ -1087,21 +1010,15 @@ namespace FitFanShop.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FitFanShop.Domain.Entities.Catalog.ProductVariantEntity", "ProductVariant")
+                    b.HasOne("FitFanShop.Domain.Entities.Catalog.ProductEntity", "Product")
                         .WithMany("CartItems")
-                        .HasForeignKey("ProductVariantId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("FitFanShop.Domain.Entities.Tickets.TicketTypeEntity", "TicketType")
-                        .WithMany("CartItems")
-                        .HasForeignKey("TicketTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Cart");
 
-                    b.Navigation("ProductVariant");
-
-                    b.Navigation("TicketType");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Commerce.WishlistEntity", b =>
@@ -1186,6 +1103,17 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FitFanShop.Domain.Entities.Memberships.MembershipEntity", b =>
+                {
+                    b.HasOne("FitFanShop.Domain.Entities.Memberships.MemberEntity", "Member")
+                        .WithMany("Memberships")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("FitFanShop.Domain.Entities.Notifications.ActivityLogEntity", b =>
                 {
                     b.HasOne("FitFanShop.Domain.Entities.Identity.FitFanShopUserEntity", "User")
@@ -1262,15 +1190,15 @@ namespace FitFanShop.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FitFanShop.Domain.Entities.Catalog.ProductVariantEntity", "ProductVariant")
+                    b.HasOne("FitFanShop.Domain.Entities.Catalog.ProductEntity", "Product")
                         .WithMany("OrderItems")
-                        .HasForeignKey("ProductVariantId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
 
-                    b.Navigation("ProductVariant");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Sales.PaymentEntity", b =>
@@ -1289,7 +1217,7 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.HasOne("FitFanShop.Domain.Entities.Tickets.EventEntity", "Event")
                         .WithMany("Tickets")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FitFanShop.Domain.Entities.Sales.OrderEntity", "Order")
@@ -1297,36 +1225,17 @@ namespace FitFanShop.Infrastructure.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("FitFanShop.Domain.Entities.Tickets.TicketTypeEntity", "TicketType")
-                        .WithMany("Tickets")
-                        .HasForeignKey("TicketTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("FitFanShop.Domain.Entities.Identity.FitFanShopUserEntity", "User")
                         .WithMany("Tickets")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");
 
                     b.Navigation("Order");
 
-                    b.Navigation("TicketType");
-
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FitFanShop.Domain.Entities.Tickets.TicketTypeEntity", b =>
-                {
-                    b.HasOne("FitFanShop.Domain.Entities.Tickets.EventEntity", "Event")
-                        .WithMany("TicketTypes")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Catalog.CategoryEntity", b =>
@@ -1336,22 +1245,17 @@ namespace FitFanShop.Infrastructure.Migrations
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Catalog.ProductEntity", b =>
                 {
+                    b.Navigation("CartItems");
+
                     b.Navigation("DiscountProducts");
+
+                    b.Navigation("OrderItems");
 
                     b.Navigation("ProductCategories");
 
                     b.Navigation("Reviews");
 
-                    b.Navigation("Variants");
-
                     b.Navigation("WishlistProducts");
-                });
-
-            modelBuilder.Entity("FitFanShop.Domain.Entities.Catalog.ProductVariantEntity", b =>
-                {
-                    b.Navigation("CartItems");
-
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Commerce.CartEntity", b =>
@@ -1395,6 +1299,11 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("FitFanShop.Domain.Entities.Memberships.MemberEntity", b =>
+                {
+                    b.Navigation("Memberships");
+                });
+
             modelBuilder.Entity("FitFanShop.Domain.Entities.Sales.OrderEntity", b =>
                 {
                     b.Navigation("Items");
@@ -1416,15 +1325,6 @@ namespace FitFanShop.Infrastructure.Migrations
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Tickets.EventEntity", b =>
                 {
-                    b.Navigation("TicketTypes");
-
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("FitFanShop.Domain.Entities.Tickets.TicketTypeEntity", b =>
-                {
-                    b.Navigation("CartItems");
-
                     b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618

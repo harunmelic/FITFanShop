@@ -16,13 +16,13 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<CategoryEntity> Categories => Set<CategoryEntity>();
     public DbSet<ProductEntity> Products => Set<ProductEntity>();
     public DbSet<ProductCategoryEntity> ProductCategories => Set<ProductCategoryEntity>();
+    public DbSet<ProductVariantEntity> ProductVariants => Set<ProductVariantEntity>();
 
     public DbSet<RoleEntity> Roles => Set<RoleEntity>();
     public DbSet<FitFanShopUserEntity> Users => Set<FitFanShopUserEntity>();
     public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
 
     public DbSet<MemberEntity> Members => Set<MemberEntity>();
-    public DbSet<MembershipEntity> Memberships => Set<MembershipEntity>();
 
     public DbSet<CartEntity> Carts => Set<CartEntity>();
     public DbSet<CartItemEntity> CartItems => Set<CartItemEntity>();
@@ -43,6 +43,7 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<ActivityLogEntity> ActivityLogs => Set<ActivityLogEntity>();
 
     public DbSet<EventEntity> Events => Set<EventEntity>();
+    public DbSet<TicketTypeEntity> TicketTypes => Set<TicketTypeEntity>();
     public DbSet<TicketEntity> Tickets => Set<TicketEntity>();
 
     private readonly TimeProvider _clock;
