@@ -1,6 +1,7 @@
 ﻿using FitFanShop.Application.Abstractions;
 using FitFanShop.Infrastructure.Common;
 using FitFanShop.Infrastructure.Database;
+using FitFanShop.Infrastructure.Database.Interceptors;
 using FitFanShop.Shared.Constants;
 using FitFanShop.Shared.Options;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +35,10 @@ public static class DependencyInjection
             }
 
             var cs = sp.GetRequiredService<IOptions<ConnectionStringsOptions>>().Value.Main;
-            options.UseSqlServer(cs);
+            options.UseSqlServer(cs)
+                   .AddInterceptors(
+                       new ProductCategoryValidationInterceptor(),
+                       new StockReductionInterceptor());
         });
 
         // IAppDbContext mapping
