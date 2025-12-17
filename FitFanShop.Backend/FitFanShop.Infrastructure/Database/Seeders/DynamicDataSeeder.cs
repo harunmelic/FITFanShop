@@ -1,612 +1,301 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FitFanShop.Domain.Entities.Catalog;
-using FitFanShop.Domain.Entities.Sales;
 using FitFanShop.Domain.Entities.Identity;
+using FitFanShop.Domain.Entities.Memberships;
+using FitFanShop.Domain.Entities.Discounts;
+using FitFanShop.Domain.Entities.Tickets;
+using FitFanShop.Domain.Entities.Sales;
 
 namespace FitFanShop.Infrastructure.Database.Seeders;
 
 /// <summary>
-/// Dynamic seeder koji se pokreće u runtime-u,
-/// obično pri startu aplikacije (npr. u Program.cs).
-/// Koristi se za unos demo/test podataka koji nisu dio migracije.
-/// 
-/// NOTE: OLD SEEDER CODE IS COMMENTED OUT - Written for OLD entity structure.
-/// TODO: Rewrite this seeder for NEW entity structure after migration is complete.
+/// Dynamic seeder for demo/test data.
+/// Runs at application startup in Development environment.
 /// </summary>
 public static class DynamicDataSeeder
 {
     public static async Task SeedAsync(DatabaseContext context)
     {
-        // TODO: Implement new seeding logic for new entity structure
-        await Task.CompletedTask;
-    }
-
-    /* ==================== OLD SEEDER CODE - KEPT FOR REFERENCE ====================
-    
-    public static async Task SeedAsync_OLD(DatabaseContext context)
-    {
-        // Osiguraj da baza postoji (bez migracija)
-        await context.Database.EnsureCreatedAsync();
-
-        await SeedProductCategoriesAsync(context);
-        await SeedUsersAsync(context);
-        await SeedProductsAsync(context);
-        await SeedOrdersAsync(context);
-    }
-
-    private static async Task SeedProductCategoriesAsync(DatabaseContext context)
-    {
-        if (!await context.ProductCategories.AnyAsync())
-        {
-            context.ProductCategories.AddRange(
-                new ProductCategoryEntity
-                {
-                    Name = "Računari",
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow
-                },
-                new ProductCategoryEntity
-                {
-                    Name = "Mobilni uređaji",
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow
-                },
-                new ProductCategoryEntity
-                {
-                    Name = "Periferija",
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow
-                },
-                new ProductCategoryEntity
-                {
-                    Name = "Komponente",
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow
-                },
-                new ProductCategoryEntity
-                {
-                    Name = "Audio oprema",
-                    IsEnabled = false,
-                    CreatedAtUtc = DateTime.UtcNow
-                }
-            );
-            await context.SaveChangesAsync();
-            Console.WriteLine("✅ Dynamic seed: product categories added.");
-        }
-    }
-
-    private static async Task SeedUsersAsync(DatabaseContext context)
-    {
         if (await context.Users.AnyAsync())
+        {
+            Console.WriteLine("??  Database already contains data. Skipping seeder.");
             return;
+        }
 
-        var hasher = new PasswordHasher<FitFanShopUserEntity>();
+        Console.WriteLine("?? Starting Dynamic Data Seeder...");
 
-        var admin = new FitFanShopUserEntity
-        {
-            Email = "admin@market.local",
-            PasswordHash = hasher.HashPassword(null!, "Admin123!"),
-            IsAdmin = true,
-            IsEnabled = true,
-            CreatedAtUtc = DateTime.UtcNow
-        };
+        var users = await SeedUsersAsync(context);
+        var categories = await SeedCategoriesAsync(context);
+        var (products, variants) = await SeedProductsAsync(context, categories);
+        await SeedMembersAsync(context, users);
+        await SeedDiscountsAsync(context, products);
+        var (events, ticketTypes) = await SeedEventsAsync(context);
+        await SeedOrdersAsync(context, users, variants);
+        await SeedTicketsAsync(context, users, events, ticketTypes);
 
-        var manager = new FitFanShopUserEntity
-        {
-            Email = "manager@market.local",
-            PasswordHash = hasher.HashPassword(null!, "Manager123!"),
-            IsManager = true,
-            IsEnabled = true,
-            CreatedAtUtc = DateTime.UtcNow
-        };
-
-        var employee = new FitFanShopUserEntity
-        {
-            Email = "employee@market.local",
-            PasswordHash = hasher.HashPassword(null!, "Employee123!"),
-            IsEmployee = true,
-            IsEnabled = true,
-            CreatedAtUtc = DateTime.UtcNow
-        };
-
-        var dummyForSwagger = new FitFanShopUserEntity
-        {
-            Email = "string",
-            PasswordHash = hasher.HashPassword(null!, "string"),
-            IsEmployee = true,
-            IsEnabled = true,
-            CreatedAtUtc = DateTime.UtcNow
-        };
-
-        var dummyForTests = new FitFanShopUserEntity
-        {
-            Email = "test",
-            PasswordHash = hasher.HashPassword(null!, "test123"),
-            IsEmployee = true,
-            IsEnabled = true,
-            CreatedAtUtc = DateTime.UtcNow
-        };
-
-        // Demo customers for orders
-        var customer1 = new FitFanShopUserEntity
-        {
-            Email = "nina.bijedic@email.com",
-            PasswordHash = hasher.HashPassword(null!, "Customer123!"),
-            IsEnabled = true,
-            CreatedAtUtc = DateTime.UtcNow.AddDays(-30)
-        };
-
-        var customer2 = new FitFanShopUserEntity
-        {
-            Email = "iris.memic@email.com",
-            PasswordHash = hasher.HashPassword(null!, "Customer123!"),
-            IsEnabled = true,
-            CreatedAtUtc = DateTime.UtcNow.AddDays(-25)
-        };
-
-        var customer3 = new FitFanShopUserEntity
-        {
-            Email = "azra.smajic@email.com",
-            PasswordHash = hasher.HashPassword(null!, "Customer123!"),
-            IsEnabled = true,
-            CreatedAtUtc = DateTime.UtcNow.AddDays(-20)
-        };
-
-        context.Users.AddRange(
-            admin,
-            manager,
-            employee,
-            dummyForSwagger,
-            dummyForTests,
-            customer1,
-            customer2,
-            customer3
-        );
-
-        await context.SaveChangesAsync();
-        Console.WriteLine("✅ Dynamic seed: demo users added.");
+        Console.WriteLine("? Dynamic Data Seeder completed!");
     }
 
-    /// <summary>
-    /// Kreira demo proizvode ako ih još nema u bazi.
-    /// </summary>
-    private static async Task SeedProductsAsync(DatabaseContext context)
+    private static async Task<List<FitFanShopUserEntity>> SeedUsersAsync(DatabaseContext context)
     {
-        if (await context.Products.AnyAsync())
-            return;
-
-        // Učitaj kategorije
-        var categories = await context.ProductCategories
-            .Where(c => c.IsEnabled)
-            .ToListAsync();
-
-        if (!categories.Any())
+        var hasher = new PasswordHasher<FitFanShopUserEntity>();
+        var users = new List<FitFanShopUserEntity>
         {
-            Console.WriteLine("⚠️  No categories found. Skipping product seed.");
-            return;
-        }
+            // Admin user
+            new() { Email = "admin@fitfanshop.com", PasswordHash = hasher.HashPassword(null!, "admin123"), FirstName = "Admin", LastName = "User", RoleId = 2, RegistrationDate = DateTime.UtcNow.AddDays(-90), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-90) },
+            
+            // Demo customers
+            new() { Email = "user1@example.com", PasswordHash = hasher.HashPassword(null!, "demouser1"), FirstName = "John", LastName = "Smith", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-60), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-60) },
+            new() { Email = "user2@example.com", PasswordHash = hasher.HashPassword(null!, "demouser2"), FirstName = "Emma", LastName = "Johnson", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-45), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-45) },
+            new() { Email = "user3@example.com", PasswordHash = hasher.HashPassword(null!, "demouser3"), FirstName = "Michael", LastName = "Williams", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-30), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-30) },
+            
+            // Swagger test user
+            new() { Email = "string", PasswordHash = hasher.HashPassword(null!, "string"), FirstName = "Swagger", LastName = "Test", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-1), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-1) }
+        };
+        
+        context.Users.AddRange(users);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"? Seeded {users.Count} users");
+        return users;
+    }
 
-        var racunariCat = categories.FirstOrDefault(c => c.Name.Contains("Računari"));
-        var mobilniCat = categories.FirstOrDefault(c => c.Name.Contains("Mobilni"));
-        var periferijaCat = categories.FirstOrDefault(c => c.Name.Contains("Periferija"));
-        var komponenteCat = categories.FirstOrDefault(c => c.Name.Contains("Komponente"));
-
-        var products = new List<ProductEntity>();
-
-        // Računari
-        if (racunariCat != null)
+    private static async Task<List<CategoryEntity>> SeedCategoriesAsync(DatabaseContext context)
+    {
+        var categories = new List<CategoryEntity>
         {
-            products.AddRange(new[]
-            {
-                new ProductEntity
-                {
-                    Name = "Lenovo ThinkPad X1 Carbon Gen 11",
-                    Description = "14\" FHD+ IPS, Intel i7-1365U, 16GB RAM, 512GB SSD, Windows 11 Pro",
-                    Price = 2899.00m,
-                    StockQuantity = 15,
-                    CategoryId = racunariCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-20)
-                },
-                new ProductEntity
-                {
-                    Name = "Dell XPS 15 9530",
-                    Description = "15.6\" 4K OLED Touch, Intel i9-13900H, 32GB RAM, 1TB SSD, RTX 4070",
-                    Price = 3499.00m,
-                    StockQuantity = 8,
-                    CategoryId = racunariCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-18)
-                },
-                new ProductEntity
-                {
-                    Name = "HP Pavilion Gaming Desktop",
-                    Description = "AMD Ryzen 7 5700G, 16GB RAM, 512GB SSD, RTX 3060 Ti, Windows 11",
-                    Price = 1899.00m,
-                    StockQuantity = 12,
-                    CategoryId = racunariCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-15)
-                },
-                new ProductEntity
-                {
-                    Name = "ASUS ROG Zephyrus G14",
-                    Description = "14\" QHD 165Hz, AMD Ryzen 9 7940HS, 32GB RAM, 1TB SSD, RTX 4060",
-                    Price = 2699.00m,
-                    StockQuantity = 6,
-                    CategoryId = racunariCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-12)
-                }
-            });
-        }
+            new() { Name = "Jerseys", Description = "Official FC Fit club jerseys", IsEnabled = true, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "Shorts", Description = "FC Fit football shorts", IsEnabled = true, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "Scarves", Description = "FC Fit fan scarves", IsEnabled = true, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "Caps", Description = "FC Fit caps and beanies", IsEnabled = true, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "Flags", Description = "FC Fit fan flags and banners", IsEnabled = true, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "Mugs", Description = "FC Fit coffee mugs", IsEnabled = true, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "Bags", Description = "FC Fit backpacks and sports bags", IsEnabled = true, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "Balls", Description = "FC Fit footballs", IsEnabled = true, CreatedAtUtc = DateTime.UtcNow }
+        };
+        
+        context.Categories.AddRange(categories);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"? Seeded {categories.Count} categories");
+        return categories;
+    }
 
-        // Mobilni uređaji
-        if (mobilniCat != null)
+    private static async Task<(List<ProductEntity>, List<ProductVariantEntity>)> SeedProductsAsync(DatabaseContext context, List<CategoryEntity> categories)
+    {
+        var products = new List<ProductEntity>
         {
-            products.AddRange(new[]
-            {
-                new ProductEntity
-                {
-                    Name = "Samsung Galaxy S24 Ultra",
-                    Description = "6.8\" AMOLED 2X, 12GB RAM, 512GB, Snapdragon 8 Gen 3, S Pen",
-                    Price = 1699.00m,
-                    StockQuantity = 25,
-                    CategoryId = mobilniCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-10)
-                },
-                new ProductEntity
-                {
-                    Name = "Apple iPhone 15 Pro Max",
-                    Description = "6.7\" Super Retina XDR, A17 Pro, 256GB, Titanium Design",
-                    Price = 1899.00m,
-                    StockQuantity = 18,
-                    CategoryId = mobilniCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-9)
-                },
-                new ProductEntity
-                {
-                    Name = "Google Pixel 8 Pro",
-                    Description = "6.7\" LTPO OLED, Google Tensor G3, 12GB RAM, 256GB",
-                    Price = 1299.00m,
-                    StockQuantity = 20,
-                    CategoryId = mobilniCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-8)
-                },
-                new ProductEntity
-                {
-                    Name = "Xiaomi 14 Pro",
-                    Description = "6.73\" AMOLED, Snapdragon 8 Gen 3, 12GB RAM, 512GB, Leica Camera",
-                    Price = 1099.00m,
-                    StockQuantity = 30,
-                    CategoryId = mobilniCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-7)
-                }
-            });
-        }
+            // Jerseys (6 products)
+            new() { Name = "FC Fit Home Jersey 2024/25", Description = "Official home jersey with adidas logo", Price = 149.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Away Jersey 2024/25", Description = "Modern away jersey design", Price = 149.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Third Jersey 2024/25", Description = "Third jersey for special matches", Price = 139.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Goalkeeper Jersey 2024/25", Description = "Goalkeeper jersey with reinforced elbows", Price = 129.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Retro Jersey 1990s", Description = "Retro edition from golden years", Price = 159.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Limited Edition Gold Jersey", Description = "Limited gold edition - members only", Price = 199.99m, IsEnabled = true, Exclusive = true, CreatedAtUtc = DateTime.UtcNow },
+            
+            // Shorts (3 products)
+            new() { Name = "FC Fit Home Shorts 2024/25", Description = "Home shorts with breathable material", Price = 59.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Away Shorts 2024/25", Description = "Away shorts with modern cut", Price = 59.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Training Shorts", Description = "Training shorts for practice", Price = 49.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            
+            // Scarves (3 products)
+            new() { Name = "FC Fit Official Scarf", Description = "Official fan scarf with club colors", Price = 49.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Ultras Edition Scarf", Description = "Special edition for ultras group", Price = 59.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Winter Knit Scarf", Description = "Winter knitted scarf", Price = 44.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            
+            // Caps (2 products)
+            new() { Name = "FC Fit Snapback Cap", Description = "Snapback cap with embroidered logo", Price = 39.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Beanie", Description = "Winter beanie for cold days", Price = 29.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            
+            // Flags (3 products)
+            new() { Name = "FC Fit Flag 150x100cm", Description = "Large stadium fan flag", Price = 79.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Mini Flag", Description = "Small hand flag", Price = 19.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Champions Edition Flag", Description = "Exclusive flag for special occasions", Price = 99.99m, IsEnabled = true, Exclusive = true, CreatedAtUtc = DateTime.UtcNow },
+            
+            // Mugs (2 products)
+            new() { Name = "FC Fit Official Mug", Description = "Ceramic mug with club crest", Price = 29.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit VIP Mug Set (3pc)", Description = "Premium 3-piece mug set - exclusive", Price = 79.99m, IsEnabled = true, Exclusive = true, CreatedAtUtc = DateTime.UtcNow },
+            
+            // Bags (3 products)
+            new() { Name = "FC Fit Official Backpack", Description = "Sports backpack with multiple pockets", Price = 89.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Sports Bag", Description = "Large equipment bag", Price = 69.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Gym Bag", Description = "Compact gym bag", Price = 74.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            
+            // Balls (2 products)
+            new() { Name = "FC Fit Official Match Ball", Description = "Official club match ball", Price = 149.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit Training Ball Size 5", Description = "Training ball for practice", Price = 79.99m, IsEnabled = true, Exclusive = false, CreatedAtUtc = DateTime.UtcNow }
+        };
 
-        // Periferija
-        if (periferijaCat != null)
-        {
-            products.AddRange(new[]
-            {
-                new ProductEntity
-                {
-                    Name = "Logitech MX Master 3S",
-                    Description = "Wireless Performance Mouse, 8K DPI, USB-C, Bluetooth",
-                    Price = 149.00m,
-                    StockQuantity = 50,
-                    CategoryId = periferijaCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-6)
-                },
-                new ProductEntity
-                {
-                    Name = "Keychron K8 Pro Mechanical Keyboard",
-                    Description = "Wireless TKL, Hot-swappable, RGB Backlight, Gateron Switch",
-                    Price = 189.00m,
-                    StockQuantity = 35,
-                    CategoryId = periferijaCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-5)
-                },
-                new ProductEntity
-                {
-                    Name = "Dell UltraSharp U2723DE",
-                    Description = "27\" QHD IPS Monitor, USB-C Hub, 90W Power Delivery",
-                    Price = 749.00m,
-                    StockQuantity = 22,
-                    CategoryId = periferijaCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-4)
-                },
-                new ProductEntity
-                {
-                    Name = "Blue Yeti USB Microphone",
-                    Description = "Professional USB Condenser Microphone, Multiple Patterns",
-                    Price = 169.00m,
-                    StockQuantity = 40,
-                    CategoryId = periferijaCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-3)
-                }
-            });
-        }
-
-        // Komponente
-        if (komponenteCat != null)
-        {
-            products.AddRange(new[]
-            {
-                new ProductEntity
-                {
-                    Name = "AMD Ryzen 9 7950X",
-                    Description = "16-Core, 32-Thread Desktop Processor, 5.7 GHz Max Boost",
-                    Price = 899.00m,
-                    StockQuantity = 15,
-                    CategoryId = komponenteCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-2)
-                },
-                new ProductEntity
-                {
-                    Name = "NVIDIA GeForce RTX 4080",
-                    Description = "16GB GDDR6X, Ray Tracing, DLSS 3, Ada Lovelace Architecture",
-                    Price = 1899.00m,
-                    StockQuantity = 10,
-                    CategoryId = komponenteCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow.AddDays(-1)
-                },
-                new ProductEntity
-                {
-                    Name = "Corsair Vengeance DDR5 32GB",
-                    Description = "2x16GB DDR5-6000 CL30, Intel XMP 3.0, AMD EXPO",
-                    Price = 249.00m,
-                    StockQuantity = 45,
-                    CategoryId = komponenteCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow
-                },
-                new ProductEntity
-                {
-                    Name = "Samsung 990 PRO NVMe SSD 2TB",
-                    Description = "PCIe 4.0, 7450/6900 MB/s Read/Write, V-NAND Technology",
-                    Price = 299.00m,
-                    StockQuantity = 38,
-                    CategoryId = komponenteCat.Id,
-                    IsEnabled = true,
-                    CreatedAtUtc = DateTime.UtcNow
-                }
-            });
-        }
+        // Set up ProductCategories collection BEFORE saving products
+        for (int i = 0; i < 6; i++) products[i].ProductCategories.Add(new ProductCategoryEntity { CategoryId = categories[0].Id, CreatedAtUtc = DateTime.UtcNow });
+        for (int i = 6; i < 9; i++) products[i].ProductCategories.Add(new ProductCategoryEntity { CategoryId = categories[1].Id, CreatedAtUtc = DateTime.UtcNow });
+        for (int i = 9; i < 12; i++) products[i].ProductCategories.Add(new ProductCategoryEntity { CategoryId = categories[2].Id, CreatedAtUtc = DateTime.UtcNow });
+        for (int i = 12; i < 14; i++) products[i].ProductCategories.Add(new ProductCategoryEntity { CategoryId = categories[3].Id, CreatedAtUtc = DateTime.UtcNow });
+        for (int i = 14; i < 17; i++) products[i].ProductCategories.Add(new ProductCategoryEntity { CategoryId = categories[4].Id, CreatedAtUtc = DateTime.UtcNow });
+        for (int i = 17; i < 19; i++) products[i].ProductCategories.Add(new ProductCategoryEntity { CategoryId = categories[5].Id, CreatedAtUtc = DateTime.UtcNow });
+        for (int i = 19; i < 22; i++) products[i].ProductCategories.Add(new ProductCategoryEntity { CategoryId = categories[6].Id, CreatedAtUtc = DateTime.UtcNow });
+        for (int i = 22; i < 24; i++) products[i].ProductCategories.Add(new ProductCategoryEntity { CategoryId = categories[7].Id, CreatedAtUtc = DateTime.UtcNow });
 
         context.Products.AddRange(products);
         await context.SaveChangesAsync();
 
-        Console.WriteLine($"✅ Dynamic seed: {products.Count} products added.");
+        // Add variants
+        var variants = new List<ProductVariantEntity>();
+        for (int i = 0; i < 9; i++)
+        {
+            foreach (var size in new[] { "S", "M", "L", "XL", "XXL" })
+                variants.Add(new() { ProductId = products[i].Id, Size = size, StockQuantity = products[i].Exclusive ? 5 : 15, Sku = $"FCFIT-{i + 1:D3}-{size}", CreatedAtUtc = DateTime.UtcNow });
+        }
+        
+        int[] stocks = { 100, 75, 80, 120, 150, 50, 200, 25, 150, 30, 60, 70, 50, 40, 80 };
+        for (int i = 9; i < 24; i++)
+            variants.Add(new() { ProductId = products[i].Id, Size = "One Size", StockQuantity = stocks[i - 9], Sku = $"FCFIT-{i + 1:D3}-ONE", CreatedAtUtc = DateTime.UtcNow });
+
+        context.ProductVariants.AddRange(variants);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"? Seeded {products.Count} products with {variants.Count} variants");
+        return (products, variants);
     }
 
-    /// <summary>
-    /// Kreira demo narudžbe (orders) sa order items.
-    /// </summary>
-    private static async Task SeedOrdersAsync(DatabaseContext context)
+    private static async Task SeedMembersAsync(DatabaseContext context, List<FitFanShopUserEntity> users)
     {
-        if (await context.Orders.AnyAsync())
-            return;
-
-        // Učitaj korisnike i proizvode
-        var customers = await context.Users
-            .ToListAsync();
-
-        var products = await context.Products
-            .Where(p => p.IsEnabled)
-            .ToListAsync();
-
-        if (!customers.Any() || !products.Any())
+        var members = new List<MemberEntity>
         {
-            Console.WriteLine("⚠️  No customers or products found. Skipping orders seed.");
-            return;
-        }
-
-        var orders = new List<OrderEntity>();
-        var orderCounter = 1;
-
-        // Order 1 - Completed (customer1, 15 dana prije)
-        var customer1 = customers[0];
-        var order1Date = DateTime.UtcNow.AddDays(-15);
-        var order1Products = products.Take(3).ToList();
-
-        var order1Items = new List<OrderItemEntity>
-        {
-            CreateOrderItem(order1Products[0], 1, 0m), // Laptop
-            CreateOrderItem(order1Products[1], 1, 10m), // Desktop sa 10% popustom
-            CreateOrderItem(order1Products[2], 2, 0m)  // 2x monitor
+            new() { UserId = users[1].Id, StartDate = DateTime.UtcNow.AddDays(-30), EndDate = DateTime.UtcNow.AddDays(335), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-30) },
+            new() { UserId = users[2].Id, StartDate = DateTime.UtcNow.AddDays(-15), EndDate = DateTime.UtcNow.AddDays(350), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-15) },
+            new() { UserId = users[3].Id, StartDate = DateTime.UtcNow.AddDays(-400), EndDate = DateTime.UtcNow.AddDays(-35), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-400) }
         };
+        
+        context.Members.AddRange(members);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"? Seeded {members.Count} members (2 active, 1 expired)");
+    }
 
-        var order1 = new OrderEntity
+    private static async Task SeedDiscountsAsync(DatabaseContext context, List<ProductEntity> products)
+    {
+        var discounts = new List<DiscountEntity>
         {
-            ReferenceNumber = $"ORD-{orderCounter++:D4}",
-            FitFanShopUserId = customer1.Id,
-            OrderedAtUtc = order1Date,
-            PaidAtUtc = order1Date.AddHours(2),
-            Status = OrderStatusType.Completed,
-            TotalAmount = order1Items.Sum(i => i.Total),
-            Note = "Brza dostava molim.",
-            Items = order1Items,
-            CreatedAtUtc = order1Date
+            new() { Name = "Summer Sale 2025", Percentage = 15m, StartDate = DateTime.UtcNow.AddDays(-10), EndDate = DateTime.UtcNow.AddDays(20), MembersOnly = false, CreatedAtUtc = DateTime.UtcNow.AddDays(-10) },
+            new() { Name = "VIP Member Exclusive", Percentage = 25m, StartDate = DateTime.UtcNow.AddDays(-30), EndDate = DateTime.UtcNow.AddDays(335), MembersOnly = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-30) },
+            new() { Name = "Black Friday", Percentage = 30m, StartDate = DateTime.UtcNow.AddDays(-5), EndDate = DateTime.UtcNow.AddDays(2), MembersOnly = false, CreatedAtUtc = DateTime.UtcNow.AddDays(-5) }
         };
+        
+        context.Discounts.AddRange(discounts);
+        await context.SaveChangesAsync();
 
-        orders.Add(order1);
-
-        // Order 2 - Paid (customer2, 10 dana prije)
-        var customer2 = customers[1];
-        var order2Date = DateTime.UtcNow.AddDays(-10);
-        var order2Products = products.Skip(4).Take(2).ToList(); // Phone + accessories
-
-        var order2Items = new List<OrderItemEntity>
+        var discountProducts = new List<DiscountProductEntity>
         {
-            CreateOrderItem(order2Products[0], 1, 5m), // Phone sa 5% popustom
-            CreateOrderItem(order2Products[1], 1, 0m)  // Accessories
+            // Summer Sale (15%) - Jerseys
+            new() { DiscountId = discounts[0].Id, ProductId = products[0].Id, CreatedAtUtc = DateTime.UtcNow },
+            new() { DiscountId = discounts[0].Id, ProductId = products[1].Id, CreatedAtUtc = DateTime.UtcNow },
+            
+            // VIP Member (25%) - Exclusive products
+            new() { DiscountId = discounts[1].Id, ProductId = products[5].Id, CreatedAtUtc = DateTime.UtcNow },
+            new() { DiscountId = discounts[1].Id, ProductId = products[16].Id, CreatedAtUtc = DateTime.UtcNow },
+            new() { DiscountId = discounts[1].Id, ProductId = products[18].Id, CreatedAtUtc = DateTime.UtcNow },
+            
+            // Black Friday (30%) - Balls and bags
+            new() { DiscountId = discounts[2].Id, ProductId = products[22].Id, CreatedAtUtc = DateTime.UtcNow },
+            new() { DiscountId = discounts[2].Id, ProductId = products[23].Id, CreatedAtUtc = DateTime.UtcNow },
+            new() { DiscountId = discounts[2].Id, ProductId = products[20].Id, CreatedAtUtc = DateTime.UtcNow }
         };
+        
+        context.DiscountProducts.AddRange(discountProducts);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"? Seeded {discounts.Count} discounts with {discountProducts.Count} products");
+    }
 
-        var order2 = new OrderEntity
+    private static async Task<(List<EventEntity>, List<TicketTypeEntity>)> SeedEventsAsync(DatabaseContext context)
+    {
+        var events = new List<EventEntity>
         {
-            ReferenceNumber = $"ORD-{orderCounter++:D4}",
-            FitFanShopUserId = customer2.Id,
-            OrderedAtUtc = order2Date,
-            PaidAtUtc = order2Date.AddMinutes(30),
-            Status = OrderStatusType.Paid,
-            TotalAmount = order2Items.Sum(i => i.Total),
-            Note = null,
-            Items = order2Items,
-            CreatedAtUtc = order2Date
+            new() { Name = "FC Fit vs Rival FC", Description = "Premier League - Round 15", EventDate = DateTime.UtcNow.AddDays(15).AddHours(20).AddMinutes(45), Location = "FC Fit Stadium, City", CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit vs United FC", Description = "Premier League - Round 18", EventDate = DateTime.UtcNow.AddDays(30).AddHours(19), Location = "FC Fit Stadium, City", CreatedAtUtc = DateTime.UtcNow },
+            new() { Name = "FC Fit vs City FC", Description = "National Cup - Semi-final", EventDate = DateTime.UtcNow.AddDays(45).AddHours(21), Location = "FC Fit Stadium, City", CreatedAtUtc = DateTime.UtcNow }
         };
+        
+        context.Events.AddRange(events);
+        await context.SaveChangesAsync();
 
-        orders.Add(order2);
-
-        // Order 3 - Confirmed (customer3, 5 dana prije)
-        var customer3 = customers[2];
-        var order3Date = DateTime.UtcNow.AddDays(-5);
-        var order3Products = products.Skip(8).Take(4).ToList(); // PC components
-
-        var order3Items = new List<OrderItemEntity>
+        var ticketTypes = new List<TicketTypeEntity>
         {
-            CreateOrderItem(order3Products[0], 1, 0m), // CPU
-            CreateOrderItem(order3Products[1], 1, 0m), // GPU
-            CreateOrderItem(order3Products[2], 2, 15m), // 2x RAM sa 15% popustom
-            CreateOrderItem(order3Products[3], 1, 0m)  // SSD
+            // Event 1: FC Fit vs Rival FC
+            new() { EventId = events[0].Id, Name = "VIP Box", Price = 150m, TotalAvailable = 50, Description = "Premium VIP box with catering", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[0].Id, Name = "North Stand", Price = 80m, TotalAvailable = 300, Description = "North stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[0].Id, Name = "South Stand", Price = 80m, TotalAvailable = 300, Description = "South stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[0].Id, Name = "East Stand", Price = 50m, TotalAvailable = 500, Description = "East stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[0].Id, Name = "West Stand", Price = 50m, TotalAvailable = 500, Description = "West stand", CreatedAtUtc = DateTime.UtcNow },
+            
+            // Event 2: FC Fit vs United FC
+            new() { EventId = events[1].Id, Name = "VIP Box", Price = 120m, TotalAvailable = 50, Description = "Premium VIP box", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[1].Id, Name = "North Stand", Price = 60m, TotalAvailable = 300, Description = "North stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[1].Id, Name = "South Stand", Price = 60m, TotalAvailable = 300, Description = "South stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[1].Id, Name = "East Stand", Price = 40m, TotalAvailable = 500, Description = "East stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[1].Id, Name = "West Stand", Price = 40m, TotalAvailable = 500, Description = "West stand", CreatedAtUtc = DateTime.UtcNow },
+            
+            // Event 3: FC Fit vs City FC (Cup - higher prices)
+            new() { EventId = events[2].Id, Name = "VIP Box", Price = 180m, TotalAvailable = 50, Description = "Premium VIP box for Cup", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[2].Id, Name = "North Stand", Price = 100m, TotalAvailable = 300, Description = "North stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[2].Id, Name = "South Stand", Price = 100m, TotalAvailable = 300, Description = "South stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[2].Id, Name = "East Stand", Price = 70m, TotalAvailable = 500, Description = "East stand", CreatedAtUtc = DateTime.UtcNow },
+            new() { EventId = events[2].Id, Name = "West Stand", Price = 70m, TotalAvailable = 500, Description = "West stand", CreatedAtUtc = DateTime.UtcNow }
         };
+        
+        context.TicketTypes.AddRange(ticketTypes);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"? Seeded {events.Count} events with {ticketTypes.Count} ticket types");
+        return (events, ticketTypes);
+    }
 
-        var order3 = new OrderEntity
+    private static async Task SeedOrdersAsync(DatabaseContext context, List<FitFanShopUserEntity> users, List<ProductVariantEntity> variants)
+    {
+        var orders = new List<OrderEntity>
         {
-            ReferenceNumber = $"ORD-{orderCounter++:D4}",
-            FitFanShopUserId = customer3.Id,
-            OrderedAtUtc = order3Date,
-            PaidAtUtc = null,
-            Status = OrderStatusType.Confirmed,
-            TotalAmount = order3Items.Sum(i => i.Total),
-            Note = "Kontaktirajte me prije dostave.",
-            Items = order3Items,
-            CreatedAtUtc = order3Date
+            new() { UserId = users[1].Id, OrderDate = DateTime.UtcNow.AddDays(-10), StatusId = 3, TotalAmount = 299.98m, Note = "Fast delivery please", CreatedAtUtc = DateTime.UtcNow.AddDays(-10) },
+            new() { UserId = users[2].Id, OrderDate = DateTime.UtcNow.AddDays(-5), StatusId = 2, TotalAmount = 189.99m, Note = "Member discount applied", CreatedAtUtc = DateTime.UtcNow.AddDays(-5) },
+            new() { UserId = users[3].Id, OrderDate = DateTime.UtcNow.AddDays(-2), StatusId = 1, TotalAmount = 149.99m, Note = "Awaiting payment", CreatedAtUtc = DateTime.UtcNow.AddDays(-2) }
         };
-
-        orders.Add(order3);
-
-        // Order 4 - Draft (customer1, 2 dana prije)
-        var order4Date = DateTime.UtcNow.AddDays(-2);
-        var order4Products = products.Skip(6).Take(2).ToList();
-
-        var order4Items = new List<OrderItemEntity>
-        {
-            CreateOrderItem(order4Products[0], 1, 0m),
-            CreateOrderItem(order4Products[1], 3, 20m) // 3x keyboards sa 20% popustom
-        };
-
-        var order4 = new OrderEntity
-        {
-            ReferenceNumber = $"ORD-{orderCounter++:D4}",
-            FitFanShopUserId = customer1.Id,
-            OrderedAtUtc = order4Date,
-            PaidAtUtc = null,
-            Status = OrderStatusType.Draft,
-            TotalAmount = order4Items.Sum(i => i.Total),
-            Note = "Još razmišljam o boji...",
-            Items = order4Items,
-            CreatedAtUtc = order4Date
-        };
-
-        orders.Add(order4);
-
-        // Order 5 - Cancelled (customer2, 7 dana prije)
-        var order5Date = DateTime.UtcNow.AddDays(-7);
-        var order5Products = products.Skip(3).Take(1).ToList();
-
-        var order5Items = new List<OrderItemEntity>
-        {
-            CreateOrderItem(order5Products[0], 1, 0m)
-        };
-
-        var order5 = new OrderEntity
-        {
-            ReferenceNumber = $"ORD-{orderCounter++:D4}",
-            FitFanShopUserId = customer2.Id,
-            OrderedAtUtc = order5Date,
-            PaidAtUtc = null,
-            Status = OrderStatusType.Cancelled,
-            TotalAmount = order5Items.Sum(i => i.Total),
-            Note = "Otkazan na zahtjev korisnika.",
-            Items = order5Items,
-            CreatedAtUtc = order5Date
-        };
-
-        orders.Add(order5);
-
-        // Order 6 - Recent Paid (customer3, 1 dan prije)
-        var order6Date = DateTime.UtcNow.AddDays(-1);
-        var order6Products = products.Skip(10).Take(2).ToList();
-
-        var order6Items = new List<OrderItemEntity>
-        {
-            CreateOrderItem(order6Products[0], 2, 0m),
-            CreateOrderItem(order6Products[1], 1, 5m)
-        };
-
-        var order6 = new OrderEntity
-        {
-            ReferenceNumber = $"ORD-{orderCounter++:D4}",
-            FitFanShopUserId = customer3.Id,
-            OrderedAtUtc = order6Date,
-            PaidAtUtc = order6Date.AddHours(1),
-            Status = OrderStatusType.Paid,
-            TotalAmount = order6Items.Sum(i => i.Total),
-            Note = "Express dostava.",
-            Items = order6Items,
-            CreatedAtUtc = order6Date
-        };
-
-        orders.Add(order6);
-
+        
         context.Orders.AddRange(orders);
         await context.SaveChangesAsync();
 
-        Console.WriteLine($"✅ Dynamic seed: {orders.Count} orders added with {orders.Sum(o => o.Items.Count)} total items.");
-    }
-
-    /// <summary>
-    /// Helper metoda za kreiranje order itema sa kalkulacijama.
-    /// </summary>
-    private static OrderItemEntity CreateOrderItem(
-        ProductEntity product,
-        decimal quantity,
-        decimal discountPercent)
-    {
-        var unitPrice = product.Price;
-        var subtotal = quantity * unitPrice;
-        var discountAmount = discountPercent > 0
-            ? Math.Round(subtotal * (discountPercent / 100), 2)
-            : 0m;
-        var total = subtotal - discountAmount;
-
-        return new OrderItemEntity
+        var orderItems = new List<OrderItemEntity>
         {
-            ProductId = product.Id,
-            Quantity = quantity,
-            UnitPrice = unitPrice,
-            Subtotal = subtotal,
-            DiscountPercent = discountPercent > 0 ? discountPercent : null,
-            DiscountAmount = discountAmount > 0 ? discountAmount : null,
-            Total = total,
-            Order = null!,
-            CreatedAtUtc = DateTime.UtcNow
+            // Order 1 (John) - Jersey + Mugs
+            new() { OrderId = orders[0].Id, ProductVariantId = variants[0].Id, Quantity = 1, UnitPrice = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-10) },
+            new() { OrderId = orders[0].Id, ProductVariantId = variants[47].Id, Quantity = 5, UnitPrice = 29.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-10) },
+            
+            // Order 2 (Emma) - Jersey + Shorts (with Summer Sale discount)
+            new() { OrderId = orders[1].Id, ProductVariantId = variants[7].Id, Quantity = 1, UnitPrice = 127.49m, CreatedAtUtc = DateTime.UtcNow.AddDays(-5) },
+            new() { OrderId = orders[1].Id, ProductVariantId = variants[31].Id, Quantity = 1, UnitPrice = 59.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-5) },
+            
+            // Order 3 (Michael) - Jersey + Scarf
+            new() { OrderId = orders[2].Id, ProductVariantId = variants[12].Id, Quantity = 1, UnitPrice = 139.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-2) },
+            new() { OrderId = orders[2].Id, ProductVariantId = variants[45].Id, Quantity = 1, UnitPrice = 49.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-2) }
         };
+        
+        context.OrderItems.AddRange(orderItems);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"? Seeded {orders.Count} orders with {orderItems.Count} items");
     }
-    
-    ==================== END OF OLD SEEDER CODE ====================
-    */
+
+    private static async Task SeedTicketsAsync(DatabaseContext context, List<FitFanShopUserEntity> users, List<EventEntity> events, List<TicketTypeEntity> ticketTypes)
+    {
+        var tickets = new List<TicketEntity>
+        {
+            // John bought 2 tickets for Event 1 (North Stand)
+            new() { TicketTypeId = ticketTypes[1].Id, EventId = events[0].Id, UserId = users[1].Id, PricePaid = 80m, QRCode = $"QR-FCFIT-{Guid.NewGuid():N}", SeatNumber = "N-15", Status = "Valid", PurchaseDate = DateTime.UtcNow.AddDays(-7), CreatedAtUtc = DateTime.UtcNow.AddDays(-7) },
+            new() { TicketTypeId = ticketTypes[1].Id, EventId = events[0].Id, UserId = users[1].Id, PricePaid = 80m, QRCode = $"QR-FCFIT-{Guid.NewGuid():N}", SeatNumber = "N-16", Status = "Valid", PurchaseDate = DateTime.UtcNow.AddDays(-7), CreatedAtUtc = DateTime.UtcNow.AddDays(-7) },
+            
+            // Emma bought VIP ticket for Event 2
+            new() { TicketTypeId = ticketTypes[5].Id, EventId = events[1].Id, UserId = users[2].Id, PricePaid = 120m, QRCode = $"QR-FCFIT-{Guid.NewGuid():N}", SeatNumber = "VIP-A12", Status = "Valid", PurchaseDate = DateTime.UtcNow.AddDays(-3), CreatedAtUtc = DateTime.UtcNow.AddDays(-3) },
+            
+            // Michael bought 2 tickets for Event 3 (East Stand)
+            new() { TicketTypeId = ticketTypes[13].Id, EventId = events[2].Id, UserId = users[3].Id, PricePaid = 70m, QRCode = $"QR-FCFIT-{Guid.NewGuid():N}", SeatNumber = "E-28", Status = "Valid", PurchaseDate = DateTime.UtcNow.AddDays(-1), CreatedAtUtc = DateTime.UtcNow.AddDays(-1) },
+            new() { TicketTypeId = ticketTypes[13].Id, EventId = events[2].Id, UserId = users[3].Id, PricePaid = 70m, QRCode = $"QR-FCFIT-{Guid.NewGuid():N}", SeatNumber = "E-29", Status = "Valid", PurchaseDate = DateTime.UtcNow.AddDays(-1), CreatedAtUtc = DateTime.UtcNow.AddDays(-1) }
+        };
+        
+        context.Tickets.AddRange(tickets);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"? Seeded {tickets.Count} tickets");
+    }
 }
