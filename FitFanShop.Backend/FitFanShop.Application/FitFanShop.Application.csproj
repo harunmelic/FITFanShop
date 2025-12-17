@@ -20,4 +20,9 @@
     <ProjectReference Include="..\FitFanShop.Shared\FitFanShop.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\Extensions\" />
+    <Folder Include="Modules\Sales\Orders\Commands\Create\" />
+  </ItemGroup>
+
 </Project>
