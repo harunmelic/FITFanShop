@@ -2,6 +2,7 @@
 using FitFanShop.API.Middleware;
 using FitFanShop.Application;
 using FitFanShop.Infrastructure;
+using FitFanShop.Shared.Options;
 using Serilog;
 
 public partial class Program
@@ -49,18 +50,30 @@ public partial class Program
                 .AddInfrastructure(builder.Configuration, builder.Environment)
                 .AddApplication();
 
-            // CORS policy to allow Angular dev server access
+            // Registracija options
+            builder.Services.Configure<CorsOptions>(builder.Configuration.GetSection("Cors"));
+            builder.Services.Configure<LocalizationOptions>(builder.Configuration.GetSection("Localization"));
+
+            // CORS iz konfiguracije
+            var corsOptions = builder.Configuration.GetSection("Cors").Get<CorsOptions>();
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAngularDev",
-                    policy =>
-                    {
-                        policy
-                            .WithOrigins("http://localhost:4200") // kao string array može i više URL-ova
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .AllowCredentials();
-                    });
+                options.AddPolicy("AllowAngularDev", policy =>
+                {
+                    policy.WithOrigins(corsOptions.AllowedOrigins)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
+            // Localization iz konfiguracije
+            var localizationOptions = builder.Configuration.GetSection("Localization").Get<LocalizationOptions>();
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.SetDefaultCulture(localizationOptions.DefaultCulture)
+                       .AddSupportedCultures(localizationOptions.SupportedCultures)
+                       .AddSupportedUICultures(localizationOptions.SupportedCultures);
             });
 
             var app = builder.Build();
@@ -77,6 +90,9 @@ public partial class Program
             // Global exception handler (IExceptionHandler)
             app.UseExceptionHandler();
             app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
+            // Request Localization (regional date/time/number formatting)
+            app.UseRequestLocalization();
 
             app.UseHttpsRedirection();
             // UseCors ide prije UseAuthorization i UseAuthentification
