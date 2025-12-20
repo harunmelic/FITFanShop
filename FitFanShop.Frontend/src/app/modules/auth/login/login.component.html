@@ -1,0 +1,45 @@
+<div style="padding: 50px;">
+  <h2>Login</h2>
+  
+  <div *ngIf="auth.isAuthenticated()" style="color: green; margin-bottom: 20px;">
+    ✅ Prijavljen: {{ auth.currentUser()?.email }}
+  </div>
+  
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <input 
+        type="email" 
+        formControlName="email"
+        placeholder="Email"
+      />
+    </div>
+
+    <div style="margin-top: 10px;">
+      <input 
+        type="password"
+        formControlName="password"
+        placeholder="Password"
+      />
+    </div>
+
+    <!-- Date Picker TEST -->
+    <div style="margin-top: 10px;">
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" placeholder="MM/DD/YYYY">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <button type="submit" [disabled]="form.invalid || isLoading" style="background-color: red; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+        {{ isLoading ? 'Loading...' : 'Login' }}
+      </button>
+    </div>
+
+    <div *ngIf="errorMessage" style="color: red; margin-top: 10px;">
+      {{ errorMessage }}
+    </div>
+  </form>
+</div>
