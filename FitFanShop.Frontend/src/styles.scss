@@ -12,7 +12,7 @@ html {
       primary: mat.$azure-palette,
       tertiary: mat.$blue-palette,
     ),
-    typography: Roboto,
+    typography: Poppins,
     density: 0,
   ));
 }
@@ -28,6 +28,7 @@ body {
   // variables at https://material.angular.dev/guide/system-variables
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
+  font-family: 'Poppins', sans-serif;
   font: var(--mat-sys-body-medium);
 
   // Reset the user agent margin.

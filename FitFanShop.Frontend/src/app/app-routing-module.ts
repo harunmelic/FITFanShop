@@ -7,10 +7,10 @@ const routes: Routes = [
     loadChildren: () =>
       import('./modules/auth/auth-module').then(m => m.AuthModule)
   },
-  // Default redirect to login
-  { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
+  // Default redirect to home (empty for now)
+  { path: '', redirectTo: '/', pathMatch: 'full' },
   // fallback 404
-  { path: '**', redirectTo: '/auth/login' }
+  { path: '**', redirectTo: '/' }
 ];
 
 @NgModule({

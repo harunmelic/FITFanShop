@@ -8,6 +8,8 @@ import { FitConfirmDialogComponent } from './components/fit-confirm-dialog/fit-c
 import {DialogHelperService} from './services/dialog-helper.service';
 import { FitLoadingBarComponent } from './components/fit-loading-bar/fit-loading-bar.component';
 import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-table-skeleton.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 
 
 
@@ -16,7 +18,9 @@ import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-t
     FitPaginatorBarComponent,
     FitConfirmDialogComponent,
     FitLoadingBarComponent,
-    FitTableSkeletonComponent
+    FitTableSkeletonComponent,
+    NavbarComponent,
+    LoginDialogComponent
   ],
   imports: [
     CommonModule,
@@ -36,6 +40,7 @@ import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-t
     FormsModule,
     FitLoadingBarComponent,
     FitTableSkeletonComponent,
+    NavbarComponent,
     materialModules
   ]
 })
