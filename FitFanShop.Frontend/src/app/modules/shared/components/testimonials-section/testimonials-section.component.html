@@ -1,0 +1,16 @@
+<div class="testimonials-section">
+  <div class="testimonials-container">
+    <button class="arrow arrow-left" (click)="prevTestimonial()">‹</button>
+    
+    <div class="testimonial-content">
+      <div class="quote-icon">"</div>
+      <p class="testimonial-text">{{ testimonials[currentTestimonial].text }}</p>
+      <div class="stars">
+        <span *ngFor="let star of getStars(testimonials[currentTestimonial].rating)">★</span>
+      </div>
+      <p class="author">{{ testimonials[currentTestimonial].author }}</p>
+    </div>
+
+    <button class="arrow arrow-right" (click)="nextTestimonial()">›</button>
+  </div>
+</div>

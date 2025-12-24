@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.service';
@@ -15,6 +15,16 @@ export class NavbarComponent {
   private router = inject(Router);
   auth = inject(AuthFacadeService);
 
+  isKatalogDropdownOpen = false;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.nav-link-dropdown')) {
+      this.isKatalogDropdownOpen = false;
+    }
+  }
+
   openLoginDialog(): void {
     this.dialog.open(LoginDialogComponent, {
       width: '400px',
@@ -24,5 +34,13 @@ export class NavbarComponent {
 
   logout(): void {
     this.auth.logout();
+  }
+
+  toggleKatalogDropdown(): void {
+    this.isKatalogDropdownOpen = !this.isKatalogDropdownOpen;
+  }
+
+  closeKatalogDropdown(): void {
+    this.isKatalogDropdownOpen = false;
   }
 }

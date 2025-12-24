@@ -1,0 +1,36 @@
+<div class="products-slider-section">
+  <div class="section-header">
+    <h2>{{ slides[currentSlide].title }}</h2>
+    <a href="#" class="go-to-shop">GO TO SHOP</a>
+  </div>
+
+  <div class="slider-container">
+    <div class="products-slide" 
+         *ngFor="let slide of slides; let i = index"
+         [class.active]="i === currentSlide">
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let product of slide.products">
+          <div class="product-image">
+            <div class="placeholder"></div>
+            <button class="add-to-cart">DODAJ U KORPU 🛒</button>
+          </div>
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="price">{{ product.price }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="arrow arrow-left" (click)="prevSlide()">‹</button>
+    <button class="arrow arrow-right" (click)="nextSlide()">›</button>
+  </div>
+
+  <div class="dots">
+    <span *ngFor="let slide of slides; let i = index" 
+          class="dot" 
+          [class.active]="i === currentSlide"
+          (click)="goToSlide(i)">
+    </span>
+  </div>
+</div>

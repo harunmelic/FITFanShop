@@ -19,7 +19,7 @@ import {SharedModule} from './modules/shared/shared-module';
     BrowserModule,
     AppRoutingModule,
     SharedModule,
-    materialModules,
+    materialModules
   ],
   providers: [
     provideAnimations(),

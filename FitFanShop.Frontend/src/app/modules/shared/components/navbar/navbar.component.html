@@ -11,7 +11,21 @@
     <!-- Navigation Links -->
     <div class="navbar-links">
       <a href="/" class="nav-link">POČETNA</a>
-      <a href="#" class="nav-link">KATALOG ▼</a>
+      
+      <!-- Katalog Dropdown -->
+      <div class="nav-link-dropdown">
+        <a href="#" class="nav-link" (click)="toggleKatalogDropdown(); $event.preventDefault()">
+          KATALOG ▼
+        </a>
+        <div class="dropdown-menu" *ngIf="isKatalogDropdownOpen" (click)="closeKatalogDropdown()">
+          <a href="#" class="dropdown-item">Test1</a>
+          <a href="#" class="dropdown-item">Test2</a>
+          <a href="#" class="dropdown-item">Test3</a>
+          <a href="#" class="dropdown-item">Test4</a>
+          <a href="#" class="dropdown-item">Test5</a>
+        </div>
+      </div>
+      
       <a href="#" class="nav-link">O NAMA</a>
       <a href="#" class="nav-link">KONTAKT</a>
     </div>

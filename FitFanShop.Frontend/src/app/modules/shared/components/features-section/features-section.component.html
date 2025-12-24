@@ -1,0 +1,9 @@
+<div class="features-section">
+  <div class="features-container">
+    <div class="feature-item" *ngFor="let feature of features">
+      <mat-icon class="feature-icon">{{ feature.icon }}</mat-icon>
+      <h3>{{ feature.title }}</h3>
+      <p>{{ feature.description }}</p>
+    </div>
+  </div>
+</div>
