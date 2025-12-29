@@ -18,6 +18,7 @@ import { ProductsSliderComponent } from './components/products-slider/products-s
 import { TestimonialsSectionComponent } from './components/testimonials-section/testimonials-section.component';
 import { NewsletterSectionComponent } from './components/newsletter-section/newsletter-section.component';
 import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.component';
+import { LoadingScreenComponent } from './components/loading-screen/loading-screen.component';
 
 
 
@@ -36,7 +37,8 @@ import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.c
     ProductsSliderComponent,
     TestimonialsSectionComponent,
     NewsletterSectionComponent,
-    ScrollToTopComponent
+    ScrollToTopComponent,
+    LoadingScreenComponent
   ],
   imports: [
     CommonModule,
@@ -65,6 +67,7 @@ import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.c
     TestimonialsSectionComponent,
     NewsletterSectionComponent,
     ScrollToTopComponent,
+    LoadingScreenComponent,
     materialModules
   ]
 })
