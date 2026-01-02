@@ -10,12 +10,8 @@ public sealed class DiscountEntity : BaseEntity
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public bool MembersOnly { get; set; }
-
-    /// <summary>
-    /// Computed property - checks if discount is currently active based on date range
-    /// </summary>
     [NotMapped]
     public bool IsActive => StartDate <= DateTime.UtcNow && EndDate >= DateTime.UtcNow;
-
     public ICollection<DiscountProductEntity> DiscountProducts { get; private set; } = new List<DiscountProductEntity>();
 }
+

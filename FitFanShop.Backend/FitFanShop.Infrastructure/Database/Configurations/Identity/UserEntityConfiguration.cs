@@ -46,7 +46,7 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<FitFanSho
             .HasForeignKey(x => x.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        b.HasMany(x => x.RefreshTokens)
+        b.HasMany<RefreshTokenEntity>()
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId);
 

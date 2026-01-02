@@ -18,7 +18,7 @@ public sealed class NotificationEntityConfiguration : IEntityTypeConfiguration<N
             .IsRequired();
 
         builder.HasOne(x => x.User)
-            .WithMany(x => x.Notifications)
+            .WithMany()
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }

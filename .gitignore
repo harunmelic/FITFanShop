@@ -540,3 +540,32 @@ http-client.private.env.json
 # Apifox Helper cache
 .idea/.cache/.Apifox_Helper
 .idea/ApifoxUploaderProjectSetting.xml
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs
+Logs/
+*.log
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# User secrets
+appsettings.Development.json
+secrets.json
+
+# Rider
+.idea/

@@ -15,7 +15,7 @@ public sealed class ActivityLogEntityConfiguration : IEntityTypeConfiguration<Ac
             .HasMaxLength(500);
 
         builder.HasOne(x => x.User)
-            .WithMany(x => x.ActivityLogs)
+            .WithMany()
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }

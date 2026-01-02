@@ -4,6 +4,7 @@ using FitFanShop.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitFanShop.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251221012637_RemoveOrderDateFromOrder")]
+    partial class RemoveOrderDateFromOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -721,6 +724,9 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
@@ -947,6 +953,9 @@ namespace FitFanShop.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("QRCode")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -956,8 +965,16 @@ namespace FitFanShop.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<int>("TicketTypeId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UsedAtUtc")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -1150,7 +1167,7 @@ namespace FitFanShop.Infrastructure.Migrations
             modelBuilder.Entity("FitFanShop.Domain.Entities.Identity.RefreshTokenEntity", b =>
                 {
                     b.HasOne("FitFanShop.Domain.Entities.Identity.FitFanShopUserEntity", "User")
-                        .WithMany()
+                        .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1172,7 +1189,7 @@ namespace FitFanShop.Infrastructure.Migrations
             modelBuilder.Entity("FitFanShop.Domain.Entities.Notifications.ActivityLogEntity", b =>
                 {
                     b.HasOne("FitFanShop.Domain.Entities.Identity.FitFanShopUserEntity", "User")
-                        .WithMany()
+                        .WithMany("ActivityLogs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1183,7 +1200,7 @@ namespace FitFanShop.Infrastructure.Migrations
             modelBuilder.Entity("FitFanShop.Domain.Entities.Notifications.NotificationEntity", b =>
                 {
                     b.HasOne("FitFanShop.Domain.Entities.Identity.FitFanShopUserEntity", "User")
-                        .WithMany()
+                        .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1287,7 +1304,7 @@ namespace FitFanShop.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("FitFanShop.Domain.Entities.Identity.FitFanShopUserEntity", "User")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1354,13 +1371,21 @@ namespace FitFanShop.Infrastructure.Migrations
 
             modelBuilder.Entity("FitFanShop.Domain.Entities.Identity.FitFanShopUserEntity", b =>
                 {
+                    b.Navigation("ActivityLogs");
+
                     b.Navigation("Cart");
 
                     b.Navigation("MemberProfile");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Orders");
 
+                    b.Navigation("RefreshTokens");
+
                     b.Navigation("Reviews");
+
+                    b.Navigation("Tickets");
 
                     b.Navigation("Wishlist");
                 });

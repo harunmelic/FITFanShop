@@ -1,4 +1,6 @@
-﻿using FitFanShop.Application.Abstractions;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using FitFanShop.Application.Abstractions;
 using FitFanShop.Domain.Entities.Catalog;
 using FitFanShop.Domain.Entities.Commerce;
 using FitFanShop.Domain.Entities.Discounts;
@@ -8,6 +10,7 @@ using FitFanShop.Domain.Entities.Notifications;
 using FitFanShop.Domain.Entities.Reviews;
 using FitFanShop.Domain.Entities.Sales;
 using FitFanShop.Domain.Entities.Tickets;
+using FitFanShop.Domain.Common;
 
 namespace FitFanShop.Infrastructure.Database;
 
@@ -51,4 +54,5 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     {
         _clock = clock;
     }
+
 }

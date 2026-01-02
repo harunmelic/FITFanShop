@@ -7,13 +7,10 @@ namespace FitFanShop.Domain.Entities.Sales;
 public class OrderItemEntity : BaseEntity
 {
     public int OrderId { get; set; }
-    public OrderEntity? Order { get; set; }
-
     public int ProductVariantId { get; set; }
+    public OrderEntity? Order { get; set; }
     public ProductVariantEntity? ProductVariant { get; set; }
-
+    public ReviewEntity? Review { get; set; }
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
-
-    public ReviewEntity? Review { get; set; }
 }
