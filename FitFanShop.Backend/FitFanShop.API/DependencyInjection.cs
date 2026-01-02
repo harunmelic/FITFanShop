@@ -1,13 +1,11 @@
-﻿using FitFanShop.Infrastructure.Common;
+using FitFanShop.Infrastructure.Common;
 using FitFanShop.Shared.Dtos;
 using FitFanShop.Shared.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-
 namespace FitFanShop.API;
-
 public static class DependencyInjection
 {
     public static IServiceCollection AddAPI(
@@ -15,7 +13,6 @@ public static class DependencyInjection
         IConfiguration configuration,
         IHostEnvironment env)
     {
-        // Controllers + uniform BadRequest
         services.AddControllers()
             .ConfigureApiBehaviorOptions(opts =>
             {
@@ -33,14 +30,10 @@ public static class DependencyInjection
                     });
                 };
             });
-
-        // Typed options + validation on startup
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection(JwtOptions.SectionName))
             .ValidateDataAnnotations()
             .ValidateOnStart();
-
-        // JWT auth (reads from IOptions<JwtOptions>)
         services.AddAuthentication(o =>
         {
             o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,7 +42,6 @@ public static class DependencyInjection
         .AddJwtBearer((o) =>
         {
             var jwt = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()!;
-
             o.TokenValidationParameters = new()
             {
                 ValidateIssuer = true,
@@ -62,15 +54,12 @@ public static class DependencyInjection
                 ClockSkew = TimeSpan.Zero
             };
         });
-
         services.AddAuthorization(o =>
         {
             o.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
         });
-
-        // Swagger with Bearer auth
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
@@ -78,7 +67,6 @@ public static class DependencyInjection
             var xml = Path.Combine(AppContext.BaseDirectory, "FitFanShop.API.xml");
             if (File.Exists(xml))
                 c.IncludeXmlComments(xml, includeControllerXmlComments: true);
-
             var bearer = new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -92,10 +80,8 @@ public static class DependencyInjection
             c.AddSecurityDefinition("Bearer", bearer);
             c.AddSecurityRequirement(new OpenApiSecurityRequirement { { bearer, Array.Empty<string>() } });
         });
-
         services.AddExceptionHandler<FitFanShopExceptionHandler>();
         services.AddProblemDetails();
-
         return services;
     }
 }

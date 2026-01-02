@@ -1,23 +1,15 @@
-﻿using FitFanShop.Domain.Entities.Identity;
+using FitFanShop.Domain.Entities.Identity;
 using FitFanShop.Domain.Entities.Sales;
 using Microsoft.EntityFrameworkCore;
-
 namespace FitFanShop.Infrastructure.Database.Seeders;
-
-/// <summary>
-/// Static data seeder for lookup tables (Roles, OrderStatuses).
-/// This data is seeded via migrations and should exist in all environments.
-/// </summary>
 public static class StaticDataSeeder
 {
     private static readonly DateTime SeedDate = new(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
     public static void Seed(ModelBuilder modelBuilder)
     {
         SeedRoles(modelBuilder);
         SeedOrderStatuses(modelBuilder);
     }
-
     private static void SeedRoles(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<RoleEntity>().HasData(
@@ -39,7 +31,6 @@ public static class StaticDataSeeder
             }
         );
     }
-
     private static void SeedOrderStatuses(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<OrderStatusEntity>().HasData(

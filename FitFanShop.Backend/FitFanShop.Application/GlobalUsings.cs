@@ -1,7 +1,3 @@
-﻿// ================================================
-// Global using directives — shared across all feature modules
-// ================================================
-
 global using MediatR;
 global using FluentValidation;
 global using FitFanShop.Application.Abstractions;

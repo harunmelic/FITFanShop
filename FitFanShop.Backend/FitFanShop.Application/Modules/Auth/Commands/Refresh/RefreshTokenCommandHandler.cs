@@ -1,5 +1,4 @@
-ï»¿namespace FitFanShop.Application.Modules.Auth.Commands.Refresh;
-
+namespace FitFanShop.Application.Modules.Auth.Commands.Refresh;
 public sealed class RefreshTokenCommandHandler(
     IAppDbContext ctx,
     IJwtTokenService jwt,
@@ -8,42 +7,28 @@ public sealed class RefreshTokenCommandHandler(
 {
     public async Task<RefreshTokenCommandDto> Handle(RefreshTokenCommand request, CancellationToken ct)
     {
-        // 1) Hash the received refresh token
         var incomingHash = jwt.HashRefreshToken(request.RefreshToken);
-
-        // 2) Find the valid refresh token in the database (TRACKING because we will modify it)
         var rt = await ctx.RefreshTokens
             .Include(x => x.User)
             .FirstOrDefaultAsync(x =>
                 x.TokenHash == incomingHash &&
                 !x.IsRevoked &&
                 !x.IsDeleted, ct);
-
         var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
-
         if (rt is null || rt.ExpiresAtUtc <= nowUtc)
-            throw new FitFanShopConflictException("Refresh token je nevaÅ¾eÄ‡i ili je istekao.");
-
-        // (optional) Fingerprint check
+            throw new FitFanShopConflictException("Refresh token je nevažeæi ili je istekao.");
         if (rt.Fingerprint is not null &&
             request.Fingerprint is not null &&
             rt.Fingerprint != request.Fingerprint)
         {
             throw new FitFanShopConflictException("Neispravan klijentski otisak.");
         }
-
         var user = rt.User;
         if (user is null || !user.IsEnabled || user.IsDeleted)
-            throw new FitFanShopConflictException("KorisniÄki nalog je nevaÅ¾eÄ‡i.");
-
-        // 3) Rotation: revoke the old one
+            throw new FitFanShopConflictException("Korisnièki nalog je nevažeæi.");
         rt.IsRevoked = true;
         rt.RevokedAtUtc = nowUtc;
-
-        // 4) Issue a NEW pair (access + refresh) â€“ the service returns both RAW and HASH along with expirations.
         var pair = jwt.IssueTokens(user);
-
-        // 5) Save the NEW refresh token (HASH only) in the database
         var newRt = new RefreshTokenEntity
         {
             TokenHash = pair.RefreshTokenHash,
@@ -51,11 +36,8 @@ public sealed class RefreshTokenCommandHandler(
             UserId = user.Id,
             Fingerprint = request.Fingerprint,
         };
-
         ctx.RefreshTokens.Add(newRt);
         await ctx.SaveChangesAsync(ct);
-
-        // 6) Return the RAW refresh token and access token to the client
         return new RefreshTokenCommandDto
         {
             AccessToken = pair.AccessToken,

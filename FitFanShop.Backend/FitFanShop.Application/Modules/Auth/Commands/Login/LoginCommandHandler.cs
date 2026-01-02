@@ -1,4 +1,5 @@
-﻿using FitFanShop.Application.Modules.Auth.Commands.Login;
+﻿using FitFanShop.Application.Common.Exceptions;
+using FitFanShop.Application.Modules.Auth.Commands.Login;
 
 public sealed class LoginCommandHandler(
     IAppDbContext ctx,
@@ -12,11 +13,11 @@ public sealed class LoginCommandHandler(
 
         var user = await ctx.Users
             .FirstOrDefaultAsync(x => x.Email.ToLower() == email && x.IsEnabled && !x.IsDeleted, ct)
-            ?? throw new FitFanShopNotFoundException("Korisnik nije pronađen ili je onemogućen.");
+            ?? throw new FitFanShopNotFoundException("User not found or disabled.");
 
         var verify = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
         if (verify == PasswordVerificationResult.Failed)
-            throw new FitFanShopConflictException("Pogrešni kredencijali.");
+            throw new FitFanShopInvalidCredentialsException("Invalid credentials.");
 
         var tokens = jwt.IssueTokens(user);
 

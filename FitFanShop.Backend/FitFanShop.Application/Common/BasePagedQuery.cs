@@ -1,10 +1,5 @@
-﻿namespace FitFanShop.Application.Common;
-
-/// <summary>
-/// Base class for list queries with pagination, search, and sorting.
-/// </summary>
+namespace FitFanShop.Application.Common;
 public abstract class BasePagedQuery<TItem> : IRequest<PageResult<TItem>>
 {
-    /// <summary>Pagination parameters (page number and page size).</summary>
     public PageRequest Paging { get; init; } = new();
 }

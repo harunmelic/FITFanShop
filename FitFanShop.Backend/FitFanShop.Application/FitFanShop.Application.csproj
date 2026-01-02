@@ -22,6 +22,8 @@
 
   <ItemGroup>
     <Folder Include="Common\Extensions\" />
+    <Folder Include="Modules\Catalog\Products\Commands\DisableProduct\" />
+    <Folder Include="Modules\Catalog\Products\Commands\EnableProduct\" />
     <Folder Include="Modules\Sales\Orders\Commands\Create\" />
   </ItemGroup>
 
