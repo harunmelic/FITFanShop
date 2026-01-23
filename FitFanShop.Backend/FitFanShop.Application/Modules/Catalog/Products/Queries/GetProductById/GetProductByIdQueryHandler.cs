@@ -18,6 +18,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
         var product = await _ctx.Products
             .Include(p => p.ProductCategories)
             .Include(p => p.Variants)
+            .Where(p => !p.IsDeleted)
             .FirstOrDefaultAsync(p => p.Id == query.Id && p.IsEnabled, ct); 
 
         if (product == null)
@@ -31,14 +32,20 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
             Price = product.Price,
             IsEnabled = product.IsEnabled,
             Exclusive = product.Exclusive,
-            CategoryIds = product.ProductCategories.Select(pc => pc.CategoryId).ToList(),
-            Variants = product.Variants.Select(v => new ProductVariantDto
-            {
-                Id = v.Id,
-                Size = v.Size,
-                StockQuantity = v.StockQuantity,
-                Sku = v.Sku
-            }).ToList()
+            CategoryIds = product.ProductCategories
+                .Where(pc => !pc.IsDeleted)
+                .Select(pc => pc.CategoryId)
+                .ToList(),
+            Variants = product.Variants
+                .Where(v => !v.IsDeleted)
+                .Select(v => new ProductVariantDto
+                {
+                    Id = v.Id,
+                    Size = v.Size,
+                    StockQuantity = v.StockQuantity,
+                    Sku = v.Sku
+                })
+                .ToList()
         };
     }
 }

@@ -565,9 +565,6 @@ namespace FitFanShop.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -586,9 +583,6 @@ namespace FitFanShop.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ActionDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("ActionDescription")
                         .IsRequired()
@@ -860,15 +854,7 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -1261,7 +1247,7 @@ namespace FitFanShop.Infrastructure.Migrations
                     b.HasOne("FitFanShop.Domain.Entities.Sales.OrderEntity", "Order")
                         .WithOne("Payment")
                         .HasForeignKey("FitFanShop.Domain.Entities.Sales.PaymentEntity", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");

@@ -14,11 +14,12 @@ public sealed class PaymentEntityConfiguration : IEntityTypeConfiguration<Paymen
             .IsRequired()
             .HasMaxLength(50);
 
-        builder.Property(x => x.PaymentStatus)
-            .IsRequired()
-            .HasMaxLength(50);
-
         builder.Property(x => x.Amount)
             .HasPrecision(18, 2);
+
+        builder.HasOne(x => x.Order)
+            .WithOne(o => o!.Payment)
+            .HasForeignKey<PaymentEntity>(x => x.OrderId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

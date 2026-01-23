@@ -118,9 +118,9 @@ public static class DynamicDataSeeder
     {
         var members = new List<MemberEntity>
         {
-            new() { UserId = users[1].Id, StartDate = DateTime.UtcNow.AddDays(-30), EndDate = DateTime.UtcNow.AddDays(335), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-30) },
-            new() { UserId = users[2].Id, StartDate = DateTime.UtcNow.AddDays(-15), EndDate = DateTime.UtcNow.AddDays(350), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-15) },
-            new() { UserId = users[3].Id, StartDate = DateTime.UtcNow.AddDays(-400), EndDate = DateTime.UtcNow.AddDays(-35), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-400) }
+            new() { UserId = users[1].Id, EndDate = DateTime.UtcNow.AddDays(335), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-30) },
+            new() { UserId = users[2].Id, EndDate = DateTime.UtcNow.AddDays(350), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-15) },
+            new() { UserId = users[3].Id, EndDate = DateTime.UtcNow.AddDays(-35), PricePaid = 149.99m, CreatedAtUtc = DateTime.UtcNow.AddDays(-400) }
         };
         context.Members.AddRange(members);
         await context.SaveChangesAsync();

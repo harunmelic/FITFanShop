@@ -41,7 +41,7 @@ public sealed class ProductCategoryValidationInterceptor : SaveChangesIntercepto
                 }
                 throw new FitFanShopBusinessRuleException(
                     "PRODUCT_MISSING_CATEGORY",
-                    $"Proizvod '{product.Name}' mora imati barem jednu kategoriju");
+                    $"Product '{product.Name}' must have at least one category.");
             }
         }
     }
