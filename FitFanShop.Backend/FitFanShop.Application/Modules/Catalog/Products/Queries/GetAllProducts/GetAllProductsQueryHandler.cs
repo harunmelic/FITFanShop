@@ -14,12 +14,12 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, L
         var productsQuery = _ctx.Products
             .Include(p => p.ProductCategories)
             .Include(p => p.Variants)
-            .Where(p => p.IsEnabled) 
+            .Where(p => !p.IsDeleted && p.IsEnabled) 
             .AsQueryable();
         if (!string.IsNullOrWhiteSpace(query.Search))
             productsQuery = productsQuery.Where(p => p.Name.Contains(query.Search));
         if (query.CategoryId.HasValue)
-            productsQuery = productsQuery.Where(p => p.ProductCategories.Any(pc => pc.CategoryId == query.CategoryId));
+            productsQuery = productsQuery.Where(p => p.ProductCategories.Any(pc => !pc.IsDeleted && pc.CategoryId == query.CategoryId));
         if (query.MinPrice.HasValue)
             productsQuery = productsQuery.Where(p => p.Price >= query.MinPrice);
         if (query.MaxPrice.HasValue)
@@ -52,14 +52,20 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, L
             Price = p.Price,
             IsEnabled = p.IsEnabled,
             Exclusive = p.Exclusive,
-            CategoryIds = p.ProductCategories.Select(pc => pc.CategoryId).ToList(),
-            Variants = p.Variants.Select(v => new ProductVariantDto
-            {
-                Id = v.Id,
-                Size = v.Size,
-                StockQuantity = v.StockQuantity,
-                Sku = v.Sku
-            }).ToList()
+            CategoryIds = p.ProductCategories
+                .Where(pc => !pc.IsDeleted)
+                .Select(pc => pc.CategoryId)
+                .ToList(),
+            Variants = p.Variants
+                .Where(v => !v.IsDeleted)
+                .Select(v => new ProductVariantDto
+                {
+                    Id = v.Id,
+                    Size = v.Size,
+                    StockQuantity = v.StockQuantity,
+                    Sku = v.Sku
+                })
+                .ToList()
         }).ToList();
     }
 }

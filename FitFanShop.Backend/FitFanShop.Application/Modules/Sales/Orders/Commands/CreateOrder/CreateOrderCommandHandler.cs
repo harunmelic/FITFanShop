@@ -50,6 +50,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int
                     .Include(x => x.Product)
                     .ThenInclude(x => x.DiscountProducts)
                     .ThenInclude(dp => dp.Discount)
+                    .Where(x => !x.IsDeleted)
                     .FirstOrDefaultAsync(x => x.Id == p.ProductVariantId, cancellationToken);
                 if (variant == null)
                     throw new FitFanShopNotFoundException($"Product variant {p.ProductVariantId} not found");
