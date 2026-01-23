@@ -78,6 +78,8 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
+    app.UseMiddleware<ActivityLogMiddleware>();
+
     app.MapControllers();
 
     await app.Services.InitializeDatabaseAsync(app.Environment);

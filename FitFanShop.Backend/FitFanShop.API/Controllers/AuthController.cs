@@ -1,11 +1,19 @@
 ﻿using FitFanShop.Application.Modules.Auth.Commands.Login;
 using FitFanShop.Application.Modules.Auth.Commands.Logout;
 using FitFanShop.Application.Modules.Auth.Commands.Refresh;
+using FitFanShop.Application.Modules.Auth.Commands.Register;
 
 [ApiController]
 [Route("api/auth")]
 public sealed class AuthController(IMediator mediator) : ControllerBase
 {
+    [HttpPost("register")]
+    [AllowAnonymous]
+    public async Task<ActionResult<LoginCommandDto>> Register([FromBody] RegisterCommand command, CancellationToken ct)
+    {
+        return Ok(await mediator.Send(command, ct));
+    }
+
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<ActionResult<LoginCommandDto>> Login([FromBody] LoginCommand command, CancellationToken ct)
