@@ -112,7 +112,9 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
                     StockQuantity = v.StockQuantity,
                     Sku = v.Sku ?? string.Empty
                 })
-                .ToList()
+                .ToList(),
+            ReviewCount = 0,
+            AverageRating = 0
         };
     }
 }

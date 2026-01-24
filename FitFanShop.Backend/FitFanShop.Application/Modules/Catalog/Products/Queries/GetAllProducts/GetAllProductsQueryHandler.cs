@@ -14,6 +14,7 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, L
         var productsQuery = _ctx.Products
             .Include(p => p.ProductCategories)
             .Include(p => p.Variants)
+            .Include(p => p.Reviews)
             .Where(p => !p.IsDeleted && p.IsEnabled) 
             .AsQueryable();
         if (!string.IsNullOrWhiteSpace(query.Search))
@@ -65,7 +66,11 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, L
                     StockQuantity = v.StockQuantity,
                     Sku = v.Sku
                 })
-                .ToList()
+                .ToList(),
+            ReviewCount = p.Reviews.Count(r => !r.IsDeleted),
+            AverageRating = p.Reviews.Any(r => !r.IsDeleted) 
+                ? (decimal)Math.Round(p.Reviews.Where(r => !r.IsDeleted).Average(r => r.Rating), 2) 
+                : 0
         }).ToList();
     }
 }

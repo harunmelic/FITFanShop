@@ -10,4 +10,8 @@ public class ProductDto
     public bool Exclusive { get; set; }
     public List<int> CategoryIds { get; set; } = new();
     public List<ProductVariantDto> Variants { get; set; } = new();
+    
+    // Review Statistics
+    public int ReviewCount { get; set; }
+    public decimal AverageRating { get; set; }
 }

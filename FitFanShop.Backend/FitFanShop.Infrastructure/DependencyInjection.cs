@@ -31,7 +31,8 @@ public static class DependencyInjection
             options.UseSqlServer(cs)
                    .AddInterceptors(
                        new ProductCategoryValidationInterceptor(),
-                       new StockReductionInterceptor());
+                       new StockReductionInterceptor(),
+                       new ProductVariantCascadeDeleteInterceptor());
         });
         services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<DatabaseContext>());
         services.AddScoped<IPasswordHasher<FitFanShopUserEntity>, PasswordHasher<FitFanShopUserEntity>>();

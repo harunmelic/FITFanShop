@@ -50,12 +50,21 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int
                     .Include(x => x.Product)
                     .ThenInclude(x => x.DiscountProducts)
                     .ThenInclude(dp => dp.Discount)
-                    .Where(x => !x.IsDeleted)
+                    .IgnoreQueryFilters() // Provjerava sve, ukljuèujuæi obrisane
                     .FirstOrDefaultAsync(x => x.Id == p.ProductVariantId, cancellationToken);
+                
                 if (variant == null)
                     throw new FitFanShopNotFoundException($"Product variant {p.ProductVariantId} not found");
+                
+                if (variant.IsDeleted)
+                    throw new FitFanShopBusinessRuleException("ProductDeleted", $"Product variant {p.ProductVariantId} is no longer available (deleted)");
+                
                 if (variant.Product == null)
                     throw new FitFanShopNotFoundException($"Product for variant {p.ProductVariantId} not found");
+                
+                if (variant.Product.IsDeleted)
+                    throw new FitFanShopBusinessRuleException("ProductDeleted", $"Product for variant {p.ProductVariantId} is no longer available (deleted)");
+                
                 if (variant.StockQuantity < p.Quantity)
                     throw new FitFanShopBusinessRuleException("InsufficientStock", $"Not enough stock for product variant {p.ProductVariantId}. Requested: {p.Quantity}, Available: {variant.StockQuantity}");
 

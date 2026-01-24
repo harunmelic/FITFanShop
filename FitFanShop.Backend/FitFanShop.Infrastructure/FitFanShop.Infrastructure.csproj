@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <Folder Include="Database\Configurations\Payments\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

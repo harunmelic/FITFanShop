@@ -17,11 +17,13 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand,
             .FirstOrDefaultAsync(p => p.Id == command.Id, ct);
         if (product == null)
             throw new FitFanShopNotFoundException($"Product with id {command.Id} not found.");
+        
         product.ProductCategories.Clear();
-        var variants = await _ctx.ProductVariants.Where(v => v.ProductId == product.Id).ToListAsync(ct);
-        _ctx.ProductVariants.RemoveRange(variants);
+        
+        // Soft delete Product - ProductVariantCascadeDeleteInterceptor æe automatski soft-deletovati sve variants
         product.IsDeleted = true;
         product.IsEnabled = false;
+        
         await _ctx.SaveChangesAsync(ct);
         return Unit.Value;
     }

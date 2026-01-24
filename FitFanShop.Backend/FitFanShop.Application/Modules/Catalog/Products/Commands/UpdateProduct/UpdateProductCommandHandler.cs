@@ -18,6 +18,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     {
         var product = await _ctx.Products
             .Include(p => p.ProductCategories)
+            .Include(p => p.Reviews)
             .FirstOrDefaultAsync(p => p.Id == command.Id, ct);
 
         if (product == null)
@@ -85,7 +86,11 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             Price = product.Price,
             IsEnabled = product.IsEnabled,
             Exclusive = product.Exclusive,
-            CategoryIds = product.ProductCategories.Where(pc => !pc.IsDeleted).Select(pc => pc.CategoryId).ToList()
+            CategoryIds = product.ProductCategories.Where(pc => !pc.IsDeleted).Select(pc => pc.CategoryId).ToList(),
+            ReviewCount = product.Reviews.Count(r => !r.IsDeleted),
+            AverageRating = product.Reviews.Any(r => !r.IsDeleted) 
+                ? (decimal)Math.Round(product.Reviews.Where(r => !r.IsDeleted).Average(r => r.Rating), 2) 
+                : 0
         };
     }
 }

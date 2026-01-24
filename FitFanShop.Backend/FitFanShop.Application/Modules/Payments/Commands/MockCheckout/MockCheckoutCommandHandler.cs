@@ -42,7 +42,29 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
 
         var activeItems = cart.Items.Where(i => !i.IsDeleted).ToList();
 
-        // 2. Kreiraj Order iz Cart-a
+        // 2. Validacija: Provjeri da li svi ProductVariants postoje u bazi
+        var productVariantIds = activeItems
+            .Where(i => i.ProductVariantId.HasValue)
+            .Select(i => i.ProductVariantId!.Value)
+            .ToList();
+
+        if (productVariantIds.Any())
+        {
+            var existingVariantIds = await _ctx.ProductVariants
+                .Where(v => productVariantIds.Contains(v.Id) && !v.IsDeleted)
+                .Select(v => v.Id)
+                .ToListAsync(ct);
+
+            var missingVariantIds = productVariantIds.Except(existingVariantIds).ToList();
+            if (missingVariantIds.Any())
+            {
+                throw new FitFanShopBusinessRuleException(
+                    "InvalidCartItems",
+                    $"Some products in your cart are no longer available. Please remove them and try again. Missing variant IDs: {string.Join(", ", missingVariantIds)}");
+            }
+        }
+
+        // 3. Kreiraj Order iz Cart-a
         var createOrderCommand = new CreateOrderCommand
         {
             Products = activeItems
@@ -63,7 +85,7 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
 
         var orderId = await _mediator.Send(createOrderCommand, ct);
 
-        // 3. Dohvati kreiran Order da vidimo TotalAmount
+        // 4. Dohvati kreiran Order da vidimo TotalAmount
         var order = await _ctx.Orders
             .FirstOrDefaultAsync(o => o.Id == orderId, ct);
 
@@ -81,7 +103,17 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
 
         _ctx.Payments.Add(payment);
 
-        // 5. Isprazni Cart (hard delete)
+        // 5. Automatski promijeni status na "Confirmed" nakon uspješnog plaæanja
+        var confirmedStatus = await _ctx.OrderStatuses
+            .FirstOrDefaultAsync(s => s.Name == "Confirmed", ct);
+
+        if (confirmedStatus != null)
+        {
+            order.StatusId = confirmedStatus.Id;
+            order.ModifiedAtUtc = DateTime.UtcNow;
+        }
+
+        // 6. Isprazni Cart (hard delete)
         _ctx.CartItems.RemoveRange(activeItems);
 
         await _ctx.SaveChangesAsync(ct);
