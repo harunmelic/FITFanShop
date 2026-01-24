@@ -1,8 +1,6 @@
-.login-dialog {
-  width: 400px;
+.register-dialog {
+  width: 500px;
   padding: 0;
-  overflow-x: hidden;
-  box-sizing: border-box;
 }
 
 .dialog-header {
@@ -28,15 +26,35 @@
   padding: 24px;
 }
 
+// Stepper customization
+::ng-deep .mat-stepper-horizontal {
+  .mat-step-header {
+    padding: 16px 24px;
+    
+    .mat-step-label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
+
 form {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-top: 24px;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+  }
 }
 
 .form-input {
@@ -47,7 +65,6 @@ form {
   font-size: 14px;
   font-family: 'Poppins', sans-serif;
   transition: border-color 0.2s;
-  box-sizing: border-box;
 
   &:focus {
     outline: none;
@@ -75,24 +92,36 @@ form {
   }
 }
 
+mat-error {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 .error-message {
   color: #d32f2f;
   font-size: 13px;
-  margin-top: -8px;
+  padding: 12px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-top: 8px;
 }
 
 .button-group {
   display: flex;
-  flex-direction: column;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 16px;
+
+  button {
+    flex: 1;
+  }
 }
 
 .btn-primary {
   width: 100%;
   padding: 12px 24px;
   background-color: #666;
-  color: white;
+  color: white !important;
   border: none;
   border-radius: 4px;
   font-size: 15px;
@@ -125,7 +154,7 @@ form {
   width: 100%;
   padding: 12px 24px;
   background-color: white;
-  color: #666;
+  color: #666 !important;
   border: 2px solid #666;
   border-radius: 4px;
   font-size: 15px;
@@ -134,7 +163,45 @@ form {
   cursor: pointer;
   transition: all 0.2s;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: #f5f5f5;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Review section
+.review-section {
+  padding-top: 16px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+  }
+}
+
+.review-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  .label {
+    font-weight: 500;
+    color: #666;
+  }
+
+  .value {
+    color: #333;
+    font-weight: 500;
+  }
+
+  &:last-of-type {
+    border-bottom: none;
   }
 }

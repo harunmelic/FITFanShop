@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { BaseComponent } from '../../../../core/components/base-classes/base-component';
 import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.service';
 import { LoginCommand } from '../../../../api-services/auth/auth-api.model';
+import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
 
 @Component({
   selector: 'app-login-dialog',
@@ -15,6 +16,7 @@ export class LoginDialogComponent extends BaseComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthFacadeService);
   private dialogRef = inject(MatDialogRef<LoginDialogComponent>);
+  private dialog = inject(MatDialog);
   hidePassword = true;
 
   form = this.fb.group({
@@ -37,6 +39,9 @@ export class LoginDialogComponent extends BaseComponent {
       next: () => {
         this.stopLoading();
         this.dialogRef.close(true);
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 100);
       },
       error: (err) => {
         this.stopLoading('Pogrešan email ili šifra.');
@@ -46,8 +51,11 @@ export class LoginDialogComponent extends BaseComponent {
   }
 
   onRegister(): void {
-    // TODO: Implementiraj registraciju
-    console.log('Register clicked');
+    this.dialogRef.close();
+    this.dialog.open(RegisterDialogComponent, {
+      width: '500px',
+      disableClose: false,
+    });
   }
 
   close(): void {

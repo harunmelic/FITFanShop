@@ -11,6 +11,7 @@ import {
   LogoutCommand,
   RefreshTokenCommand,
   RefreshTokenCommandDto,
+  RegisterCommand,
 } from '../../../api-services/auth/auth-api.model';
 
 import { AuthStorageService } from './auth-storage.service';
@@ -62,6 +63,20 @@ export class AuthFacadeService {
    */
   login(payload: LoginCommand): Observable<void> {
     return this.api.login(payload).pipe(
+      tap((response: LoginCommandDto) => {
+        this.storage.saveLogin(response);           // access + refresh + expiries
+        this.decodeAndSetUser(response.accessToken); // popuni _currentUser
+      }),
+      map(() => void 0)
+    );
+  }
+
+  /**
+   * Register novog korisnika.
+   * Snima tokene u storage, dekodira JWT i popunjava current user state.
+   */
+  register(payload: RegisterCommand): Observable<void> {
+    return this.api.register(payload).pipe(
       tap((response: LoginCommandDto) => {
         this.storage.saveLogin(response);           // access + refresh + expiries
         this.decodeAndSetUser(response.accessToken); // popuni _currentUser
@@ -155,6 +170,8 @@ export class AuthFacadeService {
       const user: CurrentUserDto = {
         userId: Number(payload.sub),
         email: payload.email,
+        firstName: payload.given_name,
+        lastName: payload.family_name,
         isAdmin: payload.is_admin === 'true',
         isManager: payload.is_manager === 'true',
         isEmployee: payload.is_employee === 'true',

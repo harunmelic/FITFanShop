@@ -7,7 +7,8 @@ import {
   LoginCommandDto,
   RefreshTokenCommand,
   RefreshTokenCommandDto,
-  LogoutCommand
+  LogoutCommand,
+  RegisterCommand
 } from './auth-api.model';
 
 @Injectable({
@@ -23,6 +24,14 @@ export class AuthApiService {
    */
   login(payload: LoginCommand): Observable<LoginCommandDto> {
     return this.http.post<LoginCommandDto>(`${this.baseUrl}/login`, payload);
+  }
+
+  /**
+   * POST /Auth/register
+   * Register new user and get access/refresh tokens.
+   */
+  register(payload: RegisterCommand): Observable<LoginCommandDto> {
+    return this.http.post<LoginCommandDto>(`${this.baseUrl}/register`, payload);
   }
 
   /**

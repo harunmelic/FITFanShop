@@ -10,6 +10,7 @@ import { FitLoadingBarComponent } from './components/fit-loading-bar/fit-loading
 import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-table-skeleton.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { RegisterDialogComponent } from './components/register-dialog/register-dialog.component';
 import { MembershipBannerComponent } from './components/membership-banner/membership-banner.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeroSliderComponent } from './components/hero-slider/hero-slider.component';
@@ -30,6 +31,7 @@ import { LoadingScreenComponent } from './components/loading-screen/loading-scre
     FitTableSkeletonComponent,
     NavbarComponent,
     LoginDialogComponent,
+    RegisterDialogComponent,
     MembershipBannerComponent,
     FooterComponent,
     HeroSliderComponent,

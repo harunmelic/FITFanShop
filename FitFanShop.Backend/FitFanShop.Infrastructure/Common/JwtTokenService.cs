@@ -27,6 +27,8 @@ public sealed class JwtTokenService : IJwtTokenService
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(ClaimTypes.NameIdentifier,   user.Id.ToString()),
             new(ClaimTypes.Email,            user.Email),
+            new(JwtRegisteredClaimNames.GivenName, user.FirstName),
+            new(JwtRegisteredClaimNames.FamilyName, user.LastName),
             new("is_admin",    user.IsAdmin.ToString().ToLowerInvariant()),
             new("is_member",   user.IsMember.ToString().ToLowerInvariant()),
             new("ver",         user.TokenVersion.ToString()),
@@ -73,3 +75,4 @@ public sealed class JwtTokenService : IJwtTokenService
     }
     private static long ToUnixTimeSeconds(DateTimeOffset dto) => dto.ToUnixTimeSeconds();
 }
+

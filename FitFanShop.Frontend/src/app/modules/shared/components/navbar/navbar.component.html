@@ -36,9 +36,40 @@
         <mat-icon>search</mat-icon>
       </button>
 
-      <button mat-icon-button class="icon-button" (click)="auth.isAuthenticated() ? logout() : openLoginDialog()">
-        <mat-icon>person</mat-icon>
-      </button>
+      <!-- Profile Icon with Dropdown -->
+      <div class="profile-dropdown">
+        <button 
+          mat-icon-button 
+          class="icon-button" 
+          (click)="auth.isAuthenticated() ? toggleProfileDropdown() : openLoginDialog(); $event.stopPropagation()"
+        >
+          <mat-icon>person</mat-icon>
+        </button>
+
+        <!-- Profile Dropdown Menu (shown when authenticated) -->
+        <div class="profile-menu" *ngIf="isProfileDropdownOpen && auth.isAuthenticated()">
+          <div class="profile-menu-header">
+            <mat-icon>person</mat-icon>
+            <div class="profile-info">
+              <span class="profile-name">
+                {{ auth.currentUser()?.firstName && auth.currentUser()?.lastName 
+                  ? auth.currentUser()?.firstName + ' ' + auth.currentUser()?.lastName 
+                  : 'Korisnik' }}
+              </span>
+              <span class="profile-email">{{ auth.currentUser()?.email }}</span>
+            </div>
+          </div>
+          <div class="profile-menu-divider"></div>
+          <a class="profile-menu-item" (click)="closeProfileDropdown()">
+            <mat-icon>account_circle</mat-icon>
+            <span>Moj Profil</span>
+          </a>
+          <a class="profile-menu-item" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Odjavi se</span>
+          </a>
+        </div>
+      </div>
 
       <button mat-icon-button class="icon-button">
         <mat-icon>shopping_cart</mat-icon>

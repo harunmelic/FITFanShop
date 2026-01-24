@@ -18,12 +18,22 @@
       </div>
 
       <div class="form-field">
-        <input 
-          [type]="hidePassword ? 'password' : 'text'"
-          formControlName="password"
-          placeholder="Password"
-          class="form-input"
-        />
+        <div class="password-field">
+          <input 
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Password"
+            class="form-input"
+          />
+          <button 
+            type="button" 
+            mat-icon-button 
+            class="password-toggle"
+            (click)="hidePassword = !hidePassword"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
       </div>
 
       <div *ngIf="errorMessage" class="error-message">
@@ -36,7 +46,8 @@
           class="btn-primary"
           [disabled]="form.invalid || isLoading"
         >
-          {{ isLoading ? 'Prijavljujem...' : 'Prijavi se' }}
+          <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
+          <span>{{ isLoading ? 'Prijavljujem...' : 'Prijavi se' }}</span>
         </button>
 
         <button 

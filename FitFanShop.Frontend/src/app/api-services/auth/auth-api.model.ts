@@ -51,6 +51,18 @@ export interface RefreshTokenCommandDto {
 }
 
 /**
+ * Command for POST /Auth/register
+ * Corresponds to: RegisterCommand.cs
+ */
+export interface RegisterCommand {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+/**
  * Command for POST /Auth/logout
  * Corresponds to: LogoutCommand.cs
  */

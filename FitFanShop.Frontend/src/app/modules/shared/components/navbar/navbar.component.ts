@@ -16,12 +16,16 @@ export class NavbarComponent {
   auth = inject(AuthFacadeService);
 
   isKatalogDropdownOpen = false;
+  isProfileDropdownOpen = false;
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (!target.closest('.nav-link-dropdown')) {
       this.isKatalogDropdownOpen = false;
+    }
+    if (!target.closest('.profile-dropdown')) {
+      this.isProfileDropdownOpen = false;
     }
   }
 
@@ -32,8 +36,24 @@ export class NavbarComponent {
     });
   }
 
+  toggleProfileDropdown(): void {
+    this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
+  }
+
+  closeProfileDropdown(): void {
+    this.isProfileDropdownOpen = false;
+  }
+
   logout(): void {
-    this.auth.logout();
+    this.auth.logout().subscribe({
+      next: () => {
+        this.closeProfileDropdown();
+        this.router.navigate(['/']);
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 100);
+      }
+    });
   }
 
   toggleKatalogDropdown(): void {

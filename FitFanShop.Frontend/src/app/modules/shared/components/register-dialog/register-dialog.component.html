@@ -1,0 +1,214 @@
+<div class="register-dialog">
+  <div class="dialog-header">
+    <h2>Registracija</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <mat-stepper linear #stepper>
+      <!-- STEP 1: Personal Info -->
+      <mat-step [stepControl]="personalInfoForm">
+        <ng-template matStepLabel>Lični Podaci</ng-template>
+        
+        <form [formGroup]="personalInfoForm">
+          <div class="form-field">
+            <label>Ime</label>
+            <input 
+              type="text" 
+              formControlName="firstName"
+              placeholder="Unesite ime"
+              class="form-input"
+              autocomplete="off"
+            />
+            <mat-error *ngIf="personalInfoForm.get('firstName')?.hasError('required') && personalInfoForm.get('firstName')?.touched">
+              Ime je obavezno
+            </mat-error>
+            <mat-error *ngIf="personalInfoForm.get('firstName')?.hasError('minlength') && personalInfoForm.get('firstName')?.touched">
+              Ime mora imati najmanje 2 karaktera
+            </mat-error>
+          </div>
+
+          <div class="form-field">
+            <label>Prezime</label>
+            <input 
+              type="text" 
+              formControlName="lastName"
+              placeholder="Unesite prezime"
+              class="form-input"
+              autocomplete="off"
+            />
+            <mat-error *ngIf="personalInfoForm.get('lastName')?.hasError('required') && personalInfoForm.get('lastName')?.touched">
+              Prezime je obavezno
+            </mat-error>
+            <mat-error *ngIf="personalInfoForm.get('lastName')?.hasError('minlength') && personalInfoForm.get('lastName')?.touched">
+              Prezime mora imati najmanje 2 karaktera
+            </mat-error>
+          </div>
+
+          <div class="button-group">
+            <button 
+              mat-button 
+              matStepperNext 
+              type="button"
+              class="btn-primary"
+              [disabled]="personalInfoForm.invalid"
+            >
+              Sledeće
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- STEP 2: Account Info -->
+      <mat-step [stepControl]="accountInfoForm">
+        <ng-template matStepLabel>Nalog</ng-template>
+        
+        <form [formGroup]="accountInfoForm">
+          <div class="form-field">
+            <label>Email</label>
+            <input 
+              type="email" 
+              formControlName="email"
+              placeholder="email@example.com"
+              class="form-input"
+              autocomplete="off"
+            />
+            <mat-error *ngIf="accountInfoForm.get('email')?.hasError('required') && accountInfoForm.get('email')?.touched">
+              Email je obavezan
+            </mat-error>
+            <mat-error *ngIf="accountInfoForm.get('email')?.hasError('email') && accountInfoForm.get('email')?.touched">
+              Unesite validan email
+            </mat-error>
+          </div>
+
+          <div class="form-field">
+            <label>Šifra</label>
+            <div class="password-field">
+              <input 
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="Unesite šifru"
+                class="form-input"
+                autocomplete="new-password"
+              />
+              <button 
+                type="button" 
+                mat-icon-button 
+                class="password-toggle"
+                (click)="hidePassword = !hidePassword"
+              >
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </div>
+            <mat-error *ngIf="accountInfoForm.get('password')?.hasError('required') && accountInfoForm.get('password')?.touched">
+              Šifra je obavezna
+            </mat-error>
+            <mat-error *ngIf="accountInfoForm.get('password')?.hasError('minlength') && accountInfoForm.get('password')?.touched">
+              Šifra mora imati najmanje 6 karaktera
+            </mat-error>
+            <mat-error *ngIf="accountInfoForm.get('password')?.hasError('pattern') && accountInfoForm.get('password')?.touched">
+              Šifra mora sadržati najmanje jedno veliko slovo
+            </mat-error>
+          </div>
+
+          <div class="form-field">
+            <label>Potvrdi Šifru</label>
+            <div class="password-field">
+              <input 
+                [type]="hideConfirmPassword ? 'password' : 'text'"
+                formControlName="confirmPassword"
+                placeholder="Ponovite šifru"
+                class="form-input"
+                autocomplete="new-password"
+              />
+              <button 
+                type="button" 
+                mat-icon-button 
+                class="password-toggle"
+                (click)="hideConfirmPassword = !hideConfirmPassword"
+              >
+                <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </div>
+            <mat-error *ngIf="accountInfoForm.get('confirmPassword')?.hasError('required') && accountInfoForm.get('confirmPassword')?.touched">
+              Potvrda šifre je obavezna
+            </mat-error>
+            <mat-error *ngIf="accountInfoForm.hasError('passwordMismatch') && accountInfoForm.get('confirmPassword')?.touched">
+              Šifre se ne poklapaju
+            </mat-error>
+          </div>
+
+          <div class="button-group">
+            <button 
+              mat-button 
+              matStepperPrevious 
+              type="button"
+              class="btn-secondary"
+            >
+              Nazad
+            </button>
+            <button 
+              mat-button 
+              matStepperNext 
+              type="button"
+              class="btn-primary"
+              [disabled]="accountInfoForm.invalid"
+            >
+              Sledeće
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- STEP 3: Review -->
+      <mat-step>
+        <ng-template matStepLabel>Potvrda</ng-template>
+        
+        <div class="review-section">
+          <h3>Pregledajte podatke</h3>
+          
+          <div class="review-item">
+            <span class="label">Ime:</span>
+            <span class="value">{{ personalInfoForm.value.firstName }}</span>
+          </div>
+          
+          <div class="review-item">
+            <span class="label">Prezime:</span>
+            <span class="value">{{ personalInfoForm.value.lastName }}</span>
+          </div>
+          
+          <div class="review-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ accountInfoForm.value.email }}</span>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <div class="button-group">
+            <button 
+              mat-button 
+              matStepperPrevious 
+              type="button"
+              class="btn-secondary"
+            >
+              Nazad
+            </button>
+            <button 
+              type="button"
+              class="btn-primary"
+              (click)="onSubmit()"
+              [disabled]="isLoading"
+            >
+              <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
+              <span>{{ isLoading ? 'Registrujem...' : 'Registruj se' }}</span>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+</div>
