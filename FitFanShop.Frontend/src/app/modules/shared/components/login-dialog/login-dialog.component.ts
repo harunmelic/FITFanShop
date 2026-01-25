@@ -5,6 +5,7 @@ import { BaseComponent } from '../../../../core/components/base-classes/base-com
 import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.service';
 import { LoginCommand } from '../../../../api-services/auth/auth-api.model';
 import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
+import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
 
 @Component({
   selector: 'app-login-dialog',
@@ -53,6 +54,14 @@ export class LoginDialogComponent extends BaseComponent {
   onRegister(): void {
     this.dialogRef.close();
     this.dialog.open(RegisterDialogComponent, {
+      width: '500px',
+      disableClose: false,
+    });
+  }
+
+  onForgotPassword(): void {
+    this.dialogRef.close();
+    this.dialog.open(ForgotPasswordDialogComponent, {
       width: '500px',
       disableClose: false,
     });

@@ -28,7 +28,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "User",
             Email = $"testuser{Guid.NewGuid()}@test.com",
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
 
         // Act
@@ -56,7 +58,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "User",
             Email = email,
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
 
         var secondCommand = new RegisterCommand
@@ -65,7 +69,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "User",
             Email = email,
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
 
         // Act
@@ -86,7 +92,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "User",
             Email = "invalid-email",
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
 
         // Act
@@ -106,7 +114,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "User",
             Email = $"testuser{Guid.NewGuid()}@test.com",
             Password = "weak", // No uppercase, no digit, too short
-            ConfirmPassword = "weak"
+            ConfirmPassword = "weak",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
 
         // Act
@@ -126,7 +136,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "User",
             Email = $"testuser{Guid.NewGuid()}@test.com",
             Password = "Test123!",
-            ConfirmPassword = "DifferentPassword123!"
+            ConfirmPassword = "DifferentPassword123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
 
         // Act
@@ -146,7 +158,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "User",
             Email = $"testuser{Guid.NewGuid()}@test.com",
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
 
         // Act
@@ -173,7 +187,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "Test",
             Email = email,
             Password = password,
-            ConfirmPassword = password
+            ConfirmPassword = password,
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
         
         await _client.PostAsJsonAsync("/api/auth/register", registerCommand);
@@ -207,7 +223,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "Test",
             Email = email,
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
         
         await _client.PostAsJsonAsync("/api/auth/register", registerCommand);
@@ -292,7 +310,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "Test",
             Email = email,
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
         
         var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerCommand);
@@ -344,7 +364,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "Test",
             Email = email,
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
         
         var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerCommand);
@@ -379,7 +401,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "Test",
             Email = email,
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
         
         var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerCommand);
@@ -408,7 +432,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "Test",
             Email = email,
             Password = "Test123!",
-            ConfirmPassword = "Test123!"
+            ConfirmPassword = "Test123!",
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
         
         var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerCommand);
@@ -444,7 +470,9 @@ public class AuthTests : IClassFixture<CustomWebApplicationFactory<Program>>
             LastName = "Flow",
             Email = email,
             Password = password,
-            ConfirmPassword = password
+            ConfirmPassword = password,
+            SecurityQuestion = "What is your favorite color?",
+            SecurityAnswer = "Blue"
         };
         
         var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerCommand);

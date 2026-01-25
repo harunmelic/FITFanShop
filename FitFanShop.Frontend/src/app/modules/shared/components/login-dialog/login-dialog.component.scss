@@ -81,6 +81,24 @@ form {
   margin-top: -8px;
 }
 
+.forgot-password-link {
+  text-align: right;
+  margin-top: -8px;
+
+  a {
+    color: #666;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #333;
+      text-decoration: underline;
+    }
+  }
+}
+
 .button-group {
   display: flex;
   flex-direction: column;

@@ -41,7 +41,9 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, LoginComm
             Email = email,
             RoleId = (int)RoleType.User,
             IsEnabled = true,
-            RegistrationDate = DateTime.UtcNow
+            RegistrationDate = DateTime.UtcNow,
+            SecurityQuestion = request.SecurityQuestion,
+            SecurityAnswerHash = _hasher.HashPassword(null, request.SecurityAnswer)
         };
 
         user.PasswordHash = _hasher.HashPassword(user, request.Password);
@@ -69,3 +71,4 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, LoginComm
         };
     }
 }
+

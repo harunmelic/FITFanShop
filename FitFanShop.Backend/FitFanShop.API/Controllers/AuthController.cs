@@ -1,7 +1,10 @@
-﻿using FitFanShop.Application.Modules.Auth.Commands.Login;
+using FitFanShop.Application.Modules.Auth.Commands.Login;
 using FitFanShop.Application.Modules.Auth.Commands.Logout;
 using FitFanShop.Application.Modules.Auth.Commands.Refresh;
 using FitFanShop.Application.Modules.Auth.Commands.Register;
+using FitFanShop.Application.Modules.Auth.Commands.VerifySecurityAnswer;
+using FitFanShop.Application.Modules.Auth.Commands.ResetPassword;
+using FitFanShop.Application.Modules.Auth.Queries.GetSecurityQuestion;
 
 [ApiController]
 [Route("api/auth")]
@@ -34,4 +37,26 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     {
         await mediator.Send(command, ct);
     }
+
+    [AllowAnonymous]
+    [HttpGet("security-question")]
+    public async Task<ActionResult<GetSecurityQuestionDto>> GetSecurityQuestion([FromQuery] string email, CancellationToken ct)
+    {
+        return Ok(await mediator.Send(new GetSecurityQuestionQuery(email), ct));
+    }
+
+    [AllowAnonymous]
+    [HttpPost("verify-security-answer")]
+    public async Task<ActionResult<VerifySecurityAnswerDto>> VerifySecurityAnswer([FromBody] VerifySecurityAnswerCommand command, CancellationToken ct)
+    {
+        return Ok(await mediator.Send(command, ct));
+    }
+
+    [AllowAnonymous]
+    [HttpPost("reset-password")]
+    public async Task<ActionResult<ResetPasswordDto>> ResetPassword([FromBody] ResetPasswordCommand command, CancellationToken ct)
+    {
+        return Ok(await mediator.Send(command, ct));
+    }
 }
+

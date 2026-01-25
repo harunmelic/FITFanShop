@@ -21,6 +21,15 @@ export class RegisterDialogComponent extends BaseComponent {
   hidePassword = true;
   hideConfirmPassword = true;
 
+  // Predefinisana sigurnosna pitanja
+  securityQuestions = [
+    'Ime vašeg prvog ljubimca?',
+    'Grad u kojem ste rođeni?',
+    'Omiljeni film?',
+    'Prezime majke prije udaje?',
+    'Nadimak iz djetinjstva?',
+  ];
+
   // Step 1: Personal Info
   personalInfoForm = this.fb.group({
     firstName: ['', [Validators.required, Validators.minLength(2)]],
@@ -41,6 +50,12 @@ export class RegisterDialogComponent extends BaseComponent {
     { validators: this.passwordMatchValidator }
   );
 
+  // Step 3: Security Question
+  securityForm = this.fb.group({
+    securityQuestion: ['', [Validators.required]],
+    securityAnswer: ['', [Validators.required, Validators.minLength(2)]],
+  });
+
   // Password match validator
   private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password')?.value;
@@ -53,7 +68,7 @@ export class RegisterDialogComponent extends BaseComponent {
   }
 
   onSubmit(): void {
-    if (this.personalInfoForm.invalid || this.accountInfoForm.invalid || this.isLoading) {
+    if (this.personalInfoForm.invalid || this.accountInfoForm.invalid || this.securityForm.invalid || this.isLoading) {
       return;
     }
 
@@ -65,6 +80,8 @@ export class RegisterDialogComponent extends BaseComponent {
       email: this.accountInfoForm.value.email ?? '',
       password: this.accountInfoForm.value.password ?? '',
       confirmPassword: this.accountInfoForm.value.confirmPassword ?? '',
+      securityQuestion: this.securityForm.value.securityQuestion ?? '',
+      securityAnswer: this.securityForm.value.securityAnswer ?? '',
     };
 
     this.auth.register(payload).subscribe({

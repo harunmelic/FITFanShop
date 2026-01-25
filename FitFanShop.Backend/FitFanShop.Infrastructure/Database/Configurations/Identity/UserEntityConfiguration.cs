@@ -1,4 +1,4 @@
-﻿using FitFanShop.Domain.Entities.Identity;
+using FitFanShop.Domain.Entities.Identity;
 using FitFanShop.Domain.Entities.Memberships;
 using FitFanShop.Domain.Entities.Commerce;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +40,14 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<FitFanSho
 
         b.Property(x => x.IsEnabled)
             .HasDefaultValue(true);
+
+        b.Property(x => x.SecurityQuestion)
+            .HasMaxLength(200)
+            .IsRequired(false);
+
+        b.Property(x => x.SecurityAnswerHash)
+            .HasMaxLength(500)
+            .IsRequired(false);
 
         b.HasOne(x => x.Role)
             .WithMany(x => x.Users)

@@ -41,5 +41,19 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
         RuleFor(x => x.ConfirmPassword)
             .Equal(x => x.Password)
             .WithMessage("Passwords do not match.");
+
+        RuleFor(x => x.SecurityQuestion)
+            .NotEmpty()
+            .WithMessage("Security question is required.")
+            .MaximumLength(200)
+            .WithMessage("Security question must not exceed 200 characters.");
+
+        RuleFor(x => x.SecurityAnswer)
+            .NotEmpty()
+            .WithMessage("Security answer is required.")
+            .MinimumLength(3)
+            .WithMessage("Security answer must be at least 3 characters.")
+            .MaximumLength(100)
+            .WithMessage("Security answer must not exceed 100 characters.");
     }
 }

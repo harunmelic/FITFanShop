@@ -10,4 +10,7 @@ public class RegisterCommand : IRequest<LoginCommandDto>
     public required string Email { get; set; }
     public required string Password { get; set; }
     public required string ConfirmPassword { get; set; }
+    public required string SecurityQuestion { get; set; }
+    public required string SecurityAnswer { get; set; }
 }
+

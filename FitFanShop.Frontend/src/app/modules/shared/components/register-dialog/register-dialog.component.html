@@ -162,7 +162,67 @@
         </form>
       </mat-step>
 
-      <!-- STEP 3: Review -->
+      <!-- STEP 3: Security Question -->
+      <mat-step [stepControl]="securityForm">
+        <ng-template matStepLabel>Sigurnost</ng-template>
+        
+        <form [formGroup]="securityForm">
+          <div class="form-field">
+            <label>Sigurnosno Pitanje</label>
+            <select 
+              formControlName="securityQuestion"
+              class="form-input"
+            >
+              <option value="" disabled>Izaberite pitanje</option>
+              <option *ngFor="let question of securityQuestions" [value]="question">
+                {{ question }}
+              </option>
+            </select>
+            <mat-error *ngIf="securityForm.get('securityQuestion')?.hasError('required') && securityForm.get('securityQuestion')?.touched">
+              Sigurnosno pitanje je obavezno
+            </mat-error>
+          </div>
+
+          <div class="form-field">
+            <label>Odgovor na Sigurnosno Pitanje</label>
+            <input 
+              type="text" 
+              formControlName="securityAnswer"
+              placeholder="Unesite odgovor"
+              class="form-input"
+              autocomplete="off"
+            />
+            <mat-error *ngIf="securityForm.get('securityAnswer')?.hasError('required') && securityForm.get('securityAnswer')?.touched">
+              Odgovor je obavezan
+            </mat-error>
+            <mat-error *ngIf="securityForm.get('securityAnswer')?.hasError('minlength') && securityForm.get('securityAnswer')?.touched">
+              Odgovor mora imati najmanje 2 karaktera
+            </mat-error>
+          </div>
+
+          <div class="button-group">
+            <button 
+              mat-button 
+              matStepperPrevious 
+              type="button"
+              class="btn-secondary"
+            >
+              Nazad
+            </button>
+            <button 
+              mat-button 
+              matStepperNext 
+              type="button"
+              class="btn-primary"
+              [disabled]="securityForm.invalid"
+            >
+              Sledeće
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- STEP 4: Review -->
       <mat-step>
         <ng-template matStepLabel>Potvrda</ng-template>
         
@@ -182,6 +242,11 @@
           <div class="review-item">
             <span class="label">Email:</span>
             <span class="value">{{ accountInfoForm.value.email }}</span>
+          </div>
+
+          <div class="review-item">
+            <span class="label">Sigurnosno Pitanje:</span>
+            <span class="value">{{ securityForm.value.securityQuestion }}</span>
           </div>
 
           <div *ngIf="errorMessage" class="error-message">

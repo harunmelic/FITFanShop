@@ -8,7 +8,10 @@ import {
   RefreshTokenCommand,
   RefreshTokenCommandDto,
   LogoutCommand,
-  RegisterCommand
+  RegisterCommand,
+  GetSecurityQuestionResponse,
+  VerifySecurityAnswerCommand,
+  ResetPasswordCommand
 } from './auth-api.model';
 
 @Injectable({
@@ -48,5 +51,31 @@ export class AuthApiService {
    */
   logout(payload: LogoutCommand): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/logout`, payload);
+  }
+
+  /**
+   * GET /Auth/security-question
+   * Get security question for email.
+   */
+  getSecurityQuestion(email: string): Observable<GetSecurityQuestionResponse> {
+    return this.http.get<GetSecurityQuestionResponse>(`${this.baseUrl}/security-question`, {
+      params: { email }
+    });
+  }
+
+  /**
+   * POST /Auth/verify-security-answer
+   * Verify security answer for password reset.
+   */
+  verifySecurityAnswer(command: VerifySecurityAnswerCommand): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/verify-security-answer`, command);
+  }
+
+  /**
+   * POST /Auth/reset-password
+   * Reset password using security answer.
+   */
+  resetPassword(command: ResetPasswordCommand): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/reset-password`, command);
   }
 }

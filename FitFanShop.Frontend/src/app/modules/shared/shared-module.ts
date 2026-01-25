@@ -20,6 +20,7 @@ import { TestimonialsSectionComponent } from './components/testimonials-section/
 import { NewsletterSectionComponent } from './components/newsletter-section/newsletter-section.component';
 import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.component';
 import { LoadingScreenComponent } from './components/loading-screen/loading-screen.component';
+import { ForgotPasswordDialogComponent } from './components/forgot-password-dialog/forgot-password-dialog.component';
 
 
 
@@ -32,6 +33,7 @@ import { LoadingScreenComponent } from './components/loading-screen/loading-scre
     NavbarComponent,
     LoginDialogComponent,
     RegisterDialogComponent,
+    ForgotPasswordDialogComponent,
     MembershipBannerComponent,
     FooterComponent,
     HeroSliderComponent,

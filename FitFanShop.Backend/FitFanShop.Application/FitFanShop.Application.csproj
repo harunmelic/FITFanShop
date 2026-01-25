@@ -25,6 +25,7 @@
     <Folder Include="Modules\Catalog\Products\Commands\DisableProduct\" />
     <Folder Include="Modules\Catalog\Products\Commands\EnableProduct\" />
     <Folder Include="Modules\Notifications\" />
+    <Folder Include="Modules\Sales\Orders\Commands\AutoDeliverOrders\" />
     <Folder Include="Modules\Sales\Orders\Commands\Create\" />
   </ItemGroup>
 

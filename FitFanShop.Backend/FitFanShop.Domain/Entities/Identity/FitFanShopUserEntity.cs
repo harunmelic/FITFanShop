@@ -1,4 +1,4 @@
-﻿using FitFanShop.Domain.Common;
+using FitFanShop.Domain.Common;
 using FitFanShop.Domain.Entities.Catalog;
 using FitFanShop.Domain.Entities.Commerce;
 using FitFanShop.Domain.Entities.Memberships;
@@ -19,6 +19,8 @@ public sealed class FitFanShopUserEntity : BaseEntity
     public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
     public int RoleId { get; set; } = (int)RoleType.User;
     public int TokenVersion { get; set; }
+    public string? SecurityQuestion { get; set; }
+    public string? SecurityAnswerHash { get; set; }
     public bool IsEnabled { get; set; } = true;
     public RoleEntity? Role { get; set; }
     public MemberEntity? MemberProfile { get; set; }
@@ -32,3 +34,4 @@ public sealed class FitFanShopUserEntity : BaseEntity
     public bool IsMember => MemberProfile != null &&
                             (MemberProfile.EndDate == null || MemberProfile.EndDate > DateTime.UtcNow);
 }
+

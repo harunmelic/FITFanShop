@@ -60,6 +60,24 @@ export interface RegisterCommand {
   email: string;
   password: string;
   confirmPassword: string;
+  securityQuestion: string;
+  securityAnswer: string;
+}
+
+export interface GetSecurityQuestionResponse {
+  securityQuestion: string;
+}
+
+export interface VerifySecurityAnswerCommand {
+  email: string;
+  securityAnswer: string;
+}
+
+export interface ResetPasswordCommand {
+  email: string;
+  securityAnswer: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 /**

@@ -12,6 +12,9 @@ import {
   RefreshTokenCommand,
   RefreshTokenCommandDto,
   RegisterCommand,
+  GetSecurityQuestionResponse,
+  VerifySecurityAnswerCommand,
+  ResetPasswordCommand,
 } from '../../../api-services/auth/auth-api.model';
 
 import { AuthStorageService } from './auth-storage.service';
@@ -83,6 +86,27 @@ export class AuthFacadeService {
       }),
       map(() => void 0)
     );
+  }
+
+  /**
+   * Get security question for email.
+   */
+  getSecurityQuestion(email: string): Observable<GetSecurityQuestionResponse> {
+    return this.api.getSecurityQuestion(email);
+  }
+
+  /**
+   * Verify security answer for password reset.
+   */
+  verifySecurityAnswer(email: string, securityAnswer: string): Observable<void> {
+    return this.api.verifySecurityAnswer({ email, securityAnswer });
+  }
+
+  /**
+   * Reset password using security answer.
+   */
+  resetPassword(email: string, securityAnswer: string, newPassword: string, confirmPassword: string): Observable<void> {
+    return this.api.resetPassword({ email, securityAnswer, newPassword, confirmPassword });
   }
 
   /**
