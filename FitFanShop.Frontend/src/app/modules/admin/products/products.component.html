@@ -1,0 +1,64 @@
+<div class="products-page">
+  <div class="page-header">
+    <h2>Products Management</h2>
+    <p>Upravljanje proizvodima</p>
+  </div>
+  
+  <div class="page-content">
+    <!-- Loading spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+      <p>Učitavanje proizvoda...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Products table -->
+    <div *ngIf="!isLoading && !errorMessage" class="content-card">
+      <div class="card-header">
+        <h3>Lista proizvoda</h3>
+        <button class="btn-primary">Dodaj novi proizvod</button>
+      </div>
+
+      <div *ngIf="products.length === 0" class="empty-state">
+        <p>Nema proizvoda u bazi.</p>
+      </div>
+
+      <table *ngIf="products.length > 0" class="products-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Naziv</th>
+            <th>Opis</th>
+            <th>Cena</th>
+            <th>Kategorija</th>
+            <th>Zalihe</th>
+            <th>Status</th>
+            <th>Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of products">
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description || 'N/A' }}</td>
+            <td>{{ product.price | currency:'EUR' }}</td>
+            <td>{{ product.categoryName || 'N/A' }}</td>
+            <td>{{ product.stock || 0 }}</td>
+            <td>
+              <span class="badge" [class.active]="product.isActive" [class.inactive]="!product.isActive">
+                {{ product.isActive ? 'Aktivan' : 'Neaktivan' }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn-edit">Izmeni</button>
+              <button class="btn-delete" (click)="deleteProduct(product.id)">Obriši</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

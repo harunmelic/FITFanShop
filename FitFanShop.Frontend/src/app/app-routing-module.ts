@@ -7,6 +7,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./modules/auth/auth-module').then(m => m.AuthModule)
   },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./modules/admin/admin.module').then(m => m.AdminModule)
+  },
   // Default redirect to home (empty for now)
   { path: '', redirectTo: '/', pathMatch: 'full' },
   // fallback 404

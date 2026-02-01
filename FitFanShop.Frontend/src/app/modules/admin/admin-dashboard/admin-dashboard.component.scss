@@ -1,0 +1,42 @@
+.admin-dashboard {
+  .dashboard-header {
+    margin-bottom: 30px;
+    
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: #2c3e50;
+      margin: 0 0 10px 0;
+    }
+
+    p {
+      color: #7f8c8d;
+      margin: 0;
+    }
+  }
+
+  .dashboard-content {
+    .info-card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      p {
+        margin-bottom: 15px;
+        color: #555;
+        line-height: 1.6;
+      }
+
+      ul {
+        margin: 15px 0;
+        padding-left: 20px;
+
+        li {
+          margin-bottom: 10px;
+          color: #555;
+        }
+      }
+    }
+  }
+}
