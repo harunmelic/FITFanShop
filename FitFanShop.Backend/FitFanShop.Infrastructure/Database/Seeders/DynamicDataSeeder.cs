@@ -30,13 +30,17 @@ public static class DynamicDataSeeder
     private static async Task<List<FitFanShopUserEntity>> SeedUsersAsync(DatabaseContext context)
     {
         var hasher = new PasswordHasher<FitFanShopUserEntity>();
+        var securityQuestion = "Grad u kojem ste roðeni?";
+        var normalizedSecurityAnswer = "turbe";
+        var securityAnswerHash = hasher.HashPassword(null!, normalizedSecurityAnswer);
+        
         var users = new List<FitFanShopUserEntity>
         {
-            new() { Email = "admin@fitfanshop.com", PasswordHash = hasher.HashPassword(null!, "admin123"), FirstName = "Admin", LastName = "User", RoleId = 2, RegistrationDate = DateTime.UtcNow.AddDays(-90), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-90) },
-            new() { Email = "user1@example.com", PasswordHash = hasher.HashPassword(null!, "demouser1"), FirstName = "John", LastName = "Smith", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-60), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-60) },
-            new() { Email = "user2@example.com", PasswordHash = hasher.HashPassword(null!, "demouser2"), FirstName = "Emma", LastName = "Johnson", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-45), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-45) },
-            new() { Email = "user3@example.com", PasswordHash = hasher.HashPassword(null!, "demouser3"), FirstName = "Michael", LastName = "Williams", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-30), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-30) },
-            new() { Email = "string", PasswordHash = hasher.HashPassword(null!, "string"), FirstName = "Swagger", LastName = "Test", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-1), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-1) }
+            new() { Email = "admin@fitfanshop.com", PasswordHash = hasher.HashPassword(null!, "admin123"), FirstName = "Admin", LastName = "User", RoleId = 2, RegistrationDate = DateTime.UtcNow.AddDays(-90), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-90), SecurityQuestion = securityQuestion, SecurityAnswerHash = securityAnswerHash },
+            new() { Email = "user1@example.com", PasswordHash = hasher.HashPassword(null!, "demouser1"), FirstName = "John", LastName = "Smith", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-60), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-60), SecurityQuestion = securityQuestion, SecurityAnswerHash = securityAnswerHash },
+            new() { Email = "user2@example.com", PasswordHash = hasher.HashPassword(null!, "demouser2"), FirstName = "Emma", LastName = "Johnson", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-45), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-45), SecurityQuestion = securityQuestion, SecurityAnswerHash = securityAnswerHash },
+            new() { Email = "user3@example.com", PasswordHash = hasher.HashPassword(null!, "demouser3"), FirstName = "Michael", LastName = "Williams", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-30), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-30), SecurityQuestion = securityQuestion, SecurityAnswerHash = securityAnswerHash },
+            new() { Email = "string", PasswordHash = hasher.HashPassword(null!, "string"), FirstName = "Swagger", LastName = "Test", RoleId = 1, RegistrationDate = DateTime.UtcNow.AddDays(-1), IsEnabled = true, CreatedAtUtc = DateTime.UtcNow.AddDays(-1), SecurityQuestion = securityQuestion, SecurityAnswerHash = securityAnswerHash }
         };
         context.Users.AddRange(users);
         await context.SaveChangesAsync();
