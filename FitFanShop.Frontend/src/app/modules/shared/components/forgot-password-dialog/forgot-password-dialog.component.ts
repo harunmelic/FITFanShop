@@ -19,6 +19,7 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
 
   step: 'verify' | 'reset' = 'verify';
   securityQuestion = '';
+  resetToken = '';
   hideNewPassword = true;
   hideConfirmPassword = true;
 
@@ -93,10 +94,17 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
     const securityAnswer = this.verifyForm.value.securityAnswer ?? '';
 
     this.auth.verifySecurityAnswer(email, securityAnswer).subscribe({
-      next: () => {
+      next: (response) => {
         this.stopLoading();
-        this.step = 'reset';
-        this.toaster.success('Verifikacija uspešna! Unesite novu šifru.');
+        
+        if (response.isValid) {
+          this.resetToken = response.resetToken || '';
+          this.step = 'reset';
+          this.toaster.success('Verifikacija uspešna! Unesite novu šifru.');
+        } else {
+          const errorMsg = response.message || 'Netačan odgovor na sigurnosno pitanje.';
+          this.toaster.error(errorMsg);
+        }
       },
       error: (err) => {
         console.error('Verify error:', err);
@@ -122,11 +130,10 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
     this.startLoading();
 
     const email = this.verifyForm.value.email ?? '';
-    const securityAnswer = this.verifyForm.value.securityAnswer ?? '';
     const newPassword = this.resetForm.value.newPassword ?? '';
-    const confirmPassword = this.resetForm.value.confirmPassword ?? '';
+    const confirmNewPassword = this.resetForm.value.confirmPassword ?? '';
 
-    this.auth.resetPassword(email, securityAnswer, newPassword, confirmPassword).subscribe({
+    this.auth.resetPassword(email, this.resetToken, newPassword, confirmNewPassword).subscribe({
       next: () => {
         this.stopLoading();
         this.toaster.success('Šifra uspešno promenjena! Prijavite se sa novom šifrom.');

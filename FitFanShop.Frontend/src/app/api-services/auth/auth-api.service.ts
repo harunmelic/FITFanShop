@@ -11,6 +11,7 @@ import {
   RegisterCommand,
   GetSecurityQuestionResponse,
   VerifySecurityAnswerCommand,
+  VerifySecurityAnswerResponse,
   ResetPasswordCommand
 } from './auth-api.model';
 
@@ -67,8 +68,8 @@ export class AuthApiService {
    * POST /Auth/verify-security-answer
    * Verify security answer for password reset.
    */
-  verifySecurityAnswer(command: VerifySecurityAnswerCommand): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/verify-security-answer`, command);
+  verifySecurityAnswer(command: VerifySecurityAnswerCommand): Observable<VerifySecurityAnswerResponse> {
+    return this.http.post<VerifySecurityAnswerResponse>(`${this.baseUrl}/verify-security-answer`, command);
   }
 
   /**
