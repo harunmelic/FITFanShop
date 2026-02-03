@@ -13,21 +13,22 @@
       <a href="/" class="nav-link">POČETNA</a>
       
       <!-- Katalog Dropdown -->
-      <div class="nav-link-dropdown">
+<div class="nav-link-dropdown">
         <a href="#" class="nav-link" (click)="toggleKatalogDropdown(); $event.preventDefault()">
           KATALOG ▼
         </a>
-        <div class="dropdown-menu" *ngIf="isKatalogDropdownOpen" (click)="closeKatalogDropdown()">
-          <a href="#" class="dropdown-item">Test1</a>
-          <a href="#" class="dropdown-item">Test2</a>
-          <a href="#" class="dropdown-item">Test3</a>
-          <a href="#" class="dropdown-item">Test4</a>
-          <a href="#" class="dropdown-item">Test5</a>
+        <div class="dropdown-menu" *ngIf="isKatalogDropdownOpen">
+          @for (category of categories(); track category.id) {
+            <a [routerLink]="['/catalog/category', category.id]" [queryParams]="{name: category.name}" class="dropdown-item" (click)="closeKatalogDropdown()">{{ category.name }}</a>
+          }
+          @empty {
+            <span class="dropdown-item">Nema dostupnih kategorija</span>
+          }
         </div>
       </div>
       
-      <a href="#" class="nav-link">O NAMA</a>
-      <a href="#" class="nav-link">KONTAKT</a>
+      <a href="#" class="nav-link" (click)="scrollToFooter(); $event.preventDefault()">O NAMA</a>
+      <a href="#" class="nav-link" (click)="scrollToFooter(); $event.preventDefault()">KONTAKT</a>
     </div>
 
     <!-- Icons -->
@@ -74,7 +75,7 @@
       <button mat-icon-button class="icon-button">
         <mat-icon>shopping_cart</mat-icon>
       </button>
-      <span class="cart-count">(0)</span>
+      <span class="cart-count">({{ cartService.itemCount() }})</span>
     </div>
   </div>
 </nav>

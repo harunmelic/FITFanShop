@@ -1,38 +1,19 @@
-<!-- Loading Screen (globalno) -->
+<!-- Loading Screen -->
 <app-loading-screen></app-loading-screen>
 
 <!-- Global Loading Bar (shown during HTTP requests) -->
 <app-fit-loading-bar></app-fit-loading-bar>
 
-<!-- Landing Page Components (samo ako nije admin ruta) -->
-<ng-container *ngIf="!isAdminRoute">
-  <!-- Navbar -->
-  <app-navbar></app-navbar>
+<!-- Navbar -->
+<app-navbar></app-navbar>
 
-  <!-- Hero Slider -->
-  <app-hero-slider></app-hero-slider>
+<div style="padding-top: 70px;">
+  <!-- Main Application Container -->
+  <router-outlet></router-outlet>
 
-  <!-- Features Section -->
-  <app-features-section></app-features-section>
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div>
 
-  <!-- Products Slider -->
-  <app-products-slider></app-products-slider>
-
-  <!-- Membership Banner -->
-  <app-membership-banner></app-membership-banner>
-
-  <!-- Testimonials Section -->
-  <app-testimonials-section></app-testimonials-section>
-
-  <!-- Newsletter Section -->
-  <app-newsletter-section></app-newsletter-section>
-</ng-container>
-
-<!-- Main Application Container -->
-<router-outlet></router-outlet>
-
-<!-- Footer (samo ako nije admin ruta) -->
-<app-footer *ngIf="!isAdminRoute"></app-footer>
-
-<!-- Scroll to Top Button (samo ako nije admin ruta) -->
-<app-scroll-to-top *ngIf="!isAdminRoute"></app-scroll-to-top>
+<!-- Scroll to Top Button -->
+<app-scroll-to-top></app-scroll-to-top>

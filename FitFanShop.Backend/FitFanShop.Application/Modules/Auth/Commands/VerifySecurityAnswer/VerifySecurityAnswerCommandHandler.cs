@@ -34,7 +34,9 @@ public class VerifySecurityAnswerCommandHandler : IRequestHandler<VerifySecurity
             throw new FitFanShopNotFoundException("User not found or security answer not set.");
         }
 
-        var result = _hasher.VerifyHashedPassword(null, user.SecurityAnswerHash, request.SecurityAnswer);
+        // Normalize the security answer for case-insensitive comparison
+        var normalizedAnswer = request.SecurityAnswer.Trim().ToLowerInvariant();
+        var result = _hasher.VerifyHashedPassword(null, user.SecurityAnswerHash, normalizedAnswer);
 
         if (result == PasswordVerificationResult.Failed)
         {
