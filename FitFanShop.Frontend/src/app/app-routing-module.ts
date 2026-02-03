@@ -3,12 +3,20 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: '',
+    loadChildren: () =>
+      import('./modules/home/home-module').then(m => m.HomeModule)
+  },
+  {
     path: 'auth',
     loadChildren: () =>
       import('./modules/auth/auth-module').then(m => m.AuthModule)
   },
-  // Default redirect to home (empty for now)
-  { path: '', redirectTo: '/', pathMatch: 'full' },
+  {
+    path: 'catalog',
+    loadChildren: () =>
+      import('./modules/catalog/catalog-module').then(m => m.CatalogModule)
+  },
   // fallback 404
   { path: '**', redirectTo: '/' }
 ];

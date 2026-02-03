@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import {FitPaginatorBarComponent} from './components/fit-paginator-bar/fit-paginator-bar.component';
 import {materialModules} from './material-modules';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -46,6 +47,7 @@ import { ForgotPasswordDialogComponent } from './components/forgot-password-dial
   ],
   imports: [
     CommonModule,
+    RouterModule,
     ReactiveFormsModule,
     FormsModule,
     TranslatePipe,
@@ -57,6 +59,7 @@ import { ForgotPasswordDialogComponent } from './components/forgot-password-dial
   exports:[
     FitPaginatorBarComponent,
     CommonModule,
+    RouterModule,
     ReactiveFormsModule,
     TranslatePipe,
     FormsModule,

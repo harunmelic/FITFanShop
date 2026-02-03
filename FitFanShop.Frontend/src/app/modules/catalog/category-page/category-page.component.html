@@ -1,0 +1,106 @@
+<div class="category-page">
+  <div class="category-header">
+    <h1>{{ categoryName }}</h1>
+    <p class="category-subtitle">Prikazano {{ products().length }} proizvoda</p>
+  </div>
+  
+  <div class="category-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading()" class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Učitavanje proizvoda...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading() && products().length === 0" class="empty-state">
+      <mat-icon>inventory_2</mat-icon>
+      <h3>Nema dostupnih proizvoda</h3>
+      <p>Trenutno nema proizvoda u ovoj kategoriji.</p>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!isLoading() && products().length > 0" class="products-grid">
+      <div *ngFor="let product of products()" class="product-card">
+        <div class="product-image" (click)="goToProduct(product.id)">
+          <div class="image-placeholder">
+            <!-- Crna placeholder slika -->
+          </div>
+          <div class="product-badge" *ngIf="product.exclusive">
+            <span>EKSKLUZIVNO</span>
+          </div>
+        </div>
+        
+        <div class="product-info">
+          <h3 class="product-name" (click)="goToProduct(product.id)">{{ product.name }}</h3>
+          <p class="product-description">{{ product.description }}</p>
+          
+          <div class="product-rating" *ngIf="product.reviewCount > 0">
+            <mat-icon class="star-icon">star</mat-icon>
+            <span class="rating-value">{{ product.averageRating | number:'1.1-1' }}</span>
+            <span class="review-count">({{ product.reviewCount }})</span>
+          </div>
+
+          <div class="product-variants">
+            <span class="variants-label">Dostupne veličine:</span>
+            <div class="variants-sizes">
+              <span *ngFor="let variant of product.variants" class="size-badge">
+                {{ variant.size }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-footer">
+          <div class="product-price">
+            <span class="price-label">Cijena:</span>
+            <span class="price-value">{{ product.price | number:'1.2-2' }} KM</span>
+          </div>
+          
+          <button mat-raised-button 
+                  color="primary" 
+                  class="add-to-cart-btn"
+                  (click)="addToCart(product)"
+                  [disabled]="product.variants.every(v => v.stockQuantity === 0)">
+            <mat-icon>shopping_cart</mat-icon>
+            DODAJ U KORPU
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!isLoading() && products().length > 0" class="pagination-container">
+      <div class="pagination">
+        <button mat-stroked-button 
+                class="nav-btn"
+                (click)="prevPage()"
+                [disabled]="currentPage() <= 1">
+          <mat-icon>chevron_left</mat-icon>
+          Prethodna
+        </button>
+
+        <div class="page-numbers">
+          <button *ngFor="let page of [].constructor(totalPages()); let i = index"
+                  mat-button
+                  class="page-btn"
+                  [class.active]="currentPage() === i + 1"
+                  (click)="goToPage(i + 1)">
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <button mat-stroked-button 
+                class="nav-btn"
+                (click)="nextPage()"
+                [disabled]="currentPage() >= totalPages()">
+          Sljedeća
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
+      <div class="pagination-info">
+        Stranica {{ currentPage() }} od {{ totalPages() }}
+      </div>
+    </div>
+  </div>
+</div>

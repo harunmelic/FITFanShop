@@ -1,8 +1,11 @@
-import { Component, inject, HostListener } from '@angular/core';
+import { Component, inject, HostListener, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+import { CategoryApiService } from '../../../../api-services/catalog/category-api.service';
+import { CategoryDto } from '../../../../api-services/catalog/category-api.model';
+import { CartService } from '../../../../core/services/cart/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,13 +13,32 @@ import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   private dialog = inject(MatDialog);
   private router = inject(Router);
+  private categoryService = inject(CategoryApiService);
   auth = inject(AuthFacadeService);
+  cartService = inject(CartService);
 
+  categories = signal<CategoryDto[]>([]);
   isKatalogDropdownOpen = false;
   isProfileDropdownOpen = false;
+
+  ngOnInit(): void {
+    this.loadCategories();
+    // Korpa se automatski učitava u CartService-u kada se korisnik prijavi
+  }
+
+  loadCategories(): void {
+    this.categoryService.getAll(1, 100).subscribe({
+      next: (categories) => {
+        this.categories.set(categories.filter(c => c.isEnabled));
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+      }
+    });
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
@@ -62,5 +84,12 @@ export class NavbarComponent {
 
   closeKatalogDropdown(): void {
     this.isKatalogDropdownOpen = false;
+  }
+
+  scrollToFooter(): void {
+    const footer = document.querySelector('.footer');
+    if (footer) {
+      footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }
