@@ -60,7 +60,7 @@
                   color="primary" 
                   class="add-to-cart-btn"
                   (click)="addToCart(product)"
-                  [disabled]="product.variants.every(v => v.stockQuantity === 0)">
+                  [disabled]="isOutOfStock(product)">
             <mat-icon>shopping_cart</mat-icon>
             DODAJ U KORPU
           </button>

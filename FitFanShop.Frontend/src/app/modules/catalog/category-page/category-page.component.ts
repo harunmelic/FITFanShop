@@ -62,7 +62,11 @@ export class CategoryPageComponent implements OnInit {
   }
 
   getProductImage(product: ProductDto): string {
-    return product.variants[0]?.imageUrl || '';
+    return product.imageUrl || '';
+  }
+
+  isOutOfStock(product: ProductDto): boolean {
+    return product.variants.every(v => v.stockQuantity === 0);
   }
 
   addToCart(product: ProductDto): void {
