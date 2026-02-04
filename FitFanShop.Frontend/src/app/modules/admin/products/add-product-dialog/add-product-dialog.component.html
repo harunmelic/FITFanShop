@@ -1,0 +1,77 @@
+<div class="add-product-dialog">
+  <div class="dialog-header">
+    <h2>Add New Product</h2>
+  </div>
+  
+  <div class="dialog-content">
+    <form [formGroup]="productForm" class="product-form">
+      <div class="form-row">
+        <!-- Name -->
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input type="text" formControlName="name" placeholder="Enter product name">
+          <span class="error-message" *ngIf="f['name'].touched && f['name'].hasError('required')">
+            Name is required
+          </span>
+          <span class="error-message" *ngIf="f['name'].touched && f['name'].hasError('minlength')">
+            Name must be at least 3 characters
+          </span>
+        </div>
+
+        <!-- Price -->
+        <div class="form-group">
+          <label>Price *</label>
+          <div class="input-with-prefix">
+            <span class="prefix">€</span>
+            <input type="number" formControlName="price" placeholder="0.00">
+          </div>
+          <span class="error-message" *ngIf="f['price'].touched && f['price'].hasError('required')">
+            Price is required
+          </span>
+          <span class="error-message" *ngIf="f['price'].touched && f['price'].hasError('min')">
+            Price must be greater than or equal to 0
+          </span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" rows="2" placeholder="Enter product description"></textarea>
+      </div>
+
+      <div class="form-row">
+        <!-- Stock -->
+        <div class="form-group">
+          <label>Stock</label>
+          <input type="number" formControlName="stock" placeholder="0">
+          <span class="error-message" *ngIf="f['stock'].touched && f['stock'].hasError('min')">
+            Stock must be greater than or equal to 0
+          </span>
+        </div>
+
+        <!-- Category ID -->
+        <div class="form-group">
+          <label>Category ID</label>
+          <input type="number" formControlName="categoryId" placeholder="Enter category ID">
+        </div>
+      </div>
+
+      <!-- Image URL -->
+      <div class="form-group">
+        <label>Image URL</label>
+        <input type="text" formControlName="imageUrl" placeholder="https://example.com/image.jpg">
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="btn btn-cancel" (click)="onCancel()" [disabled]="isSubmitting">
+      Cancel
+    </button>
+    <button class="btn btn-save" (click)="onSubmit()" [disabled]="isSubmitting">
+      <span *ngIf="!isSubmitting">Save</span>
+      <span *ngIf="isSubmitting">Saving...</span>
+    </button>
+  </div>
+</div>

@@ -5,18 +5,18 @@
 <app-fit-loading-bar></app-fit-loading-bar>
 
 <!-- Navbar -->
-<app-navbar></app-navbar>
+<app-navbar *ngIf="!isAdminRoute"></app-navbar>
 
 <!-- Cart Sidebar -->
-<app-cart-sidebar></app-cart-sidebar>
+<app-cart-sidebar *ngIf="!isAdminRoute"></app-cart-sidebar>
 
-<div style="padding-top: 70px;">
+<div [style.padding-top]="isAdminRoute ? '0' : '70px'">
   <!-- Main Application Container -->
   <router-outlet></router-outlet>
 
   <!-- Footer -->
-  <app-footer></app-footer>
+  <app-footer *ngIf="!isAdminRoute"></app-footer>
 </div>
 
 <!-- Scroll to Top Button -->
-<app-scroll-to-top></app-scroll-to-top>
+<app-scroll-to-top *ngIf="!isAdminRoute"></app-scroll-to-top>
