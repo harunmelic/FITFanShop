@@ -7,6 +7,7 @@ export interface JwtPayloadDto {
   is_admin: string;
   is_manager: string;
   is_employee: string;
+  is_member: string; // Premium membership status
   ver: string;
   iat: number;
   exp: number;

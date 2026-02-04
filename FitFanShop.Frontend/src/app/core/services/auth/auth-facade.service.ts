@@ -200,6 +200,7 @@ export class AuthFacadeService {
         isAdmin: payload.is_admin === 'true',
         isManager: payload.is_manager === 'true',
         isEmployee: payload.is_employee === 'true',
+        isMember: payload.is_member === 'true', // Premium membership
         tokenVersion: Number(payload.ver),
       };
 
