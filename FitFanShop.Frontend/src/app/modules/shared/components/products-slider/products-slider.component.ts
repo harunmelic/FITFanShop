@@ -17,6 +17,10 @@ export class ProductsSliderComponent implements OnInit {
   products = signal<ProductDto[]>([]);
 
   slides: { title: string; products: ProductDto[] }[] = [];
+  
+  // Variant selection: Map<productId, variantId>
+  selectedVariants = new Map<number, number>();
+  showVariantSelector: number | null = null; // productId of product showing variant selector
 
   ngOnInit(): void {
     this.loadProducts();
@@ -79,11 +83,27 @@ export class ProductsSliderComponent implements OnInit {
   }
 
   addToCart(product: ProductDto): void {
-    // Get first available variant
-    const variant = product.variants.find(v => v.stockQuantity > 0);
-    if (variant) {
+    // Always show variant selector
+    this.showVariantSelector = product.id;
+  }
+
+  selectVariant(productId: number, variantId: number): void {
+    const product = this.slides.flatMap(s => s.products).find(p => p.id === productId);
+    if (!product) return;
+
+    const variant = product.variants.find(v => v.id === variantId);
+    if (variant && variant.stockQuantity > 0) {
       this.cartService.addItem(variant.id, 1);
+      this.showVariantSelector = null; // Close selector after adding
     }
+  }
+
+  isVariantSelected(productId: number, variantId: number): boolean {
+    return this.selectedVariants.get(productId) === variantId;
+  }
+
+  closeVariantSelector(): void {
+    this.showVariantSelector = null;
   }
 
   nextSlide() {

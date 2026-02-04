@@ -12,7 +12,33 @@
         <div class="product-card" *ngFor="let product of slide.products">
           <div class="product-image">
             <div class="placeholder"></div>
-            <button class="add-to-cart" (click)="addToCart(product); $event.stopPropagation()">DODAJ U KORPU 🛍️</button>
+            
+            <!-- Variant Selector Overlay -->
+            <div class="variant-selector-overlay" *ngIf="showVariantSelector === product.id">
+              <div class="variant-selector-content" (click)="$event.stopPropagation()">
+                <button class="close-btn" (click)="closeVariantSelector()">×</button>
+                <h4>{{ product.name }}</h4>
+                <p class="selector-label">Dostupne veličine:</p>
+                <div class="variant-buttons">
+                  <button 
+                    *ngFor="let variant of product.variants"
+                    class="variant-btn"
+                    [class.selected]="isVariantSelected(product.id, variant.id)"
+                    [class.out-of-stock]="variant.stockQuantity === 0"
+                    [disabled]="variant.stockQuantity === 0"
+                    (click)="selectVariant(product.id, variant.id)">
+                    {{ variant.size }}
+                    <span class="stock-badge" *ngIf="variant.stockQuantity > 0 && variant.stockQuantity <= 5">
+                      ({{ variant.stockQuantity }})
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <button class="add-to-cart" (click)="addToCart(product); $event.stopPropagation()">
+              ODABERI VELIČINU 📏
+            </button>
           </div>
           <div class="product-info">
             <h3>{{ product.name }}</h3>

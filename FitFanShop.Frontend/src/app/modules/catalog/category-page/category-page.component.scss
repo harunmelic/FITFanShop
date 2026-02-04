@@ -235,12 +235,73 @@
     font-weight: 500;
     color: #333;
     transition: all 0.2s;
+    cursor: pointer;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: #1976d2;
       color: white;
       border-color: #1976d2;
     }
+
+    &.selected {
+      background: #1976d2;
+      color: white;
+      border-color: #1976d2;
+      font-weight: 600;
+    }
+
+    &.out-of-stock {
+      background: #ffebee;
+      color: #c62828;
+      border-color: #ef9a9a;
+      text-decoration: line-through;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+}
+
+.stock-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  .warning-icon {
+    color: #f57c00;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .stock-warning-text {
+    color: #e65100;
+  }
+
+  .error-icon {
+    color: #d32f2f;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .stock-error-text {
+    color: #b71c1c;
+  }
+
+  &:has(.warning-icon) {
+    background-color: #fff3e0;
+  }
+
+  &:has(.error-icon) {
+    background-color: #ffebee;
   }
 }
 
