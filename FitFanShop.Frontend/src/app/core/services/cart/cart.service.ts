@@ -1,20 +1,27 @@
 import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { CartApiService } from '../../../api-services/commerce/cart-api.service';
-import { CartDto, AddCartItemCommand, CartItemDto } from '../../../api-services/commerce/cart-api.model';
+import { CartDto, AddCartItemCommand, CartItemDto, PriceBreakdown } from '../../../api-services/commerce/cart-api.model';
+import { DiscountApiService } from '../../../api-services/commerce/discount-api.service';
+import { DiscountDto, DiscountType } from '../../../api-services/commerce/discount-api.model';
 import { ToasterService } from '../toaster.service';
 import { AuthFacadeService } from '../auth/auth-facade.service';
+import { CurrentUserService } from '../auth/current-user.service';
 import { tap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
   private cartApi = inject(CartApiService);
+  private discountApi = inject(DiscountApiService);
   private toaster = inject(ToasterService);
   private auth = inject(AuthFacadeService);
+  private currentUser = inject(CurrentUserService);
 
   private cart = signal<CartDto | null>(null);
   private savedForLater = signal<CartItemDto[]>([]);
+  private activeDiscounts = signal<DiscountDto[]>([]);
   isLoading = signal<boolean>(false);
   isLoadingCart = signal<boolean>(false);
   isSidebarOpen = signal<boolean>(false);
@@ -23,6 +30,7 @@ export class CartService {
   itemCount = computed(() => this.cart()?.itemCount || 0);
   totalAmount = computed(() => this.cart()?.totalAmount || 0);
   savedItems = computed(() => this.savedForLater());
+  priceBreakdown = computed(() => this.calculatePriceBreakdown());
 
   constructor() {
     // Praćenje promene stanja autentifikacije
@@ -32,9 +40,22 @@ export class CartService {
       if (isAuthenticated) {
         // Korisnik se prijavio - učitaj korpu iz baze
         this.loadCart();
+        this.loadActiveDiscounts();
       } else {
         // Korisnik se odjavio - resetuj korpu
         this.cart.set(null);
+        this.activeDiscounts.set([]);
+      }
+    });
+  }
+
+  loadActiveDiscounts(): void {
+    this.discountApi.getActive().subscribe({
+      next: (discounts) => {
+        this.activeDiscounts.set(discounts);
+      },
+      error: (error) => {
+        console.error('Error loading discounts:', error);
       }
     });
   }
@@ -185,5 +206,68 @@ export class CartService {
     } else {
       this.openSidebar();
     }
+  }
+
+  // Calculate price breakdown
+  private calculatePriceBreakdown(): PriceBreakdown {
+    const items = this.cartItems();
+    
+    // Calculate subtotal
+    const subtotal = items.reduce((sum, item) => {
+      const itemPrice = item.unitPrice || item.price || 0;
+      return sum + (itemPrice * item.quantity);
+    }, 0);
+
+    // Check if user is member (10% discount)
+    const user = this.currentUser.getCurrentUser();
+    const isMember = user?.isMember || false;
+    const memberDiscount = isMember ? subtotal * 0.10 : 0;
+
+    // Calculate product discounts
+    let productDiscounts = 0;
+    const discounts = this.activeDiscounts();
+    
+    items.forEach(item => {
+      if (!item.productId) return;
+      
+      // Find applicable discount for this product
+      const applicableDiscount = discounts.find(d => 
+        d.productIds?.includes(item.productId!) && 
+        new Date(d.startDate) <= new Date() && 
+        new Date(d.endDate) >= new Date()
+      );
+
+      if (applicableDiscount) {
+        const itemTotal = (item.unitPrice || item.price || 0) * item.quantity;
+        
+        if (applicableDiscount.discountType === DiscountType.Percentage) {
+          productDiscounts += itemTotal * (applicableDiscount.value / 100);
+        } else if (applicableDiscount.discountType === DiscountType.FixedAmount) {
+          productDiscounts += applicableDiscount.value * item.quantity;
+        }
+      }
+    });
+
+    const totalDiscount = memberDiscount + productDiscounts;
+
+    // Calculate shipping (free if over 100 KM)
+    const shippingCost = subtotal >= 100 ? 0 : 15;
+
+    // Calculate tax (17% PDV)
+    const taxableAmount = subtotal - totalDiscount;
+    const tax = taxableAmount * 0.17;
+
+    // Calculate total
+    const total = subtotal - totalDiscount + shippingCost + tax;
+
+    return {
+      subtotal,
+      memberDiscount,
+      productDiscounts,
+      totalDiscount,
+      shippingCost,
+      tax,
+      total
+    };
   }
 }

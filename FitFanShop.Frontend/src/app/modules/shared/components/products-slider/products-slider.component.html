@@ -42,6 +42,16 @@
           </div>
           <div class="product-info">
             <h3>{{ product.name }}</h3>
+            <div class="product-variants" *ngIf="product.variants && product.variants.length > 0">
+              <span class="variants-label">Veličine:</span>
+              <div class="variants-sizes">
+                <span *ngFor="let variant of product.variants" 
+                      class="size-badge"
+                      [class.out-of-stock]="variant.stockQuantity === 0">
+                  {{ variant.size }}
+                </span>
+              </div>
+            </div>
             <p class="price">{{ product.price }}KM</p>
           </div>
         </div>

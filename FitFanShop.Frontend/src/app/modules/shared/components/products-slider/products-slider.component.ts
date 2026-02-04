@@ -1,7 +1,9 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ProductApiService } from '../../../../api-services/catalog/product-api.service';
 import { ProductDto } from '../../../../api-services/catalog/product-api.model';
 import { CartService } from '../../../../core/services/cart/cart.service';
+import { ProductVariantSelectorComponent } from '../product-variant-selector/product-variant-selector.component';
 
 @Component({
   selector: 'app-products-slider',
@@ -12,15 +14,12 @@ import { CartService } from '../../../../core/services/cart/cart.service';
 export class ProductsSliderComponent implements OnInit {
   private productService = inject(ProductApiService);
   private cartService = inject(CartService);
+  private dialog = inject(MatDialog);
   
   currentSlide = 0;
   products = signal<ProductDto[]>([]);
 
   slides: { title: string; products: ProductDto[] }[] = [];
-  
-  // Variant selection: Map<productId, variantId>
-  selectedVariants = new Map<number, number>();
-  showVariantSelector: number | null = null; // productId of product showing variant selector
 
   ngOnInit(): void {
     this.loadProducts();
@@ -83,27 +82,31 @@ export class ProductsSliderComponent implements OnInit {
   }
 
   addToCart(product: ProductDto): void {
-    // Always show variant selector
-    this.showVariantSelector = product.id;
-  }
+    // Provjeri da li proizvod ima više od jedne varijante ili ako ima samo jednu, ali nije ONE SIZE
+    const hasMultipleVariants = product.variants.length > 1;
+    const singleVariantNotOneSize = product.variants.length === 1 && 
+                                    product.variants[0].size.toUpperCase() !== 'ONE SIZE';
+    
+    if (hasMultipleVariants || singleVariantNotOneSize) {
+      // Otvori dijalog za odabir varijante
+      const dialogRef = this.dialog.open(ProductVariantSelectorComponent, {
+        width: '500px',
+        maxWidth: '90vw',
+        data: { product }
+      });
 
-  selectVariant(productId: number, variantId: number): void {
-    const product = this.slides.flatMap(s => s.products).find(p => p.id === productId);
-    if (!product) return;
-
-    const variant = product.variants.find(v => v.id === variantId);
-    if (variant && variant.stockQuantity > 0) {
-      this.cartService.addItem(variant.id, 1);
-      this.showVariantSelector = null; // Close selector after adding
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.cartService.addItem(result.variantId, result.quantity);
+        }
+      });
+    } else {
+      // Ako je ONE SIZE, dodaj direktno
+      const variant = product.variants.find(v => v.stockQuantity > 0);
+      if (variant) {
+        this.cartService.addItem(variant.id, 1);
+      }
     }
-  }
-
-  isVariantSelected(productId: number, variantId: number): boolean {
-    return this.selectedVariants.get(productId) === variantId;
-  }
-
-  closeVariantSelector(): void {
-    this.showVariantSelector = null;
   }
 
   nextSlide() {

@@ -1,0 +1,82 @@
+<div class="variant-selector-dialog">
+  <div class="dialog-header">
+    <h2>Odaberi veličinu</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <!-- Product Info -->
+    <div class="product-info">
+      <div class="product-image">
+        <img *ngIf="product.imageUrl" [src]="product.imageUrl" [alt]="product.name">
+        <div *ngIf="!product.imageUrl" class="image-placeholder">
+          <mat-icon>shopping_bag</mat-icon>
+        </div>
+      </div>
+      <div class="product-details">
+        <h3>{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
+        <p class="product-price">{{ product.price | number:'1.2-2' }} KM</p>
+      </div>
+    </div>
+
+    <!-- Variants Selection -->
+    <div class="variants-section">
+      <h4>Dostupne veličine:</h4>
+      <div class="variants-grid" *ngIf="availableVariants.length > 0">
+        <button 
+          *ngFor="let variant of availableVariants"
+          class="variant-option"
+          [class.selected]="isVariantSelected(variant)"
+          (click)="selectVariant(variant)"
+        >
+          <span class="size">{{ variant.size }}</span>
+          <span class="stock">{{ variant.stockQuantity }} kom.</span>
+        </button>
+      </div>
+
+      <div class="no-variants" *ngIf="availableVariants.length === 0">
+        <mat-icon>warning</mat-icon>
+        <p>Nema dostupnih veličina</p>
+      </div>
+    </div>
+
+    <!-- Quantity Selector -->
+    <div class="quantity-section" *ngIf="selectedVariant">
+      <h4>Količina:</h4>
+      <div class="quantity-controls">
+        <button mat-icon-button (click)="decreaseQuantity()" [disabled]="quantity <= 1">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <span class="quantity-value">{{ quantity }}</span>
+        <button mat-icon-button (click)="increaseQuantity()" [disabled]="quantity >= getMaxQuantity()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <span class="stock-info">Dostupno: {{ getMaxQuantity() }} kom.</span>
+    </div>
+
+    <!-- Validation Message -->
+    <div class="validation-message" *ngIf="!selectedVariant">
+      <mat-icon>info</mat-icon>
+      <span>Molimo izaberite veličinu</span>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button (click)="close()">
+      Otkaži
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="addToCart()" 
+      [disabled]="!selectedVariant"
+    >
+      <mat-icon>shopping_cart</mat-icon>
+      Dodaj u korpu
+    </button>
+  </div>
+</div>

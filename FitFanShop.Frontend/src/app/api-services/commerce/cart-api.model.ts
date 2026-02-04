@@ -11,6 +11,18 @@ export interface CartItemDto {
   stock?: number;
   unitPrice?: number; // Cena jednog komada
   totalPrice?: number; // Ukupna cena (unitPrice * quantity)
+  productId?: number; // ID proizvoda za provjeru popusta
+  discount?: number; // Popust na proizvod
+}
+
+export interface PriceBreakdown {
+  subtotal: number; // Suma svih proizvoda
+  memberDiscount: number; // 10% popust za članove
+  productDiscounts: number; // Popusti na proizvode
+  totalDiscount: number; // Ukupan popust
+  shippingCost: number; // Troškovi dostave
+  tax: number; // Porez (PDV)
+  total: number; // Konačna cijena
 }
 
 export interface CartDto {
@@ -19,6 +31,7 @@ export interface CartDto {
   items: CartItemDto[];
   totalAmount: number;
   itemCount: number;
+  priceBreakdown?: PriceBreakdown;
 }
 
 export interface AddCartItemCommand {

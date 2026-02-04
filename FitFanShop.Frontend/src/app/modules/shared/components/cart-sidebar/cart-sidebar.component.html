@@ -74,17 +74,63 @@
 
   <!-- Footer -->
   <div class="sidebar-footer" *ngIf="!cartService.isLoadingCart() && cartService.itemCount() > 0">
-    <div class="summary-row">
-      <span>Subtotal:</span>
-      <span class="amount">{{ (cartService.totalAmount() || 0) | number:'1.2-2' }} KM</span>
-    </div>
-    <div class="summary-row">
-      <span>Dostava:</span>
-      <span class="amount">Besplatna</span>
-    </div>
-    <div class="summary-row total">
-      <span>Ukupno:</span>
-      <span class="amount">{{ (cartService.totalAmount() || 0) | number:'1.2-2' }} KM</span>
+    <!-- Price Breakdown -->
+    <div class="price-breakdown">
+      <div class="breakdown-row">
+        <span>Subtotal:</span>
+        <span class="amount">{{ cartService.priceBreakdown().subtotal | number:'1.2-2' }} KM</span>
+      </div>
+
+      <!-- Member Discount -->
+      <div class="breakdown-row discount" *ngIf="cartService.priceBreakdown().memberDiscount > 0">
+        <span>
+          <mat-icon class="discount-icon">card_membership</mat-icon>
+          Member popust (10%):
+        </span>
+        <span class="amount discount-amount">-{{ cartService.priceBreakdown().memberDiscount | number:'1.2-2' }} KM</span>
+      </div>
+
+      <!-- Product Discounts -->
+      <div class="breakdown-row discount" *ngIf="cartService.priceBreakdown().productDiscounts > 0">
+        <span>
+          <mat-icon class="discount-icon">local_offer</mat-icon>
+          Akcijski popust:
+        </span>
+        <span class="amount discount-amount">-{{ cartService.priceBreakdown().productDiscounts | number:'1.2-2' }} KM</span>
+      </div>
+
+      <!-- Shipping -->
+      <div class="breakdown-row">
+        <span>Dostava:</span>
+        <span class="amount" *ngIf="cartService.priceBreakdown().shippingCost === 0">Besplatna</span>
+        <span class="amount" *ngIf="cartService.priceBreakdown().shippingCost > 0">
+          {{ cartService.priceBreakdown().shippingCost | number:'1.2-2' }} KM
+        </span>
+      </div>
+
+      <!-- Free shipping info -->
+      <div class="free-shipping-info" *ngIf="cartService.priceBreakdown().subtotal < 100 && cartService.priceBreakdown().subtotal > 0">
+        <mat-icon>local_shipping</mat-icon>
+        <span>Još {{ (100 - cartService.priceBreakdown().subtotal) | number:'1.2-2' }} KM do besplatne dostave!</span>
+      </div>
+
+      <!-- Tax -->
+      <div class="breakdown-row tax">
+        <span>PDV (17%):</span>
+        <span class="amount">{{ cartService.priceBreakdown().tax | number:'1.2-2' }} KM</span>
+      </div>
+
+      <!-- Total -->
+      <div class="breakdown-row total">
+        <span>UKUPNO:</span>
+        <span class="amount">{{ cartService.priceBreakdown().total | number:'1.2-2' }} KM</span>
+      </div>
+
+      <!-- Savings Info -->
+      <div class="savings-info" *ngIf="cartService.priceBreakdown().totalDiscount > 0">
+        <mat-icon>savings</mat-icon>
+        <span>Uštedjeli ste {{ cartService.priceBreakdown().totalDiscount | number:'1.2-2' }} KM</span>
+      </div>
     </div>
 
     <button class="checkout-btn" (click)="proceedToCheckout()">

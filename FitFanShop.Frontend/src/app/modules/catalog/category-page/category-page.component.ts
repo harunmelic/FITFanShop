@@ -1,8 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { ProductApiService } from '../../../api-services/catalog/product-api.service';
 import { ProductDto } from '../../../api-services/catalog/product-api.model';
 import { CartService } from '../../../core/services/cart/cart.service';
+import { ProductVariantSelectorComponent } from '../../shared/components/product-variant-selector/product-variant-selector.component';
 
 @Component({
   selector: 'app-category-page',
@@ -15,15 +17,13 @@ export class CategoryPageComponent implements OnInit {
   private router = inject(Router);
   private productService = inject(ProductApiService);
   cartService = inject(CartService);
+  private dialog = inject(MatDialog);
 
   categoryId: number = 0;
   categoryName: string = '';
   
   products = signal<ProductDto[]>([]);
   isLoading = signal<boolean>(false);
-  
-  // Variant selection: Map<productId, variantId>
-  selectedVariants = new Map<number, number>();
   
   // Pagination
   currentPage = signal<number>(1);
@@ -72,33 +72,31 @@ export class CategoryPageComponent implements OnInit {
     return product.variants.every(v => v.stockQuantity === 0);
   }
 
-  selectVariant(productId: number, variantId: number): void {
-    this.selectedVariants.set(productId, variantId);
-  }
-
-  isVariantSelected(productId: number, variantId: number): boolean {
-    return this.selectedVariants.get(productId) === variantId;
-  }
-
-  getSelectedVariantStock(product: ProductDto): number | null {
-    const variantId = this.selectedVariants.get(product.id);
-    if (!variantId) return null;
-    
-    const variant = product.variants.find(v => v.id === variantId);
-    return variant ? variant.stockQuantity : null;
-  }
-
-  canAddToCart(product: ProductDto): boolean {
-    return this.selectedVariants.has(product.id) && !this.isOutOfStock(product);
-  }
-
   addToCart(product: ProductDto): void {
-    const variantId = this.selectedVariants.get(product.id);
-    if (!variantId) return;
+    // Provjeri da li proizvod ima više od jedne varijante ili ako ima samo jednu, ali nije ONE SIZE
+    const hasMultipleVariants = product.variants.length > 1;
+    const singleVariantNotOneSize = product.variants.length === 1 && 
+                                    product.variants[0].size.toUpperCase() !== 'ONE SIZE';
     
-    const variant = product.variants.find(v => v.id === variantId);
-    if (variant && variant.stockQuantity > 0) {
-      this.cartService.addItem(variant.id, 1);
+    if (hasMultipleVariants || singleVariantNotOneSize) {
+      // Otvori dijalog za odabir varijante
+      const dialogRef = this.dialog.open(ProductVariantSelectorComponent, {
+        width: '500px',
+        maxWidth: '90vw',
+        data: { product }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.cartService.addItem(result.variantId, result.quantity);
+        }
+      });
+    } else {
+      // Ako je ONE SIZE, dodaj direktno
+      const firstAvailableVariant = product.variants.find(v => v.stockQuantity > 0);
+      if (firstAvailableVariant) {
+        this.cartService.addItem(firstAvailableVariant.id, 1);
+      }
     }
   }
 

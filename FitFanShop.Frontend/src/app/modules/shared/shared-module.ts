@@ -25,6 +25,7 @@ import { ForgotPasswordDialogComponent } from './components/forgot-password-dial
 import { CartSidebarComponent } from './components/cart-sidebar/cart-sidebar.component';
 import { CartItemComponent } from './components/cart-item/cart-item.component';
 import { CartSkeletonComponent } from './components/cart-skeleton/cart-skeleton.component';
+import { ProductVariantSelectorComponent } from './components/product-variant-selector/product-variant-selector.component';
 
 
 
@@ -49,7 +50,8 @@ import { CartSkeletonComponent } from './components/cart-skeleton/cart-skeleton.
     LoadingScreenComponent,
     CartSidebarComponent,
     CartItemComponent,
-    CartSkeletonComponent
+    CartSkeletonComponent,
+    ProductVariantSelectorComponent
   ],
   imports: [
     CommonModule,
