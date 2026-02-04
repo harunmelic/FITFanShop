@@ -10,4 +10,5 @@ public class DiscountDto
     public bool MembersOnly { get; set; }
     public bool IsActive { get; set; }
     public int ProductCount { get; set; }
+    public List<int> ProductIds { get; set; } = new();
 }

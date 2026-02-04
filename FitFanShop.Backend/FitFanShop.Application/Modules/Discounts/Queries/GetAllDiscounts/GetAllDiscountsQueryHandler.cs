@@ -47,7 +47,8 @@ public class GetAllDiscountsQueryHandler : IRequestHandler<GetAllDiscountsQuery,
                 EndDate = d.EndDate,
                 MembersOnly = d.MembersOnly,
                 IsActive = d.IsActive,
-                ProductCount = d.DiscountProducts.Count
+                ProductCount = d.DiscountProducts.Count,
+                ProductIds = d.DiscountProducts.Select(dp => dp.ProductId).ToList()
             })
             .ToListAsync(cancellationToken);
 
