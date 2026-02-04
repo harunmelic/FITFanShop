@@ -1,0 +1,72 @@
+<div class="cart-item" [class.loading]="isLoading">
+  <div class="item-content">
+    <div class="item-image">
+      <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.productName" class="product-image">
+      <div *ngIf="!item.imageUrl" class="image-placeholder">
+        <mat-icon>shopping_bag</mat-icon>
+      </div>
+    </div>
+
+    <div class="item-details">
+      <h4 class="item-name">
+        {{ item.productName }}
+        <span class="size-badge" *ngIf="item.size && item.size.toUpperCase() !== 'ONE SIZE'"> - {{ item.size }}</span>
+      </h4>
+      <p class="item-variant" *ngIf="item.variantDetails">{{ item.variantDetails }}</p>
+      <p class="item-price">{{ (item.unitPrice || item.price || 0) | number:'1.2-2' }} KM</p>
+      
+      <!-- Stock Warning -->
+      <div class="stock-warning" *ngIf="item.stock && item.stock > 0 && item.stock <= 5">
+        <mat-icon>warning</mat-icon>
+        <span>Ostalo samo {{ item.stock }} {{ item.stock === 1 ? 'komad' : 'komada' }}!</span>
+      </div>
+      <div class="out-of-stock" *ngIf="item.stock === 0">
+        <mat-icon>error</mat-icon>
+        <span>Nema na stanju</span>
+      </div>
+
+      <div class="item-actions" *ngIf="mode === 'cart'">
+        <button class="action-btn" (click)="onSaveForLater()" [disabled]="isLoading">
+          <mat-icon>bookmark_border</mat-icon>
+          <span>Sačuvaj</span>
+        </button>
+        <button class="action-btn remove" (click)="onRemove()" [disabled]="isLoading">
+          <mat-icon>delete_outline</mat-icon>
+          <span>Ukloni</span>
+        </button>
+      </div>
+
+      <div class="item-actions" *ngIf="mode === 'saved'">
+        <button class="action-btn primary" (click)="onMoveToCart()" [disabled]="isLoading">
+          <mat-icon>shopping_cart</mat-icon>
+          <span>Dodaj u korpu</span>
+        </button>
+        <button class="action-btn remove" (click)="onRemove()" [disabled]="isLoading">
+          <mat-icon>delete_outline</mat-icon>
+          <span>Ukloni</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="item-quantity" *ngIf="mode === 'cart'">
+      <div class="quantity-control">
+        <button class="qty-btn" (click)="decreaseQuantity()" [disabled]="isLoading || item.quantity <= 1">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <input 
+          type="number" 
+          class="qty-input" 
+          [value]="item.quantity"
+          (change)="onQuantityInput($event)"
+          [disabled]="isLoading"
+          [max]="item.stock || 999"
+          min="1"
+        >
+        <button class="qty-btn" (click)="increaseQuantity()" [disabled]="isLoading || (item.stock && item.quantity >= item.stock)">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <p class="item-total">{{ (item.totalPrice || ((item.unitPrice || item.price || 0) * (item.quantity || 1))) | number:'1.2-2' }} KM</p>
+    </div>
+  </div>
+</div>

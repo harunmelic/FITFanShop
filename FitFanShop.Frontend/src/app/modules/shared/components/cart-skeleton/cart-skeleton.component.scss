@@ -1,0 +1,94 @@
+.cart-skeleton {
+  padding: 16px 0;
+}
+
+.skeleton-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e0e0e0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.skeleton-image {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+}
+
+.skeleton-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-title {
+  width: 70%;
+  height: 16px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+}
+
+.skeleton-subtitle {
+  width: 50%;
+  height: 12px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+}
+
+.skeleton-price {
+  width: 60px;
+  height: 14px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.skeleton-quantity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.skeleton-control {
+  width: 114px;
+  height: 32px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+}
+
+.skeleton-total {
+  width: 70px;
+  height: 18px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+}
+
+// Shimmer animation
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 1.5s infinite;
+  background: linear-gradient(
+    to right,
+    #e0e0e0 0%,
+    #f0f0f0 20%,
+    #e0e0e0 40%,
+    #e0e0e0 100%
+  );
+  background-size: 800px 104px;
+}

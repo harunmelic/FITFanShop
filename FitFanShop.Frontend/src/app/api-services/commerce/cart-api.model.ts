@@ -6,6 +6,11 @@ export interface CartItemDto {
   price: number;
   productName: string;
   variantDetails?: string;
+  size?: string; // Veličina varijante
+  imageUrl?: string;
+  stock?: number;
+  unitPrice?: number; // Cena jednog komada
+  totalPrice?: number; // Ukupna cena (unitPrice * quantity)
 }
 
 export interface CartDto {
