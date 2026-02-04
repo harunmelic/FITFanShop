@@ -72,7 +72,7 @@
         </div>
       </div>
 
-      <button mat-icon-button class="icon-button">
+      <button mat-icon-button class="icon-button" (click)="cartService.openSidebar()">
         <mat-icon>shopping_cart</mat-icon>
       </button>
       <span class="cart-count">({{ cartService.itemCount() }})</span>

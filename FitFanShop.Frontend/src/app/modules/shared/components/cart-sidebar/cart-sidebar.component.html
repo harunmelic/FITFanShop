@@ -1,0 +1,98 @@
+<!-- Overlay -->
+<div 
+  class="cart-overlay" 
+  [class.show]="cartService.isSidebarOpen()"
+  (click)="onOverlayClick()"
+></div>
+
+<!-- Sidebar -->
+<div class="cart-sidebar" [class.open]="cartService.isSidebarOpen()">
+  <!-- Header -->
+  <div class="sidebar-header">
+    <h3>Korpa ({{ cartService.itemCount() }})</h3>
+    <div class="header-actions">
+      <button 
+        *ngIf="cartService.itemCount() > 0" 
+        class="clear-all-btn" 
+        (click)="onClearCart()"
+        matTooltip="Isprazni korpu"
+      >
+        <mat-icon>delete_sweep</mat-icon>
+      </button>
+      <button class="close-btn" (click)="cartService.closeSidebar()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="sidebar-content">
+    <!-- Loading Skeleton -->
+    <app-cart-skeleton *ngIf="cartService.isLoadingCart()"></app-cart-skeleton>
+
+    <!-- Empty State -->
+    <div class="empty-cart" *ngIf="!cartService.isLoadingCart() && cartService.itemCount() === 0 && cartService.savedItems().length === 0">
+      <mat-icon>shopping_cart</mat-icon>
+      <p>Vaša korpa je prazna</p>
+      <button class="continue-shopping-btn" (click)="cartService.closeSidebar()">
+        Nastavite kupovinu
+      </button>
+    </div>
+
+    <!-- Cart Items -->
+    <div class="cart-items" *ngIf="!cartService.isLoadingCart() && cartService.itemCount() > 0">
+      <app-cart-item
+        *ngFor="let item of cartService.cartItems()"
+        [item]="item"
+        [isLoading]="cartService.isLoading()"
+        mode="cart"
+        (quantityChange)="onQuantityChange($event)"
+        (remove)="onRemoveItem($event)"
+        (saveForLater)="onSaveForLater($event)"
+      ></app-cart-item>
+    </div>
+
+    <!-- Saved for Later Section -->
+    <div class="saved-section" *ngIf="!cartService.isLoadingCart() && cartService.savedItems().length > 0">
+      <button class="saved-header" (click)="toggleSavedItems()">
+        <mat-icon>{{ showSavedItems ? 'expand_less' : 'expand_more' }}</mat-icon>
+        <span>Sačuvano za kasnije ({{ cartService.savedItems().length }})</span>
+      </button>
+
+      <div class="saved-items" *ngIf="showSavedItems">
+        <app-cart-item
+          *ngFor="let item of cartService.savedItems()"
+          [item]="item"
+          [isLoading]="cartService.isLoading()"
+          mode="saved"
+          (moveToCart)="onMoveToCart($event)"
+          (remove)="onRemoveSavedItem($event)"
+        ></app-cart-item>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="sidebar-footer" *ngIf="!cartService.isLoadingCart() && cartService.itemCount() > 0">
+    <div class="summary-row">
+      <span>Subtotal:</span>
+      <span class="amount">{{ (cartService.totalAmount() || 0) | number:'1.2-2' }} KM</span>
+    </div>
+    <div class="summary-row">
+      <span>Dostava:</span>
+      <span class="amount">Besplatna</span>
+    </div>
+    <div class="summary-row total">
+      <span>Ukupno:</span>
+      <span class="amount">{{ (cartService.totalAmount() || 0) | number:'1.2-2' }} KM</span>
+    </div>
+
+    <button class="checkout-btn" (click)="proceedToCheckout()">
+      Završi kupovinu
+    </button>
+    
+    <button class="continue-shopping-btn" (click)="cartService.closeSidebar()">
+      Nastavite kupovinu
+    </button>
+  </div>
+</div>
