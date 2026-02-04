@@ -2,12 +2,11 @@ import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { CartApiService } from '../../../api-services/commerce/cart-api.service';
 import { CartDto, AddCartItemCommand, CartItemDto, PriceBreakdown } from '../../../api-services/commerce/cart-api.model';
 import { DiscountApiService } from '../../../api-services/commerce/discount-api.service';
-import { DiscountDto, DiscountType } from '../../../api-services/commerce/discount-api.model';
+import { DiscountDto } from '../../../api-services/commerce/discount-api.model';
 import { ToasterService } from '../toaster.service';
 import { AuthFacadeService } from '../auth/auth-facade.service';
 import { CurrentUserService } from '../auth/current-user.service';
 import { tap } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -219,7 +218,7 @@ export class CartService {
     }, 0);
 
     // Check if user is member (10% discount)
-    const user = this.currentUser.getCurrentUser();
+    const user = this.currentUser.currentUser();
     const isMember = user?.isMember || false;
     const memberDiscount = isMember ? subtotal * 0.10 : 0;
 
@@ -227,24 +226,50 @@ export class CartService {
     let productDiscounts = 0;
     const discounts = this.activeDiscounts();
     
+    console.log('Active discounts:', discounts);
+    console.log('Cart items:', items);
+    
     items.forEach(item => {
-      if (!item.productId) return;
+      console.log(`Processing item ${item.productName}, productId: ${item.productId}`);
       
-      // Find applicable discount for this product
-      const applicableDiscount = discounts.find(d => 
-        d.productIds?.includes(item.productId!) && 
-        new Date(d.startDate) <= new Date() && 
-        new Date(d.endDate) >= new Date()
-      );
-
-      if (applicableDiscount) {
-        const itemTotal = (item.unitPrice || item.price || 0) * item.quantity;
+      // Nađi primjenjiv popust (ne member-only popuste ili member-only ako je korisnik član)
+      const applicableDiscounts = discounts.filter(d => {
+        const isMemberDiscount = d.membersOnly;
+        const userIsMember = isMember;
         
-        if (applicableDiscount.discountType === DiscountType.Percentage) {
-          productDiscounts += itemTotal * (applicableDiscount.value / 100);
-        } else if (applicableDiscount.discountType === DiscountType.FixedAmount) {
-          productDiscounts += applicableDiscount.value * item.quantity;
+        // Ako je popust samo za članove, korisnik mora biti član
+        if (isMemberDiscount && !userIsMember) {
+          return false;
         }
+        
+        // Provjeri da li je popust aktivan po datumu
+        const now = new Date();
+        const isActiveByDate = new Date(d.startDate) <= now && new Date(d.endDate) >= now;
+        
+        if (!isActiveByDate) {
+          return false;
+        }
+        
+        // Ako postoji productIds lista, provjeri da li proizvod pripada popustu
+        // Ako nema productIds ili je prazan array, primjeni na sve proizvode
+        if (d.productIds && d.productIds.length > 0) {
+          const productBelongsToDiscount = item.productId && d.productIds.includes(item.productId);
+          console.log(`Discount ${d.name}: productId ${item.productId} in ${JSON.stringify(d.productIds)}? ${productBelongsToDiscount}`);
+          return productBelongsToDiscount;
+        }
+        
+        return true; // Nema product filter, primjenjuje se na sve
+      });
+
+      console.log(`Applicable discounts for ${item.productName}:`, applicableDiscounts);
+
+      if (applicableDiscounts.length > 0) {
+        // Koristimo najveći popust za ovaj proizvod
+        const maxDiscount = Math.max(...applicableDiscounts.map(d => d.percentage));
+        const itemTotal = (item.unitPrice || item.price || 0) * item.quantity;
+        const discountAmount = itemTotal * (maxDiscount / 100);
+        console.log(`Applying ${maxDiscount}% discount (${discountAmount} KM) to ${item.productName}`);
+        productDiscounts += discountAmount;
       }
     });
 
@@ -253,12 +278,13 @@ export class CartService {
     // Calculate shipping (free if over 100 KM)
     const shippingCost = subtotal >= 100 ? 0 : 15;
 
-    // Calculate tax (17% PDV)
-    const taxableAmount = subtotal - totalDiscount;
-    const tax = taxableAmount * 0.17;
+    // Calculate tax (17% PDV) - cijene već uključuju PDV
+    // Izdvajamo koliki je PDV iz cijene: PDV = cijena - (cijena / 1.17)
+    const subtotalWithDiscounts = subtotal - totalDiscount + shippingCost;
+    const tax = subtotalWithDiscounts - (subtotalWithDiscounts / 1.17);
 
-    // Calculate total
-    const total = subtotal - totalDiscount + shippingCost + tax;
+    // Calculate total - total je isti kao subtotal sa popustima i dostavom (PDV je već u cijeni)
+    const total = subtotal - totalDiscount + shippingCost;
 
     return {
       subtotal,

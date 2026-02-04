@@ -43,29 +43,13 @@
           <div class="product-variants">
             <span class="variants-label">Dostupne veličine:</span>
             <div class="variants-sizes">
-              <button 
+              <span 
                 *ngFor="let variant of product.variants" 
                 class="size-badge"
-                [class.selected]="isVariantSelected(product.id, variant.id)"
-                [class.out-of-stock]="variant.stockQuantity === 0"
-                (click)="selectVariant(product.id, variant.id)"
-                [disabled]="variant.stockQuantity === 0"
-                matTooltip="{{ variant.stockQuantity === 0 ? 'Nema na stanju' : 'Dostupno: ' + variant.stockQuantity + ' kom.' }}">
+                [class.out-of-stock]="variant.stockQuantity === 0">
                 {{ variant.size }}
-              </button>
+              </span>
             </div>
-          </div>
-          
-          <!-- Stock info for selected variant -->
-          <div class="stock-info" *ngIf="getSelectedVariantStock(product) !== null">
-            <ng-container *ngIf="getSelectedVariantStock(product)! > 0 && getSelectedVariantStock(product)! <= 5">
-              <mat-icon class="warning-icon">warning</mat-icon>
-              <span class="stock-warning-text">Ostalo samo {{ getSelectedVariantStock(product) }} {{ getSelectedVariantStock(product) === 1 ? 'komad' : 'komada' }}!</span>
-            </ng-container>
-            <ng-container *ngIf="getSelectedVariantStock(product) === 0">
-              <mat-icon class="error-icon">error</mat-icon>
-              <span class="stock-error-text">Nema na stanju</span>
-            </ng-container>
           </div>
         </div>
 
@@ -79,9 +63,9 @@
                   color="primary" 
                   class="add-to-cart-btn"
                   (click)="addToCart(product)"
-                  [disabled]="!canAddToCart(product)">
+                  [disabled]="isOutOfStock(product)">
             <mat-icon>shopping_cart</mat-icon>
-            {{ canAddToCart(product) ? 'DODAJ U KORPU' : 'ODABERITE VELIČINU' }}
+            DODAJ U KORPU
           </button>
         </div>
       </div>
