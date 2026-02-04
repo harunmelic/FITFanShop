@@ -13,7 +13,16 @@
         <span class="size-badge" *ngIf="item.size && item.size.toUpperCase() !== 'ONE SIZE'"> - {{ item.size }}</span>
       </h4>
       <p class="item-variant" *ngIf="item.variantDetails">{{ item.variantDetails }}</p>
-      <p class="item-price">{{ (item.unitPrice || item.price || 0) | number:'1.2-2' }} KM</p>
+      
+      <!-- Price with discount -->
+      <div class="price-container">
+        <div *ngIf="discountInfo().hasDiscount" class="discount-price">
+          <span class="original-price">{{ discountInfo().originalPrice | number:'1.2-2' }} KM</span>
+          <span class="discounted-price">{{ discountInfo().discountedPrice | number:'1.2-2' }} KM</span>
+          <span class="discount-badge">-{{ discountInfo().discountPercent }}%</span>
+        </div>
+        <p class="item-price" *ngIf="!discountInfo().hasDiscount">{{ (item.unitPrice || item.price || 0) | number:'1.2-2' }} KM</p>
+      </div>
       
       <!-- Stock Warning -->
       <div class="stock-warning" *ngIf="item.stock && item.stock > 0 && item.stock <= 5">
@@ -66,7 +75,15 @@
           <mat-icon>add</mat-icon>
         </button>
       </div>
-      <p class="item-total">{{ (item.totalPrice || ((item.unitPrice || item.price || 0) * (item.quantity || 1))) | number:'1.2-2' }} KM</p>
+      <p class="item-total">
+        <span *ngIf="discountInfo().hasDiscount" class="total-with-discount">
+          <span class="original-total">{{ (item.unitPrice || item.price || 0) * item.quantity | number:'1.2-2' }} KM</span>
+          <span class="discounted-total">{{ discountInfo().discountedPrice * item.quantity | number:'1.2-2' }} KM</span>
+        </span>
+        <span *ngIf="!discountInfo().hasDiscount">
+          {{ (item.totalPrice || ((item.unitPrice || item.price || 0) * (item.quantity || 1))) | number:'1.2-2' }} KM
+        </span>
+      </p>
     </div>
   </div>
 </div>

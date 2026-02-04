@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, computed } from '@angular/core';
 import { CartItemDto } from '../../../../api-services/commerce/cart-api.model';
+import { CartService } from '../../../../core/services/cart/cart.service';
 
 @Component({
   selector: 'app-cart-item',
@@ -11,6 +12,49 @@ export class CartItemComponent {
   @Input() item!: CartItemDto;
   @Input() isLoading = false;
   @Input() mode: 'cart' | 'saved' = 'cart';
+  
+  private cartService = inject(CartService);
+  
+  // Computed values for discount display
+  discountInfo = computed(() => {
+    const discounts = this.cartService['activeDiscounts']();
+    const user = this.cartService['currentUser'].currentUser();
+    const isMember = user?.isMember || false;
+    
+    if (!this.item.productId) {
+      return { hasDiscount: false, discountPercent: 0, originalPrice: 0, discountedPrice: 0 };
+    }
+    
+    // Filtriraj primjenjive popuste
+    const applicableDiscounts = discounts.filter(d => {
+      if (d.membersOnly && !isMember) return false;
+      
+      const now = new Date();
+      const isActiveByDate = new Date(d.startDate) <= now && new Date(d.endDate) >= now;
+      if (!isActiveByDate) return false;
+      
+      if (d.productIds && d.productIds.length > 0) {
+        return d.productIds.includes(this.item.productId!);
+      }
+      
+      return true;
+    });
+    
+    if (applicableDiscounts.length === 0) {
+      return { hasDiscount: false, discountPercent: 0, originalPrice: 0, discountedPrice: 0 };
+    }
+    
+    const maxDiscountPercent = Math.max(...applicableDiscounts.map(d => d.percentage));
+    const originalPrice = this.item.unitPrice || this.item.price || 0;
+    const discountedPrice = originalPrice * (1 - maxDiscountPercent / 100);
+    
+    return {
+      hasDiscount: true,
+      discountPercent: maxDiscountPercent,
+      originalPrice,
+      discountedPrice
+    };
+  });
   
   @Output() quantityChange = new EventEmitter<{ itemId: number; quantity: number }>();
   @Output() remove = new EventEmitter<number>();
