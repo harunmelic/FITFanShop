@@ -128,7 +128,6 @@
 
       <!-- Savings Info -->
       <div class="savings-info" *ngIf="cartService.priceBreakdown().totalDiscount > 0">
-        <mat-icon>savings</mat-icon>
         <span>Uštedjeli ste {{ cartService.priceBreakdown().totalDiscount | number:'1.2-2' }} KM</span>
       </div>
     </div>
