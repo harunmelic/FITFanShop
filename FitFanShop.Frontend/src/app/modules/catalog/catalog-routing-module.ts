@@ -1,11 +1,23 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CategoryPageComponent } from './category-page/category-page.component';
+import { CatalogLayoutComponent } from './catalog-layout/catalog-layout.component';
+import { CatalogPageComponent } from './catalog-page/catalog-page.component';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
 
 const routes: Routes = [
   {
-    path: 'category/:id',
-    component: CategoryPageComponent
+    path: '',
+    component: CatalogLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: CatalogPageComponent
+      },
+      {
+        path: 'product/:id',
+        component: ProductDetailComponent
+      }
+    ]
   }
 ];
 

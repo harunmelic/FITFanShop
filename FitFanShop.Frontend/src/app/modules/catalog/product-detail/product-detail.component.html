@@ -1,0 +1,130 @@
+<div class="product-detail-page" *ngIf="!isLoading() && product()">
+  <!-- Breadcrumbs -->
+  <div class="breadcrumbs">
+    <a [routerLink]="['/']">Početna</a>
+    <mat-icon>chevron_right</mat-icon>
+    <a [routerLink]="['/catalog']">Katalog</a>
+    <mat-icon>chevron_right</mat-icon>
+    <span>{{ product()!.name }}</span>
+  </div>
+
+  <!-- Product Content -->
+  <div class="product-content">
+    <!-- Product Image -->
+    <div class="product-image-section">
+      <div class="product-image">
+        <div class="image-placeholder"></div>
+        <div class="product-badge" *ngIf="product()!.exclusive">
+          <span>EKSKLUZIVNO</span>
+        </div>
+        <div class="out-of-stock-overlay" *ngIf="isOutOfStock()">
+          <span>RASPRODATO</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="product-info-section">
+      <h1 class="product-title">{{ product()!.name }}</h1>
+      
+      <!-- Rating -->
+      <div class="product-rating" *ngIf="product()!.reviewCount > 0">
+        <mat-icon class="star-icon">star</mat-icon>
+        <span class="rating-value">{{ product()!.averageRating | number:'1.1-1' }}</span>
+        <span class="review-count">({{ product()!.reviewCount }} recenzija)</span>
+      </div>
+
+      <!-- Price -->
+      <div class="product-price">
+        <div class="discount-info" *ngIf="getProductDiscount().hasDiscount">
+          <mat-icon class="discount-icon">local_offer</mat-icon>
+          <span class="discount-name">{{ getProductDiscount().discountName }}</span>
+        </div>
+        <span class="original-price" *ngIf="getProductDiscount().hasDiscount">{{ getProductDiscount().originalPrice | number:'1.2-2' }} KM</span>
+        <div class="price-row">
+          <span class="price" [class.discounted]="getProductDiscount().hasDiscount">
+            {{ getProductDiscount().hasDiscount ? (getProductDiscount().discountedPrice | number:'1.2-2') : (product()!.price | number:'1.2-2') }} KM
+          </span>
+          <span class="discount-badge" *ngIf="getProductDiscount().hasDiscount">-{{ getProductDiscount().discountPercent }}%</span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="product-description">
+        <p>{{ product()!.description }}</p>
+      </div>
+
+      <!-- Size Selection -->
+      <div class="size-selection" *ngIf="product()!.variants.length > 0">
+        <h3>Odaberi veličinu:</h3>
+        <div class="size-options">
+          <button 
+            *ngFor="let variant of product()!.variants"
+            mat-stroked-button
+            class="size-option"
+            [class.selected]="selectedVariant() === variant"
+            [class.out-of-stock]="variant.stockQuantity === 0"
+            [disabled]="variant.stockQuantity === 0"
+            (click)="selectVariant(variant)">
+            {{ variant.size }}
+            <span class="stock-info" *ngIf="variant.stockQuantity === 0">(Rasprodato)</span>
+          </button>
+        </div>
+        <p class="stock-available" *ngIf="selectedVariant() && selectedVariant()!.stockQuantity > 0">
+          Na stanju: {{ selectedVariant()!.stockQuantity }} komada
+        </p>
+      </div>
+
+      <!-- Quantity -->
+      <div class="quantity-section" *ngIf="!isOutOfStock()">
+        <h3>Količina:</h3>
+        <div class="quantity-controls">
+          <button 
+            mat-icon-button 
+            class="quantity-btn"
+            [disabled]="quantity() <= 1"
+            (click)="decreaseQuantity()">
+            <mat-icon>remove</mat-icon>
+          </button>
+          <span class="quantity-value">{{ quantity() }}</span>
+          <button 
+            mat-icon-button 
+            class="quantity-btn"
+            [disabled]="!selectedVariant() || quantity() >= selectedVariant()!.stockQuantity"
+            (click)="increaseQuantity()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="product-actions">
+        <button 
+          mat-raised-button 
+          color="primary"
+          class="add-to-cart-btn"
+          [disabled]="!canAddToCart()"
+          (click)="addToCart()">
+          <mat-icon>shopping_cart</mat-icon>
+          Dodaj u korpu
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-state" *ngIf="isLoading()">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Učitavanje proizvoda...</p>
+</div>
+
+<!-- Product Not Found -->
+<div class="loading-state" *ngIf="!isLoading() && !product()">
+  <mat-icon>error_outline</mat-icon>
+  <h3>Proizvod nije pronađen</h3>
+  <p>Traženi proizvod ne postoji ili nije dostupan.</p>
+  <button mat-raised-button color="primary" [routerLink]="['/catalog']">
+    Nazad na katalog
+  </button>
+</div>

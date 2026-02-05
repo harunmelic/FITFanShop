@@ -26,6 +26,7 @@ import { CartSidebarComponent } from './components/cart-sidebar/cart-sidebar.com
 import { CartItemComponent } from './components/cart-item/cart-item.component';
 import { CartSkeletonComponent } from './components/cart-skeleton/cart-skeleton.component';
 import { ProductVariantSelectorComponent } from './components/product-variant-selector/product-variant-selector.component';
+import { MembershipRequiredDialogComponent } from './components/membership-required-dialog/membership-required-dialog.component';
 
 
 
@@ -51,7 +52,8 @@ import { ProductVariantSelectorComponent } from './components/product-variant-se
     CartSidebarComponent,
     CartItemComponent,
     CartSkeletonComponent,
-    ProductVariantSelectorComponent
+    ProductVariantSelectorComponent,
+    MembershipRequiredDialogComponent
   ],
   imports: [
     CommonModule,
