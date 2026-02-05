@@ -63,7 +63,7 @@ Ostali korisnici:
 ✅ **Outside Click Detection** - Automatsko zatvaranje dropdown-a
 
 ### E-Commerce Funkcionalnosti (U razvoju)
-⏳ **Katalog Proizvoda** - Pregled i filtriranje proizvoda
+✅ **Katalog Proizvoda** - Browse & Filter Products
 ⏳ **Košarica** - Add to cart, update quantity, checkout
 ⏳ **Membership System** - Registracija i upravljanje članstvom
 ⏳ **Narudžbe** - Kreiranje i praćenje narudžbi
