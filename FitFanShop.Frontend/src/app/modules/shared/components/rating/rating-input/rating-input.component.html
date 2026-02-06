@@ -1,0 +1,18 @@
+<div class="rating-input" 
+     (mouseleave)="onMouseLeave()"
+     [class.disabled]="disabled">
+  
+  <span 
+    *ngFor="let star of stars" 
+    class="star"
+    [class]="getStarClass(star)"
+    (click)="onStarClick(star)"
+    (mouseenter)="onStarHover(star)"
+    [attr.aria-label]="'Ocjena ' + star + ' od 5'">
+    ★
+  </span>
+  
+  <span class="rating-label" *ngIf="value > 0">
+    {{ value }}/5
+  </span>
+</div>

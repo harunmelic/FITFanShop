@@ -14,6 +14,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { SharedModule } from '../shared/shared-module';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     CommonModule,
     ReactiveFormsModule,
     CatalogRoutingModule,
+    SharedModule,
     MatProgressSpinnerModule,
     MatIconModule,
     MatButtonModule,
@@ -33,7 +36,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatInputModule,
     MatSelectModule,
     MatChipsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatTableModule
   ]
 })
 export class CatalogModule {}

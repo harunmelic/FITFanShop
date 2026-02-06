@@ -1,0 +1,9 @@
+<div class="rating-display" [class]="'rating-' + size">
+  <span 
+    *ngFor="let star of stars" 
+    class="star"
+    [class]="getStarClass(star)">
+    ★
+  </span>
+  <span class="rating-value" *ngIf="size === 'large'">{{ rating | number:'1.1-1' }}</span>
+</div>

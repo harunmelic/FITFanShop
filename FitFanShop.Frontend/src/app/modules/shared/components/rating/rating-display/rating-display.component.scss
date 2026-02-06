@@ -1,0 +1,63 @@
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  .star {
+    transition: color 0.2s;
+    font-family: Arial, sans-serif;
+
+    &.filled {
+      color: #ffc107;
+    }
+
+    &.half-filled {
+      color: #ffc107;
+      opacity: 0.6;
+    }
+
+    &.empty {
+      color: #e0e0e0;
+    }
+  }
+
+  .rating-value {
+    margin-left: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+// Small size (for compact displays)
+.rating-small {
+  .star {
+    font-size: 14px;
+  }
+
+  .rating-value {
+    font-size: 12px;
+  }
+}
+
+// Medium size (default)
+.rating-medium {
+  .star {
+    font-size: 18px;
+  }
+
+  .rating-value {
+    font-size: 14px;
+  }
+}
+
+// Large size (for prominent displays)
+.rating-large {
+  .star {
+    font-size: 24px;
+  }
+
+  .rating-value {
+    font-size: 18px;
+    font-weight: 700;
+  }
+}
