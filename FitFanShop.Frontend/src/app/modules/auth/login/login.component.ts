@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
 
   ngOnInit(): void {
-    // Otvori modal i vrati se na početnu
+    // Open modal and return to home
     this.router.navigate(['/']);
     setTimeout(() => {
       this.dialog.open(LoginDialogComponent, {

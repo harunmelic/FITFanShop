@@ -136,12 +136,12 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
     this.auth.resetPassword(email, this.resetToken, newPassword, confirmNewPassword).subscribe({
       next: () => {
         this.stopLoading();
-        this.toaster.success('Šifra uspešno promenjena! Prijavite se sa novom šifrom.');
+        this.toaster.success('Šifra uspješno promijenjena! Prijavite se sa novom šifrom.');
         this.dialogRef.close(true);
       },
       error: (err) => {
         console.error('Reset password error:', err);
-        let errorMsg = 'Greška pri promeni šifre. Pokušajte ponovo.';
+        let errorMsg = 'Greška pri promjeni šifre. Pokušajte ponovo.';
         
         if (err.error?.message) {
           errorMsg = err.error.message;
