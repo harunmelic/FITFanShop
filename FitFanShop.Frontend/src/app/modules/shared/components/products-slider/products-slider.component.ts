@@ -96,13 +96,13 @@ export class ProductsSliderComponent implements OnInit {
   }
 
   addToCart(product: ProductDto): void {
-    // Provjeri da li proizvod ima više od jedne varijante ili ako ima samo jednu, ali nije ONE SIZE
+    // Check if product has more than one variant or if it has one variant but not ONE SIZE
     const hasMultipleVariants = product.variants.length > 1;
     const singleVariantNotOneSize = product.variants.length === 1 && 
                                     product.variants[0].size.toUpperCase() !== 'ONE SIZE';
     
     if (hasMultipleVariants || singleVariantNotOneSize) {
-      // Otvori dijalog za odabir varijante
+      // Open dialog for variant selection
       const dialogRef = this.dialog.open(ProductVariantSelectorComponent, {
         width: '500px',
         maxWidth: '90vw',
@@ -184,5 +184,13 @@ export class ProductsSliderComponent implements OnInit {
       originalPrice,
       discountedPrice
     };
+  }
+
+  navigateToCatalog(): void {
+    this.router.navigate(['/catalog']).then(() => {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    });
   }
 }

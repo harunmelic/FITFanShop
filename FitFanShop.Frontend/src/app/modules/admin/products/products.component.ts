@@ -49,7 +49,7 @@ export class ProductsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Proizvod je uspešno kreiran, osvežavamo listu
+        // Product created successfully, refresh list
         this.loadProducts();
       }
     });
