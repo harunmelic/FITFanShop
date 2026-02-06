@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>
+  <mat-icon>flag</mat-icon>
+  Prijavite recenziju
+</h2>
+
+<mat-dialog-content>
+  <p class="dialog-description">
+    Prijavljujete recenziju korisnika <strong>{{ data.userName }}</strong>.
+    Molimo vas da navedete razlog prijave.
+  </p>
+
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Razlog prijave</mat-label>
+      <mat-select formControlName="reason" required>
+        <mat-option *ngFor="let reason of reportReasons" [value]="reason.value">
+          {{ reason.label }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('reason')?.hasError('required')">
+        Morate odabrati razlog prijave
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Dodatno objašnjenje (opciono)</mat-label>
+      <textarea 
+        matInput 
+        formControlName="description" 
+        rows="3"
+        placeholder="Opišite problematičan sadržaj...">
+      </textarea>
+    </mat-form-field>
+  </form>
+
+  <div class="warning-note">
+    <mat-icon>info</mat-icon>
+    <span>Prijave se pregledaju u roku od 24-48 sati. Zlonamjerne prijave mogu dovesti do suspenzije naloga.</span>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    Otkaži
+  </button>
+  <button 
+    mat-raised-button 
+    color="warn" 
+    (click)="onSubmit()"
+    [disabled]="form.invalid">
+    <mat-icon>send</mat-icon>
+    Pošaljite prijavu
+  </button>
+</mat-dialog-actions>
