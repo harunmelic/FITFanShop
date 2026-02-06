@@ -21,9 +21,8 @@
         <h4 class="column-title">QUICK LINKS</h4>
         <ul class="footer-links">
           <li><a href="/">HOME</a></li>
-          <li><a href="#">O NAMA</a></li>
-          <li><a [routerLink]="['/catalog']">KATALOG</a></li>
-          <li><a href="#">KONTAKT</a></li>
+          <li><a (click)="navigateToCatalog()" style="cursor: pointer;">KATALOG</a></li>
+          <li><a href="#">EVENT</a></li>
         </ul>
       </div>
 

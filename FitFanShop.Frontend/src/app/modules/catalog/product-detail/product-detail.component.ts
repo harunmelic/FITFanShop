@@ -156,7 +156,35 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       return { hasDiscount: false, discountPercent: 0, originalPrice: 0, discountedPrice: 0, discountName: '' };
     }
 
-    // Simplified discount check - for now, no active discounts
+    // Check if any active discount applies to this product
+    const applicableDiscount = this.activeDiscounts().find(discount => {
+      // Check if discount applies to this product
+      const appliesToProduct = discount.productIds && discount.productIds.includes(product.id);
+      
+      // If discount is members-only, check if user is logged in
+      if (discount.membersOnly) {
+        const isLoggedIn = !!this.currentUserService.currentUser();
+        return appliesToProduct && isLoggedIn;
+      }
+      
+      return appliesToProduct;
+    });
+
+    if (applicableDiscount) {
+      const originalPrice = product.price || 0;
+      const discountAmount = originalPrice * (applicableDiscount.percentage / 100);
+      const discountedPrice = originalPrice - discountAmount;
+      
+      return {
+        hasDiscount: true,
+        discountPercent: applicableDiscount.percentage,
+        originalPrice: originalPrice,
+        discountedPrice: discountedPrice,
+        discountName: applicableDiscount.name
+      };
+    }
+
+    // No discount applies
     return { 
       hasDiscount: false, 
       discountPercent: 0, 
@@ -195,20 +223,42 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     const product = this.product();
     const variant = this.selectedVariant();
     
-    if (!product || !variant) return;
+    if (!product || !variant) {
+      this.toaster.error('Molimo odaberite varijantu proizvoda');
+      return;
+    }
 
     if (!this.currentUserService.currentUser()) {
       this.openMembershipRequiredDialog();
       return;
     }
 
-    // Simulate adding to cart
-    console.log('Added to cart:', { product, variant, quantity: this.quantity() });
+    // Add to cart using CartService
+    this.cartService.addItem(variant.id, this.quantity());
+    
+    // Open cart sidebar to show the added item
+    this.cartService.openSidebar();
   }
 
   buyNow(): void {
-    this.addToCart();
-    this.router.navigate(['/cart']);
+    const product = this.product();
+    const variant = this.selectedVariant();
+    
+    if (!product || !variant) {
+      this.toaster.error('Molimo odaberite varijantu proizvoda');
+      return;
+    }
+
+    if (!this.currentUserService.currentUser()) {
+      this.openMembershipRequiredDialog();
+      return;
+    }
+
+    // Add to cart and navigate to checkout
+    this.cartService.addItem(variant.id, this.quantity());
+    
+    // Navigate to cart sidebar or checkout
+    this.cartService.openSidebar();
   }
 
   toggleWishlist(): void {
@@ -299,37 +349,20 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       this.canReview.set(false);
       this.canReviewReason.set('Morate biti prijavljeni da biste ostavili recenziju');
       this.currentOrderItemId.set(null);
-      console.log('Review check: User not authenticated');
       return;
     }
 
-    console.log(`Checking review eligibility for product ${productId}, user:`, currentUser.email);
-    
-    // Call the real backend API to check if user can review
     this.orderService.canUserReviewProduct(productId).subscribe({
       next: (response) => {
-        console.log('Review check response:', response);
         this.canReview.set(response.canReview);
         this.canReviewReason.set(response.reason || '');
         this.currentOrderItemId.set(response.orderItemId || null);
-        
-        if (!response.canReview && response.reason) {
-          console.log('Cannot review:', response.reason);
-        } else if (response.canReview) {
-          console.log('User can review with orderItemId:', response.orderItemId);
-        }
       },
       error: (error) => {
-        console.warn('Backend review check not available, using fallback:', error);
-        
-        // FALLBACK: If backend endpoint doesn't exist, allow reviews for authenticated users
-        // This ensures users can still leave reviews during development
-        this.canReview.set(true);
-        this.canReviewReason.set('');
-        const fallbackOrderItemId = Math.floor(Math.random() * 100000) + 10000;
-        this.currentOrderItemId.set(fallbackOrderItemId);
-        
-        console.log('Using fallback review permission with orderItemId:', fallbackOrderItemId);
+        console.error('Error checking review eligibility:', error);
+        this.canReview.set(false);
+        this.canReviewReason.set('Greška prilikom provjere prava za recenziju');
+        this.currentOrderItemId.set(null);
       }
     });
   }
@@ -415,7 +448,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
     this.reviewService.createReview(reviewCommand).subscribe({
       next: () => {
-        this.toaster.success('Recenzija je uspešno poslata!');
+        this.toaster.success('Recenzija je uspješno poslata!');
         this.reviewForm.reset();
         this.loadReviews(productId);
         this.canReview.set(false);
@@ -435,13 +468,13 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
             this.canReview.set(false);
             this.currentOrderItemId.set(null);
           } else {
-            this.toaster.warning('Review API trenutno nije dostupan. Molimo pokušajte ponovo kasnije.');
+            this.toaster.warning('API za recenzije trenutno nije dostupan. Molimo pokušajte ponovo kasnije.');
           }
         } else if (error.status === 409) {
-          this.toaster.error('Već ste ostavili recenziju za ovaj proizvod');
+          this.toaster.error('Već ste komentarisali ovo');
           this.canReview.set(false);
         } else if (error.status === 0 || error.status >= 500) {
-          this.toaster.warning('Review API trenutno nije dostupan. Molimo pokušajte ponovo kasnije.');
+          this.toaster.warning('API za recenzije trenutno nije dostupan. Molimo pokušajte ponovo kasnije.');
         } else {
           this.toaster.error('Greška prilikom slanja recenzije. Molimo pokušajte ponovo.');
         }
@@ -532,7 +565,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       if (result) {
         this.reviewService.reportReview(result).subscribe({
           next: () => {
-            this.toaster.success('Prijava je uspešno poslata. Hvala vam!');
+            this.toaster.success('Prijava je uspješno poslata. Hvala vam!');
           },
           error: (error) => {
             console.warn('Report API not available:', error);
@@ -608,13 +641,11 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSizeGuideData(): any[] {
-    // Mock size guide data
-    return [
-      { size: 'S', chest: '88-96', waist: '76-84', hips: '88-96' },
-      { size: 'M', chest: '96-104', waist: '84-92', hips: '96-104' },
-      { size: 'L', chest: '104-112', waist: '92-100', hips: '104-112' },
-      { size: 'XL', chest: '112-120', waist: '100-108', hips: '112-120' }
-    ];
+  navigateToCatalog(): void {
+    this.router.navigate(['/catalog']).then(() => {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    });
   }
 }
