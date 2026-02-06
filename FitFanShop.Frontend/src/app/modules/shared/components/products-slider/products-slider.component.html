@@ -1,10 +1,10 @@
 <div class="products-slider-section">
-  <div class="section-header">
-    <h2>{{ slides[currentSlide].title }}</h2>
+  <div class="section-header" *ngIf="slides && slides.length > 0 && slides[currentSlide]">
+    <h2>{{ slides[currentSlide]?.title || 'PONUDA' }}</h2>
     <a [routerLink]="['/catalog']" class="go-to-shop">GO TO SHOP</a>
   </div>
 
-  <div class="slider-container">
+  <div class="slider-container" *ngIf="slides && slides.length > 0">
     <div class="products-slide" 
          *ngFor="let slide of slides; let i = index"
          [class.active]="i === currentSlide">
@@ -46,7 +46,7 @@
     <button class="arrow arrow-right" (click)="nextSlide()">›</button>
   </div>
 
-  <div class="dots">
+  <div class="dots" *ngIf="slides && slides.length > 1">
     <span *ngFor="let slide of slides; let i = index" 
           class="dot" 
           [class.active]="i === currentSlide"

@@ -27,7 +27,12 @@ export class ProductsSliderComponent implements OnInit {
   products = signal<ProductDto[]>([]);
   activeDiscounts = signal<DiscountDto[]>([]);
 
-  slides: { title: string; products: ProductDto[] }[] = [];
+  slides: { title: string; products: ProductDto[] }[] = [
+    {
+      title: 'PONUDA',
+      products: []
+    }
+  ];
 
   ngOnInit(): void {
     this.loadProducts();
