@@ -6,23 +6,23 @@ export interface CartItemDto {
   price: number;
   productName: string;
   variantDetails?: string;
-  size?: string; // Veličina varijante
+  size?: string; // Variant size
   imageUrl?: string;
   stock?: number;
-  unitPrice?: number; // Cena jednog komada
-  totalPrice?: number; // Ukupna cena (unitPrice * quantity)
-  productId?: number; // ID proizvoda za provjeru popusta
-  discount?: number; // Popust na proizvod
+  unitPrice?: number; // Price per unit
+  totalPrice?: number; // Total price (unitPrice * quantity)
+  productId?: number; // Product ID for discount check
+  discount?: number; // Product discount
 }
 
 export interface PriceBreakdown {
-  subtotal: number; // Suma svih proizvoda
-  memberDiscount: number; // 10% popust za članove
-  productDiscounts: number; // Popusti na proizvode
-  totalDiscount: number; // Ukupan popust
-  shippingCost: number; // Troškovi dostave
-  tax: number; // Porez (PDV)
-  total: number; // Konačna cijena
+  subtotal: number; // Sum of all products
+  memberDiscount: number; // 10% discount for members
+  productDiscounts: number; // Product discounts
+  totalDiscount: number; // Total discount
+  shippingCost: number; // Shipping cost
+  tax: number; // Tax (VAT)
+  total: number; // Final price
 }
 
 export interface CartDto {

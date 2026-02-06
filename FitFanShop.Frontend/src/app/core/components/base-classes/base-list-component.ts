@@ -11,7 +11,7 @@ export abstract class BaseListComponent<TItem> extends BaseComponent{
   protected abstract loadData(): void;
 
   /**
-   * Helper koji možeš zvati iz ngOnInit dječije komponente.
+   * Helper that you can call from ngOnInit of child component.
    */
   protected initList(): void {
     this.loadData();

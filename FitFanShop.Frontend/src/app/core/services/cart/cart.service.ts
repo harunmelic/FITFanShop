@@ -32,16 +32,16 @@ export class CartService {
   priceBreakdown = computed(() => this.calculatePriceBreakdown());
 
   constructor() {
-    // Praćenje promene stanja autentifikacije
+    // Track authentication state changes
     effect(() => {
       const isAuthenticated = this.auth.isAuthenticated();
       
       if (isAuthenticated) {
-        // Korisnik se prijavio - učitaj korpu iz baze
+        // User logged in - load cart from database
         this.loadCart();
         this.loadActiveDiscounts();
       } else {
-        // Korisnik se odjavio - resetuj korpu
+        // User logged out - reset cart
         this.cart.set(null);
         this.activeDiscounts.set([]);
       }
@@ -232,17 +232,17 @@ export class CartService {
     items.forEach(item => {
       console.log(`Processing item ${item.productName}, productId: ${item.productId}`);
       
-      // Nađi primjenjiv popust (ne member-only popuste ili member-only ako je korisnik član)
+      // Find applicable discounts (non-member-only or member-only if user is member)
       const applicableDiscounts = discounts.filter(d => {
         const isMemberDiscount = d.membersOnly;
         const userIsMember = isMember;
         
-        // Ako je popust samo za članove, korisnik mora biti član
+        // If discount is members-only, user must be a member
         if (isMemberDiscount && !userIsMember) {
           return false;
         }
         
-        // Provjeri da li je popust aktivan po datumu
+        // Check if discount is active by date
         const now = new Date();
         const isActiveByDate = new Date(d.startDate) <= now && new Date(d.endDate) >= now;
         
@@ -250,21 +250,21 @@ export class CartService {
           return false;
         }
         
-        // Ako postoji productIds lista, provjeri da li proizvod pripada popustu
-        // Ako nema productIds ili je prazan array, primjeni na sve proizvode
+        // If productIds list exists, check if product belongs to discount
+        // If no productIds or empty array, apply to all products
         if (d.productIds && d.productIds.length > 0) {
           const productBelongsToDiscount = item.productId && d.productIds.includes(item.productId);
           console.log(`Discount ${d.name}: productId ${item.productId} in ${JSON.stringify(d.productIds)}? ${productBelongsToDiscount}`);
           return productBelongsToDiscount;
         }
         
-        return true; // Nema product filter, primjenjuje se na sve
+        return true; // No product filter, applies to all
       });
 
       console.log(`Applicable discounts for ${item.productName}:`, applicableDiscounts);
 
       if (applicableDiscounts.length > 0) {
-        // Koristimo najveći popust za ovaj proizvod
+        // Use the highest discount for this product
         const maxDiscount = Math.max(...applicableDiscounts.map(d => d.percentage));
         const itemTotal = (item.unitPrice || item.price || 0) * item.quantity;
         const discountAmount = itemTotal * (maxDiscount / 100);
@@ -278,12 +278,12 @@ export class CartService {
     // Calculate shipping (free if over 100 KM)
     const shippingCost = subtotal >= 100 ? 0 : 15;
 
-    // Calculate tax (17% PDV) - cijene već uključuju PDV
-    // Izdvajamo koliki je PDV iz cijene: PDV = cijena - (cijena / 1.17)
+    // Calculate tax (17% VAT) - prices already include VAT
+    // Extract VAT from price: VAT = price - (price / 1.17)
     const subtotalWithDiscounts = subtotal - totalDiscount + shippingCost;
     const tax = subtotalWithDiscounts - (subtotalWithDiscounts / 1.17);
 
-    // Calculate total - total je isti kao subtotal sa popustima i dostavom (PDV je već u cijeni)
+    // Calculate total - total is same as subtotal with discounts and shipping (VAT already in price)
     const total = subtotal - totalDiscount + shippingCost;
 
     return {

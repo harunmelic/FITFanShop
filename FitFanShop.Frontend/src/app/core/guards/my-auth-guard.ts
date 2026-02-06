@@ -14,13 +14,13 @@ export const myAuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
 
   const isAuth = currentUser.isAuthenticated();
 
-  // 1) ako ruta traži auth, a user nije logiran → login
+  // 1) if route requires auth and user is not logged in → login
   if (requireAuth && !isAuth) {
     router.navigate(['/auth/login']);
     return false;
   }
 
-  // Ako ne traži auth → pusti (javne rute)
+  // If route doesn't require auth → allow (public routes)
   if (!requireAuth) {
     return true;
   }

@@ -77,7 +77,7 @@
     <!-- Price Breakdown -->
     <div class="price-breakdown">
       <div class="breakdown-row">
-        <span>Subtotal:</span>
+        <span>Međuzbir:</span>
         <span class="amount">{{ cartService.priceBreakdown().subtotal | number:'1.2-2' }} KM</span>
       </div>
 
@@ -85,7 +85,7 @@
       <div class="breakdown-row discount" *ngIf="cartService.priceBreakdown().memberDiscount > 0">
         <span>
           <mat-icon class="discount-icon">card_membership</mat-icon>
-          Member popust (10%):
+          Članski popust (10%):
         </span>
         <span class="amount discount-amount">-{{ cartService.priceBreakdown().memberDiscount | number:'1.2-2' }} KM</span>
       </div>
