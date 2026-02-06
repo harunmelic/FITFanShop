@@ -22,12 +22,13 @@ const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const auth = inject(AuthFacadeService);
 
-    // 1) Skip auth endpoints (login/refresh/logout)
+    // 1) Skip auth ONLY for auth endpoints (login/refresh/logout)
     if (isAuthEndpoint(req.url)) {
+        console.log('🔓 Auth endpoint, skipping interceptor:', req.url);
         return next(req);
     }
 
-    // 2) Add Authorization header if token exists
+    // 2) Add Authorization header if token exists (for ALL other endpoints)
     const accessToken = auth.getAccessToken();
     let authReq = req;
 
@@ -37,6 +38,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 Authorization: `Bearer ${accessToken}`
             }
         });
+        console.log('🔐 Adding auth header to:', req.url);
+    } else {
+        console.log('⚠️ No token available for:', req.url);
     }
 
     // 3) Handle 401 → refresh → retry
