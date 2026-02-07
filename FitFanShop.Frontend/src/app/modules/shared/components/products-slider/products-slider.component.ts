@@ -29,7 +29,7 @@ export class ProductsSliderComponent implements OnInit {
 
   slides: { title: string; products: ProductDto[] }[] = [
     {
-      title: 'PONUDA',
+      title: 'OFFER',
       products: []
     }
   ];
@@ -49,15 +49,15 @@ export class ProductsSliderComponent implements OnInit {
         // Split into 3 slides of 4 products each
         this.slides = [
           {
-            title: 'PONUDA',
+            title: 'OFFER',
             products: selectedProducts.slice(0, 4)
           },
           {
-            title: 'PONUDA',
+            title: 'OFFER',
             products: selectedProducts.slice(4, 8)
           },
           {
-            title: 'PONUDA',
+            title: 'OFFER',
             products: selectedProducts.slice(8, 12)
           }
         ];
@@ -81,15 +81,15 @@ export class ProductsSliderComponent implements OnInit {
   private getDefaultSlides() {
     return [
       {
-        title: 'PONUDA DRESOVA',
+        title: 'JERSEY OFFER',
         products: []
       },
       {
-        title: 'PONUDA OPREME',
+        title: 'EQUIPMENT OFFER',
         products: []
       },
       {
-        title: 'EKSKLUZIVNA KOLEKCIJA',
+        title: 'EXCLUSIVE COLLECTION',
         products: []
       }
     ];

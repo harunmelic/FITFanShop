@@ -23,11 +23,11 @@ export class AdminLayoutComponent implements OnInit {
   logout(): void {
     const dialogConfig: DialogConfig = {
       type: DialogType.QUESTION,
-      title: 'Odjavi se',
-      message: 'Da li ste sigurni da želite da se odjavite?',
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
       buttons: [
-        { type: DialogButton.CANCEL, label: 'Otkaži' },
-        { type: DialogButton.YES, label: 'Potvrdi' }
+        { type: DialogButton.CANCEL, label: 'Cancel' },
+        { type: DialogButton.YES, label: 'Confirm' }
       ]
     };
 

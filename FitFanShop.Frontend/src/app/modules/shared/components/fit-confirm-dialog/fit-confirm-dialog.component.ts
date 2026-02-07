@@ -94,13 +94,13 @@ export class FitConfirmDialogComponent {
     // If translate service not available, use default labels
     if (!this.translate) {
       const defaultLabels: { [key: string]: string } = {
-        'ok': 'U redu',
-        'cancel': 'Otkaži',
-        'yes': 'Potvrdi',
-        'no': 'Ne',
-        'close': 'Zatvori',
-        'delete': 'Obriši',
-        'save': 'Sačuvaj'
+        'ok': 'OK',
+        'cancel': 'Cancel',
+        'yes': 'Confirm',
+        'no': 'No',
+        'close': 'Close',
+        'delete': 'Delete',
+        'save': 'Save'
       };
       return defaultLabels[button.type] || button.type;
     }
