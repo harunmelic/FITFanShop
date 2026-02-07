@@ -14,17 +14,17 @@
       
       <!-- Katalog Dropdown -->
 <div class="nav-link-dropdown">
-        <a [routerLink]="['/catalog']" class="nav-link" (mouseenter)="toggleKatalogDropdown()" (click)="closeKatalogDropdown()">
+        <a class="nav-link" (mouseenter)="toggleKatalogDropdown()" (click)="navigateToCatalog()">
           KATALOG ▼
         </a>
         <div class="dropdown-menu" *ngIf="isKatalogDropdownOpen" (mouseleave)="closeKatalogDropdown()">
-          <a [routerLink]="['/catalog']" class="dropdown-item highlight" (click)="closeKatalogDropdown()">
+          <a class="dropdown-item highlight" (click)="navigateToCatalog()">
             <mat-icon>apps</mat-icon>
             All Products
           </a>
           <div class="dropdown-divider"></div>
           @for (category of categories(); track category.id) {
-            <a [routerLink]="['/catalog']" [queryParams]="{categoryId: category.id}" class="dropdown-item" (click)="closeKatalogDropdown()">{{ category.name }}</a>
+            <a class="dropdown-item" (click)="navigateToCatalog(category.id)">{{ category.name }}</a>
           }
           @empty {
             <span class="dropdown-item">Nema dostupnih kategorija</span>
@@ -32,13 +32,13 @@
         </div>
       </div>
       
+      <a href="#" class="nav-link">EVENT</a>
       <a href="#" class="nav-link" (click)="scrollToFooter(); $event.preventDefault()">O NAMA</a>
-      <a href="#" class="nav-link" (click)="scrollToFooter(); $event.preventDefault()">KONTAKT</a>
     </div>
 
     <!-- Icons -->
     <div class="navbar-icons">
-      <button mat-icon-button class="icon-button">
+      <button mat-icon-button class="icon-button" (click)="toggleSearch()">
         <mat-icon>search</mat-icon>
       </button>
 
@@ -84,3 +84,59 @@
     </div>
   </div>
 </nav>
+
+<!-- Search Bar -->
+<div class="search-bar" *ngIf="isSearchOpen()">
+  <div class="search-bar-container">
+    <div class="search-input-wrapper">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Pretražite proizvode..."
+        [formControl]="searchControl"
+        autocomplete="off"
+      >
+      <button mat-icon-button (click)="toggleSearch()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="search-results-container" *ngIf="searchControl.value && searchControl.value.length >= 2">
+    <!-- Loading State -->
+    <div class="search-loading" *ngIf="isSearching()">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Pretraga...</p>
+    </div>
+
+    <!-- No Results -->
+    <div class="search-empty" *ngIf="searchResults().length === 0 && !isSearching()">
+      <p>{{ searchResults().length }} Rezultata</p>
+      <a (click)="viewAllResults()" class="view-all-link">Pogledaj sve</a>
+    </div>
+
+    <!-- Results Grid -->
+    <div class="search-results-grid" *ngIf="searchResults().length > 0">
+      <div class="results-header">
+        <p>{{ searchResults().length }} Rezultata</p>
+        <a (click)="viewAllResults()" class="view-all-link">Pogledaj sve</a>
+      </div>
+      <div class="results-grid">
+        <div 
+          class="result-card" 
+          *ngFor="let product of searchResults()"
+          (click)="navigateToProduct(product.id)"
+        >
+          <div class="result-image-wrapper">
+            <img [src]="product.imageUrl || '/images/placeholder.png'" [alt]="product.name" class="result-image">
+          </div>
+          <div class="result-info">
+            <h4 class="result-name">{{ product.name }}</h4>
+            <p class="result-price">{{ product.price | number:'1.2-2' }} KM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

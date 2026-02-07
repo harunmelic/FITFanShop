@@ -6,6 +6,7 @@ using FitFanShop.Application.Modules.Sales.Orders.Commands.DeleteOrder;
 using FitFanShop.Application.Modules.Sales.Orders.Commands.UpdateOrderStatus;
 using FitFanShop.Application.Modules.Sales.Orders.Queries.GetOrderById;
 using FitFanShop.Application.Modules.Sales.Orders.Queries.GetMyOrders;
+using FitFanShop.Application.Modules.Orders.Queries.CanUserReviewProduct;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -69,5 +70,12 @@ public class OrdersController : ControllerBase
     {
         await _mediator.Send(new CancelOrderCommand { OrderId = id });
         return NoContent();
+    }
+
+    [HttpGet("can-review/{productId}")]
+    public async Task<ActionResult<CanUserReviewProductDto>> CanReviewProduct(int productId)
+    {
+        var result = await _mediator.Send(new CanUserReviewProductQuery { ProductId = productId });
+        return Ok(result);
     }
 }

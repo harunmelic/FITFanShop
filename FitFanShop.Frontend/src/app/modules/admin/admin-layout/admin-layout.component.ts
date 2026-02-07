@@ -15,11 +15,11 @@ export class AdminLayoutComponent implements OnInit {
   }
 
   logout(): void {
-    // TODO: Implementirati logout logiku
-    // Primer:
+    // TODO: Implement logout logic
+    // Example:
     // this.authService.logout();
     
-    // Preusmeravanje na home stranicu
+    // Redirect to home page
     this.router.navigate(['/']);
   }
 

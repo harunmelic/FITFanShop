@@ -110,6 +110,27 @@
             <mat-error *ngIf="accountInfoForm.get('password')?.hasError('pattern') && accountInfoForm.get('password')?.touched">
               Šifra mora sadržati najmanje jedno veliko slovo
             </mat-error>
+            
+            <!-- Password Strength Meter -->
+            <div class="password-strength-meter" *ngIf="passwordStrength().label">
+              <div class="strength-bar">
+                <div 
+                  class="strength-fill" 
+                  [style.width.%]="(passwordStrength().score / 5) * 100"
+                  [style.background-color]="passwordStrength().color"
+                ></div>
+              </div>
+              <div class="strength-info">
+                <span class="strength-label" [style.color]="passwordStrength().color">
+                  {{ passwordStrength().label }}
+                </span>
+                <div class="strength-feedback" *ngIf="passwordStrength().feedback.length > 0">
+                  <small *ngFor="let tip of passwordStrength().feedback">
+                    • {{ tip }}
+                  </small>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="form-field">

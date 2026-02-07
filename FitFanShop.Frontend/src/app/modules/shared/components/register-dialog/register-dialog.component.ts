@@ -1,10 +1,17 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed, signal } from '@angular/core';
 import { FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BaseComponent } from '../../../../core/components/base-classes/base-component';
 import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.service';
 import { RegisterCommand } from '../../../../api-services/auth/auth-api.model';
 import { ToasterService } from '../../../../core/services/toaster.service';
+
+export interface PasswordStrength {
+  score: number; // 0-4
+  label: string;
+  color: string;
+  feedback: string[];
+}
 
 @Component({
   selector: 'app-register-dialog',
@@ -21,7 +28,11 @@ export class RegisterDialogComponent extends BaseComponent {
   hidePassword = true;
   hideConfirmPassword = true;
 
-  // Predefinisana sigurnosna pitanja
+  // Password strength tracking
+  private passwordValue = signal<string>('');
+  passwordStrength = computed(() => this.calculatePasswordStrength(this.passwordValue()));
+
+  // Predefined security questions
   securityQuestions = [
     'Ime vašeg prvog ljubimca?',
     'Grad u kojem ste rođeni?',
@@ -49,6 +60,15 @@ export class RegisterDialogComponent extends BaseComponent {
     },
     { validators: this.passwordMatchValidator }
   );
+
+  constructor() {
+    super();
+    
+    // Track password changes for strength meter
+    this.accountInfoForm.get('password')?.valueChanges.subscribe(value => {
+      this.passwordValue.set(value || '');
+    });
+  }
 
   // Step 3: Security Question
   securityForm = this.fb.group({
@@ -117,5 +137,83 @@ export class RegisterDialogComponent extends BaseComponent {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  // Password strength calculation
+  private calculatePasswordStrength(password: string): PasswordStrength {
+    if (!password) {
+      return {
+        score: 0,
+        label: '',
+        color: '#e0e0e0',
+        feedback: []
+      };
+    }
+
+    let score = 0;
+    const feedback: string[] = [];
+
+    // Length check
+    if (password.length >= 8) {
+      score += 1;
+    } else {
+      feedback.push('Koristite najmanje 8 karaktera');
+    }
+
+    // Uppercase letter
+    if (/[A-Z]/.test(password)) {
+      score += 1;
+    } else {
+      feedback.push('Dodajte veliko slovo');
+    }
+
+    // Lowercase letter
+    if (/[a-z]/.test(password)) {
+      score += 1;
+    } else {
+      feedback.push('Dodajte malo slovo');
+    }
+
+    // Numbers
+    if (/[0-9]/.test(password)) {
+      score += 1;
+    } else {
+      feedback.push('Dodajte broj');
+    }
+
+    // Special characters
+    if (/[^A-Za-z0-9]/.test(password)) {
+      score += 1;
+    } else {
+      feedback.push('Dodajte specijalni karakter (!@#$%^&*)');
+    }
+
+    // Determine strength level
+    let label: string;
+    let color: string;
+
+    if (score <= 1) {
+      label = 'Vrlo slaba';
+      color = '#f44336'; // Red
+    } else if (score === 2) {
+      label = 'Slaba';
+      color = '#ff9800'; // Orange
+    } else if (score === 3) {
+      label = 'Srednja';
+      color = '#ffc107'; // Yellow
+    } else if (score === 4) {
+      label = 'Jaka';
+      color = '#8bc34a'; // Light Green
+    } else {
+      label = 'Vrlo jaka';
+      color = '#4caf50'; // Green
+    }
+
+    return {
+      score,
+      label,
+      color,
+      feedback: feedback.slice(0, 2) // Show max 2 suggestions
+    };
   }
 }

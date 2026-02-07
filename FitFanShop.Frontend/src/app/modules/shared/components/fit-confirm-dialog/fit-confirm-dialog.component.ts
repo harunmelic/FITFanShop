@@ -91,12 +91,12 @@ export class FitConfirmDialogComponent {
       return button.label;
     }
 
-    // Ako ima translation key, koristi ga
+    // If has translation key, use it
     if (button.translationKey) {
       return this.translate.instant(button.translationKey);
     }
 
-    // Inače koristi default translation
+    // Otherwise use default translation
     return this.translate.instant(`DIALOGS.BUTTONS.${button.type.toUpperCase()}`);
   }
 

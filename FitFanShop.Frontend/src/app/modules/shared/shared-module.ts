@@ -27,6 +27,9 @@ import { CartItemComponent } from './components/cart-item/cart-item.component';
 import { CartSkeletonComponent } from './components/cart-skeleton/cart-skeleton.component';
 import { ProductVariantSelectorComponent } from './components/product-variant-selector/product-variant-selector.component';
 import { MembershipRequiredDialogComponent } from './components/membership-required-dialog/membership-required-dialog.component';
+import { RatingDisplayComponent } from './components/rating/rating-display/rating-display.component';
+import { RatingInputComponent } from './components/rating/rating-input/rating-input.component';
+import { ReportReviewDialogComponent } from './components/report-review-dialog/report-review-dialog.component';
 
 
 
@@ -53,7 +56,10 @@ import { MembershipRequiredDialogComponent } from './components/membership-requi
     CartItemComponent,
     CartSkeletonComponent,
     ProductVariantSelectorComponent,
-    MembershipRequiredDialogComponent
+    MembershipRequiredDialogComponent,
+    ReportReviewDialogComponent,
+    RatingDisplayComponent,
+    RatingInputComponent
   ],
   imports: [
     CommonModule,
@@ -86,7 +92,9 @@ import { MembershipRequiredDialogComponent } from './components/membership-requi
     ScrollToTopComponent,
     LoadingScreenComponent,
     CartSidebarComponent,
-    materialModules
+    RatingDisplayComponent,
+    RatingInputComponent,
+    ...materialModules
   ]
 })
 export class SharedModule { }

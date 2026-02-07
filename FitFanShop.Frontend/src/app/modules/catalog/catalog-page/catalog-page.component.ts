@@ -61,21 +61,31 @@ export class CatalogPageComponent implements OnInit {
   // Available filter options
   availableSizes = signal<string[]>([]);
   priceRange = signal<{ min: number; max: number }>({ min: 0, max: 1000 });
+  
+  // Store query params to apply after categories load
+  private pendingCategoryName: string | null = null;
 
   ngOnInit(): void {
+    // Listen to query params for category filter FIRST
+    this.route.queryParams.subscribe(params => {
+      const categoryId = params['categoryId'];
+      const categoryName = params['categoryName'];
+      
+      console.log('📥 Query params received:', { categoryId, categoryName });
+      
+      if (categoryId) {
+        this.selectedCategoryId.set(+categoryId);
+      } else if (categoryName) {
+        this.pendingCategoryName = categoryName;
+        console.log('💾 Saved pending category name:', categoryName);
+      }
+    });
+    
+    // Load data - categories will trigger filter application
     this.loadCategories();
     this.loadProducts();
     this.loadActiveDiscounts();
     this.setupSearchListener();
-    
-    // Listen to query params for category filter
-    this.route.queryParams.subscribe(params => {
-      const categoryId = params['categoryId'];
-      if (categoryId) {
-        this.selectedCategoryId.set(+categoryId);
-        this.applyFilters();
-      }
-    });
   }
 
   setupSearchListener(): void {
@@ -90,7 +100,16 @@ export class CatalogPageComponent implements OnInit {
   loadCategories(): void {
     this.categoryService.getAll().subscribe({
       next: (categories) => {
+        console.log('📦 Categories loaded:', categories.length);
         this.categories.set(categories);
+        // Apply pending category name filter if exists
+        if (this.pendingCategoryName) {
+          console.log('🔄 Applying pending category filter:', this.pendingCategoryName);
+          this.applyCategoryNameFilter();
+        } else {
+          console.log('⏭️ No pending category, applying normal filters');
+          this.applyFilters();
+        }
       },
       error: (error) => {
         console.error('Error loading categories:', error);
@@ -107,6 +126,7 @@ export class CatalogPageComponent implements OnInit {
       pageSize: 100
     }).subscribe({
       next: (products) => {
+        console.log('📦 Products loaded:', products.length);
         this.products.set(products);
         this.extractFilterOptions(products);
         this.applyFilters();
@@ -185,8 +205,33 @@ export class CatalogPageComponent implements OnInit {
     this.priceRange.set({ min: minPrice, max: maxPrice });
   }
 
+  private applyCategoryNameFilter(): void {
+    if (!this.pendingCategoryName) return;
+    
+    console.log('🔍 Looking for category:', this.pendingCategoryName);
+    console.log('📋 Available categories:', this.categories().map(c => c.name));
+    
+    const category = this.categories().find(cat => 
+      cat.name.toLowerCase() === this.pendingCategoryName!.toLowerCase()
+    );
+    
+    if (category) {
+      console.log('✅ Found category:', category.name, 'ID:', category.id);
+      this.selectedCategoryId.set(category.id);
+      this.applyFilters();
+    } else {
+      console.warn('❌ Category not found:', this.pendingCategoryName);
+    }
+    
+    this.pendingCategoryName = null;
+  }
+
   applyFilters(): void {
     let filtered = [...this.products()];
+    
+    console.log('🔧 Applying filters...');
+    console.log('   Total products:', filtered.length);
+    console.log('   Selected category ID:', this.selectedCategoryId());
     
     // Search filter
     const searchTerm = this.searchControl.value?.toLowerCase() || '';
@@ -199,7 +244,9 @@ export class CatalogPageComponent implements OnInit {
     
     // Category filter
     if (this.selectedCategoryId()) {
+      const beforeCount = filtered.length;
       filtered = filtered.filter(p => p.categoryIds.includes(this.selectedCategoryId()!));
+      console.log(`   Category filter: ${beforeCount} → ${filtered.length} products`);
     }
     
     // Price filter

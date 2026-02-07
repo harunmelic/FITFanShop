@@ -1,6 +1,6 @@
 <div class="add-product-dialog">
   <div class="dialog-header">
-    <h2>Add New Product</h2>
+    <h2>Dodaj novi proizvod</h2>
   </div>
   
   <div class="dialog-content">
@@ -8,70 +8,70 @@
       <div class="form-row">
         <!-- Name -->
         <div class="form-group">
-          <label>Product Name *</label>
-          <input type="text" formControlName="name" placeholder="Enter product name">
+          <label>Naziv proizvoda *</label>
+          <input type="text" formControlName="name" placeholder="Unesite naziv proizvoda">
           <span class="error-message" *ngIf="f['name'].touched && f['name'].hasError('required')">
-            Name is required
+            Naziv je obavezan
           </span>
           <span class="error-message" *ngIf="f['name'].touched && f['name'].hasError('minlength')">
-            Name must be at least 3 characters
+            Naziv mora imati najmanje 3 karaktera
           </span>
         </div>
 
         <!-- Price -->
         <div class="form-group">
-          <label>Price *</label>
+          <label>Cijena *</label>
           <div class="input-with-prefix">
-            <span class="prefix">€</span>
+            <span class="prefix">KM</span>
             <input type="number" formControlName="price" placeholder="0.00">
           </div>
           <span class="error-message" *ngIf="f['price'].touched && f['price'].hasError('required')">
-            Price is required
+            Cijena je obavezna
           </span>
           <span class="error-message" *ngIf="f['price'].touched && f['price'].hasError('min')">
-            Price must be greater than or equal to 0
+            Cijena mora biti veća ili jednaka 0
           </span>
         </div>
       </div>
 
       <!-- Description -->
       <div class="form-group">
-        <label>Description</label>
-        <textarea formControlName="description" rows="2" placeholder="Enter product description"></textarea>
+        <label>Opis</label>
+        <textarea formControlName="description" rows="2" placeholder="Unesite opis proizvoda"></textarea>
       </div>
 
       <div class="form-row">
         <!-- Stock -->
         <div class="form-group">
-          <label>Stock</label>
+          <label>Zalihe</label>
           <input type="number" formControlName="stock" placeholder="0">
           <span class="error-message" *ngIf="f['stock'].touched && f['stock'].hasError('min')">
-            Stock must be greater than or equal to 0
+            Zalihe moraju biti veće ili jednake 0
           </span>
         </div>
 
         <!-- Category ID -->
         <div class="form-group">
-          <label>Category ID</label>
-          <input type="number" formControlName="categoryId" placeholder="Enter category ID">
+          <label>ID kategorije</label>
+          <input type="number" formControlName="categoryId" placeholder="Unesite ID kategorije">
         </div>
       </div>
 
       <!-- Image URL -->
       <div class="form-group">
-        <label>Image URL</label>
-        <input type="text" formControlName="imageUrl" placeholder="https://example.com/image.jpg">
+        <label>URL slike</label>
+        <input type="text" formControlName="imageUrl" placeholder="https://primjer.com/slika.jpg">
       </div>
     </form>
   </div>
 
   <div class="dialog-actions">
     <button class="btn btn-cancel" (click)="onCancel()" [disabled]="isSubmitting">
-      Cancel
+      Otkaži
     </button>
     <button class="btn btn-save" (click)="onSubmit()" [disabled]="isSubmitting">
-      <span *ngIf="!isSubmitting">Save</span>
-      <span *ngIf="isSubmitting">Saving...</span>
+      <span *ngIf="!isSubmitting">Sačuvaj</span>
+      <span *ngIf="isSubmitting">Čuvanje...</span>
     </button>
   </div>
 </div>

@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hero-slider',
@@ -7,6 +8,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
   styleUrls: ['./hero-slider.component.scss']
 })
 export class HeroSliderComponent implements OnInit, OnDestroy {
+  private router = inject(Router);
   currentSlide = 0;
   private autoSlideInterval: any;
 
@@ -16,13 +18,16 @@ export class HeroSliderComponent implements OnInit, OnDestroy {
       subtitle: 'VAŠU KOLEKCIJU',
       buttonText: 'KUPI DRES',
       bgColor: '#f5f5f5',
-      image: '/images/pictures/image-removebg-preview (1).png'
+      image: '/images/pictures/image-removebg-preview (1).png',
+      actionType: 'catalog',
+      categoryName: 'Jerseys'
     },
     {
       title: 'POSTANI',
       subtitle: 'ČLAN',
       buttonText: 'POSTANI ČLAN',
-      bgColor: '#e8e8e8'
+      bgColor: '#e8e8e8',
+      actionType: 'membership'
     }
   ];
 
@@ -56,5 +61,25 @@ export class HeroSliderComponent implements OnInit, OnDestroy {
     if (this.autoSlideInterval) {
       clearInterval(this.autoSlideInterval);
     }
+  }
+
+  onSlideButtonClick(slide: any) {
+    console.log('👆 Slide button clicked:', slide.actionType);
+    
+    if (slide.actionType === 'catalog' && slide.categoryName) {
+      this.navigateToCatalog(slide.categoryName);
+    } else if (slide.actionType === 'membership') {
+      this.navigateToMembership();
+    }
+  }
+
+  private navigateToCatalog(categoryName: string) {
+    console.log('📦 Navigating to catalog with category:', categoryName);
+    this.router.navigate(['/catalog'], { queryParams: { categoryName } });
+  }
+
+  private navigateToMembership() {
+    // TODO: Navigate to membership page when implemented
+    console.log('Navigate to membership');
   }
 }

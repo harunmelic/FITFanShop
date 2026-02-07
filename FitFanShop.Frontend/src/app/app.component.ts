@@ -15,14 +15,14 @@ export class AppComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    // Praćenje promene rute
+    // Track route changes
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.isAdminRoute = event.url.startsWith('/admin');
       });
 
-    // Provera inicijalne rute
+    // Check initial route
     this.isAdminRoute = this.router.url.startsWith('/admin');
   }
 }

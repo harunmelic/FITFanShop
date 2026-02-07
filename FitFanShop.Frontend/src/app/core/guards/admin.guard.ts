@@ -14,19 +14,19 @@ export class AdminGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
     
-    // TODO: Implementirati proveru da li je korisnik admin
-    // Primer:
+    // TODO: Implement admin user verification
+    // Example:
     // const currentUser = this.authService.getCurrentUser();
     // if (currentUser && currentUser.role === 'ADMIN') {
     //   return true;
     // }
     
-    // Za sada dozvoljavamo pristup svima (placeholder)
-    // Kasnije ćete ovde dodati logiku za proveru admin role
+    // For now, allow access to everyone (placeholder)
+    // Later add logic to verify admin role
     const isAdmin = this.checkIfUserIsAdmin();
     
     if (!isAdmin) {
-      // Preusmeravanje na login ili home stranicu
+      // Redirect to login or home page
       this.router.navigate(['/']);
       return false;
     }
@@ -35,13 +35,13 @@ export class AdminGuard implements CanActivate {
   }
 
   private checkIfUserIsAdmin(): boolean {
-    // TODO: Implementirati pravu proveru
-    // Primer:
+    // TODO: Implement proper verification
+    // Example:
     // const user = this.currentUserService.getCurrentUser();
     // return user?.role === 'ADMIN';
     
-    // Za sada vraćamo true kako bi admin panel bio dostupan
-    // Promenite ovo kasnije kada implementirate autentifikaciju
+    // For now return true to make admin panel accessible
+    // Change this later when implementing authentication
     return true;
   }
 }

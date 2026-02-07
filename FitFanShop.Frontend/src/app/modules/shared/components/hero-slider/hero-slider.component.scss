@@ -22,9 +22,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 
   &.active {
     opacity: 1;
+    pointer-events: auto;
+    z-index: 5;
   }
 }
 
@@ -70,6 +73,8 @@
   letter-spacing: 1px;
   cursor: pointer;
   transition: background-color 0.3s;
+  position: relative;
+  z-index: 10;
 
   &:hover {
     background-color: #555;
