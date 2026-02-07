@@ -1,6 +1,6 @@
 <div class="login-dialog">
   <div class="dialog-header">
-    <h2>Prijava</h2>
+    <h2>Login</h2>
     <button mat-icon-button (click)="close()">
       <mat-icon>close</mat-icon>
     </button>
@@ -40,7 +40,7 @@
       </div>
 
       <div class="forgot-password-link">
-        <a (click)="onForgotPassword()">Zaboravili ste lozinku?</a>
+        <a (click)="onForgotPassword()">Forgot your password?</a>
       </div>
 
       <div class="button-group">
@@ -50,7 +50,7 @@
           [disabled]="form.invalid || isLoading"
         >
           <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
-          <span>{{ isLoading ? 'Prijavljujem...' : 'Prijavi se' }}</span>
+          <span>{{ isLoading ? 'Logging in...' : 'Login' }}</span>
         </button>
 
         <button 
@@ -58,7 +58,7 @@
           class="btn-secondary"
           (click)="onRegister()"
         >
-          Registruj se
+          Register
         </button>
       </div>
     </form>

@@ -9,13 +9,13 @@
 <div class="cart-sidebar" [class.open]="cartService.isSidebarOpen()">
   <!-- Header -->
   <div class="sidebar-header">
-    <h3>Korpa ({{ cartService.itemCount() }})</h3>
+    <h3>Cart ({{ cartService.itemCount() }})</h3>
     <div class="header-actions">
       <button 
         *ngIf="cartService.itemCount() > 0" 
         class="clear-all-btn" 
         (click)="onClearCart()"
-        matTooltip="Isprazni korpu"
+        matTooltip="Clear cart"
       >
         <mat-icon>delete_sweep</mat-icon>
       </button>
@@ -33,9 +33,9 @@
     <!-- Empty State -->
     <div class="empty-cart" *ngIf="!cartService.isLoadingCart() && cartService.itemCount() === 0 && cartService.savedItems().length === 0">
       <mat-icon>shopping_cart</mat-icon>
-      <p>Vaša korpa je prazna</p>
+      <p>Your cart is empty</p>
       <button class="continue-shopping-btn" (click)="cartService.closeSidebar()">
-        Nastavite kupovinu
+        Continue shopping
       </button>
     </div>
 
@@ -56,7 +56,7 @@
     <div class="saved-section" *ngIf="!cartService.isLoadingCart() && cartService.savedItems().length > 0">
       <button class="saved-header" (click)="toggleSavedItems()">
         <mat-icon>{{ showSavedItems ? 'expand_less' : 'expand_more' }}</mat-icon>
-        <span>Sačuvano za kasnije ({{ cartService.savedItems().length }})</span>
+        <span>Saved for later ({{ cartService.savedItems().length }})</span>
       </button>
 
       <div class="saved-items" *ngIf="showSavedItems">
@@ -77,7 +77,7 @@
     <!-- Price Breakdown -->
     <div class="price-breakdown">
       <div class="breakdown-row">
-        <span>Međuzbir:</span>
+        <span>Subtotal:</span>
         <span class="amount">{{ cartService.priceBreakdown().subtotal | number:'1.2-2' }} KM</span>
       </div>
 
@@ -85,7 +85,7 @@
       <div class="breakdown-row discount" *ngIf="cartService.priceBreakdown().memberDiscount > 0">
         <span>
           <mat-icon class="discount-icon">card_membership</mat-icon>
-          Članski popust (10%):
+          Member discount (10%):
         </span>
         <span class="amount discount-amount">-{{ cartService.priceBreakdown().memberDiscount | number:'1.2-2' }} KM</span>
       </div>
@@ -94,15 +94,15 @@
       <div class="breakdown-row discount" *ngIf="cartService.priceBreakdown().productDiscounts > 0">
         <span>
           <mat-icon class="discount-icon">local_offer</mat-icon>
-          Akcijski popust:
+          Promotional discount:
         </span>
         <span class="amount discount-amount">-{{ cartService.priceBreakdown().productDiscounts | number:'1.2-2' }} KM</span>
       </div>
 
       <!-- Shipping -->
       <div class="breakdown-row">
-        <span>Dostava:</span>
-        <span class="amount" *ngIf="cartService.priceBreakdown().shippingCost === 0">Besplatna</span>
+        <span>Shipping:</span>
+        <span class="amount" *ngIf="cartService.priceBreakdown().shippingCost === 0">Free</span>
         <span class="amount" *ngIf="cartService.priceBreakdown().shippingCost > 0">
           {{ cartService.priceBreakdown().shippingCost | number:'1.2-2' }} KM
         </span>
@@ -111,7 +111,7 @@
       <!-- Free shipping info -->
       <div class="free-shipping-info" *ngIf="cartService.priceBreakdown().subtotal < 100 && cartService.priceBreakdown().subtotal > 0">
         <mat-icon>local_shipping</mat-icon>
-        <span>Još {{ (100 - cartService.priceBreakdown().subtotal) | number:'1.2-2' }} KM do besplatne dostave!</span>
+        <span>Only {{ (100 - cartService.priceBreakdown().subtotal) | number:'1.2-2' }} KM until free shipping!</span>
       </div>
 
       <!-- Tax -->
@@ -122,22 +122,22 @@
 
       <!-- Total -->
       <div class="breakdown-row total">
-        <span>UKUPNO:</span>
+        <span>TOTAL:</span>
         <span class="amount">{{ cartService.priceBreakdown().total | number:'1.2-2' }} KM</span>
       </div>
 
       <!-- Savings Info -->
       <div class="savings-info" *ngIf="cartService.priceBreakdown().totalDiscount > 0">
-        <span>Uštedjeli ste {{ cartService.priceBreakdown().totalDiscount | number:'1.2-2' }} KM</span>
+        <span>You saved {{ cartService.priceBreakdown().totalDiscount | number:'1.2-2' }} KM</span>
       </div>
     </div>
 
     <button class="checkout-btn" (click)="proceedToCheckout()">
-      Završi kupovinu
+      Proceed to checkout
     </button>
     
     <button class="continue-shopping-btn" (click)="cartService.closeSidebar()">
-      Nastavite kupovinu
+      Continue shopping
     </button>
   </div>
 </div>

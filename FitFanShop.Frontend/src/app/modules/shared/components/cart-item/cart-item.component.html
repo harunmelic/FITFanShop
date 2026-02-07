@@ -27,32 +27,32 @@
       <!-- Stock Warning -->
       <div class="stock-warning" *ngIf="item.stock && item.stock > 0 && item.stock <= 5">
         <mat-icon>warning</mat-icon>
-        <span>Ostalo samo {{ item.stock }} {{ item.stock === 1 ? 'komad' : 'komada' }}!</span>
+        <span>Only {{ item.stock }} {{ item.stock === 1 ? 'item' : 'items' }} left!</span>
       </div>
       <div class="out-of-stock" *ngIf="item.stock === 0">
         <mat-icon>error</mat-icon>
-        <span>Nema na stanju</span>
+        <span>Out of stock</span>
       </div>
 
       <div class="item-actions" *ngIf="mode === 'cart'">
         <button class="action-btn" (click)="onSaveForLater()" [disabled]="isLoading">
           <mat-icon>bookmark_border</mat-icon>
-          <span>Sačuvaj</span>
+          <span>Save</span>
         </button>
         <button class="action-btn remove" (click)="onRemove()" [disabled]="isLoading">
           <mat-icon>delete_outline</mat-icon>
-          <span>Ukloni</span>
+          <span>Remove</span>
         </button>
       </div>
 
       <div class="item-actions" *ngIf="mode === 'saved'">
         <button class="action-btn primary" (click)="onMoveToCart()" [disabled]="isLoading">
           <mat-icon>shopping_cart</mat-icon>
-          <span>Dodaj u korpu</span>
+          <span>Add to cart</span>
         </button>
         <button class="action-btn remove" (click)="onRemove()" [disabled]="isLoading">
           <mat-icon>delete_outline</mat-icon>
-          <span>Ukloni</span>
+          <span>Remove</span>
         </button>
       </div>
     </div>

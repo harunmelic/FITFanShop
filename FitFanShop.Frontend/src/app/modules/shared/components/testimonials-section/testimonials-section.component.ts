@@ -11,17 +11,17 @@ export class TestimonialsSectionComponent {
 
   testimonials = [
     {
-      text: 'Prezadovoljan sam uslugama FitFanShopa. Preporučujem svakom da poruči neki od proizvoda i sam se uvjeri u kvalitet!',
+      text: 'I\'m very satisfied with FitFanShop\'s services. I recommend everyone to order one of their products and see the quality yourself!',
       author: 'DANIS MAMELEDŽIJA',
       rating: 5
     },
     {
-      text: 'Odličan kvalitet dresova i brza dostava. Definitivno ću ponovo naručivati!',
+      text: 'Excellent jersey quality and fast delivery. I will definitely order again!',
       author: 'ABDULLAH MUSIĆ',
       rating: 5
     },
     {
-      text: 'Sve pohvale za FitFanShop! Profesionalna usluga i vrhunski proizvodi.',
+      text: 'All praises for FitFanShop! Professional service and top-quality products.',
       author: 'HARUN MELIĆ',
       rating: 5
     }

@@ -1,8 +1,8 @@
 <div class="catalog-page">
   <!-- Header Section -->
   <div class="catalog-header">
-    <h1>Katalog Proizvoda</h1>
-    <p class="catalog-subtitle">Pregledaj i filtriraj našu ponudu</p>
+    <h1>Product Catalog</h1>
+    <p class="catalog-subtitle">Browse and filter our collection</p>
   </div>
 
   <!-- Filters & Products Section -->
@@ -10,26 +10,26 @@
     <!-- Sidebar Filters -->
     <aside class="filters-sidebar">
       <div class="filters-header">
-        <h3>Filteri</h3>
+        <h3>Filters</h3>
         <button mat-button class="clear-btn" (click)="clearFilters()">
-          Očisti Sve
+          Clear All
         </button>
       </div>
 
       <!-- Search Filter -->
       <div class="filter-section">
-        <h4>Pretraga</h4>
+        <h4>Search</h4>
         <mat-form-field appearance="outline" class="search-field">
           <mat-icon matPrefix>search</mat-icon>
           <input matInput 
-                 placeholder="Pretraži proizvode..." 
+                 placeholder="Search products..." 
                  [formControl]="searchControl">
         </mat-form-field>
       </div>
 
       <!-- Category Filter -->
       <div class="filter-section" *ngIf="categories().length > 0">
-        <h4>Kategorije</h4>
+        <h4>Categories</h4>
         <div class="category-filters">
           <button 
             mat-stroked-button
@@ -37,7 +37,7 @@
             [class.active]="selectedCategoryId() === null"
             (click)="onCategorySelect(null)">
             <mat-icon>apps</mat-icon>
-            Svi Proizvodi
+            All Products
             <span class="count">({{ products().length }})</span>
           </button>
           <button 
@@ -54,7 +54,7 @@
 
       <!-- Price Filter -->
       <div class="filter-section">
-        <h4>Raspon Cijene</h4>
+        <h4>Price Range</h4>
         <div class="price-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Min</mat-label>
@@ -77,7 +77,7 @@
 
       <!-- Size Filter -->
       <div class="filter-section" *ngIf="availableSizes().length > 0">
-        <h4>Veličine</h4>
+        <h4>Sizes</h4>
         <div class="size-filters">
           <button 
             *ngFor="let size of availableSizes()" 
@@ -92,7 +92,7 @@
 
       <!-- Active Filters Summary -->
       <div class="active-filters" *ngIf="hasActiveFilters()">
-        <h4>Aktivni Filteri</h4>
+        <h4>Active Filters</h4>
         <div class="filter-chips">
           <mat-chip *ngIf="selectedCategoryId()" (removed)="onCategorySelect(null)">
             {{ getCategoryName(selectedCategoryId()!) }}
@@ -103,7 +103,7 @@
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
           <mat-chip *ngFor="let size of selectedSizes()" (removed)="onSizeToggle(size)">
-            Veličina: {{ size }}
+            Size: {{ size }}
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
         </div>
@@ -115,17 +115,17 @@
       <!-- Toolbar -->
       <div class="products-toolbar">
         <div class="results-count">
-          <strong>{{ filteredProducts().length }}</strong> proizvoda pronađeno
+          <strong>{{ filteredProducts().length }}</strong> products found
         </div>
         <div class="sort-controls">
           <mat-form-field appearance="outline" class="sort-field">
-            <mat-label>Sortiraj po</mat-label>
+            <mat-label>Sort by</mat-label>
             <mat-select [value]="sortBy()" (selectionChange)="onSortChange($event.value)">
-              <mat-option value="name-asc">Naziv (A-Ž)</mat-option>
-              <mat-option value="name-desc">Naziv (Ž-A)</mat-option>
-              <mat-option value="price-asc">Cijena (Niska - Visoka)</mat-option>
-              <mat-option value="price-desc">Cijena (Visoka - Niska)</mat-option>
-              <mat-option value="rating">Najbolje Ocijenjeno</mat-option>
+              <mat-option value="name-asc">Name (A-Z)</mat-option>
+              <mat-option value="name-desc">Name (Z-A)</mat-option>
+              <mat-option value="price-asc">Price (Low - High)</mat-option>
+              <mat-option value="price-desc">Price (High - Low)</mat-option>
+              <mat-option value="rating">Best Rated</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -134,16 +134,16 @@
       <!-- Loading State -->
       <div *ngIf="isLoading()" class="loading-state">
         <mat-spinner diameter="50"></mat-spinner>
-        <p>Učitavanje proizvoda...</p>
+        <p>Loading products...</p>
       </div>
 
       <!-- Empty State -->
       <div *ngIf="!isLoading() && filteredProducts().length === 0" class="empty-state">
         <mat-icon>search_off</mat-icon>
-        <h3>Nema pronađenih proizvoda</h3>
-        <p>Pokušajte prilagoditi filtere ili pojam pretrage</p>
+        <h3>No products found</h3>
+        <p>Try adjusting filters or search term</p>
         <button mat-raised-button color="primary" (click)="clearFilters()">
-          Očisti Filtere
+          Clear Filters
         </button>
       </div>
 
@@ -153,10 +153,10 @@
           <div class="product-image" (click)="goToProduct(product.id)">
             <div class="image-placeholder"></div>
             <div class="product-badge" *ngIf="product.exclusive">
-              <span>EKSKLUZIVNO</span>
+              <span>EXCLUSIVE</span>
             </div>
             <div class="out-of-stock-overlay" *ngIf="isOutOfStock(product)">
-              <span>RASPRODATO</span>
+              <span>OUT OF STOCK</span>
             </div>
           </div>
           
@@ -171,7 +171,7 @@
             </div>
 
             <div class="product-variants" *ngIf="product.variants.length > 0">
-              <span class="variants-label">Dostupne veličine:</span>
+              <span class="variants-label">Available sizes:</span>
               <div class="variants-sizes">
                 <span 
                   *ngFor="let variant of product.variants" 
@@ -199,7 +199,7 @@
                 [disabled]="isOutOfStock(product)"
                 (click)="addToCart(product); $event.stopPropagation()">
                 <mat-icon>shopping_cart</mat-icon>
-                Dodaj u Korpu
+                Add to Cart
               </button>
             </div>
           </div>

@@ -1,12 +1,12 @@
 <h2 mat-dialog-title>
   <mat-icon>flag</mat-icon>
-  Prijavite recenziju
+  Report review
 </h2>
 
 <mat-dialog-content>
   <p class="dialog-description">
-    Prijavljujete recenziju korisnika <strong>{{ data.userName }}</strong>.
-    Molimo vas da navedete razlog prijave.
+    You are reporting a review by <strong>{{ data.userName }}</strong>.
+    Please specify the reason for the report.
   </p>
 
   <form [formGroup]="form">
@@ -41,7 +41,7 @@
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">
-    Otkaži
+    Cancel
   </button>
   <button 
     mat-raised-button 
@@ -49,6 +49,6 @@
     (click)="onSubmit()"
     [disabled]="form.invalid">
     <mat-icon>send</mat-icon>
-    Pošaljite prijavu
+    Submit report
   </button>
 </mat-dialog-actions>
