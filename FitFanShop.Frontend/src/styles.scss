@@ -102,3 +102,25 @@ body {
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+// ===========================
+// DIALOG BACKDROP BLUR
+// ===========================
+.cdk-overlay-backdrop {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+// ===========================
+// DIALOG OVERFLOW FIX
+// ===========================
+.mat-mdc-dialog-container {
+  overflow-x: hidden !important;
+  
+  .mat-mdc-dialog-surface {
+    overflow-x: hidden !important;
+  }
+}
+
+.cdk-overlay-pane {
+  overflow-x: hidden !important;
+}

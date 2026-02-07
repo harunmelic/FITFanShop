@@ -1,0 +1,112 @@
+{
+  "NAVBAR": {
+    "HOME": "Home",
+    "CATALOG": "Catalog",
+    "EVENT": "Event",
+    "ABOUT": "About Us",
+    "SEARCH": "Search...",
+    "CART": "Cart",
+    "LOGIN": "Login",
+    "PROFILE": "My Profile",
+    "LOGOUT": "Logout",
+    "ALL_CATEGORIES": "All Categories"
+  },
+  "DIALOGS": {
+    "LOGOUT": {
+      "TITLE": "Logout",
+      "MESSAGE": "Are you sure you want to logout?"
+    },
+    "BUTTONS": {
+      "OK": "OK",
+      "CANCEL": "Cancel",
+      "YES": "Confirm",
+      "NO": "No",
+      "CLOSE": "Close",
+      "DELETE": "Delete",
+      "SAVE": "Save"
+    },
+    "TITLES": {
+      "CONFIRM_DELETE": "Confirm Deletion",
+      "UNSAVED_CHANGES": "Unsaved Changes"
+    },
+    "MESSAGES": {
+      "DELETE_CONFIRM": "Are you sure you want to delete {{name}}?",
+      "UNSAVED_CHANGES": "You have unsaved changes. Do you want to continue without saving?"
+    }
+  },
+  "AUTH": {
+    "LOGIN": {
+      "TITLE": "Login",
+      "EMAIL": "Email",
+      "PASSWORD": "Password",
+      "SUBMIT": "Login",
+      "FORGOT_PASSWORD": "Forgot password?",
+      "NO_ACCOUNT": "Don't have an account?",
+      "REGISTER": "Register"
+    },
+    "REGISTER": {
+      "TITLE": "Register",
+      "FIRST_NAME": "First Name",
+      "LAST_NAME": "Last Name",
+      "EMAIL": "Email",
+      "PASSWORD": "Password",
+      "CONFIRM_PASSWORD": "Confirm Password",
+      "SUBMIT": "Register",
+      "HAVE_ACCOUNT": "Already have an account?",
+      "LOGIN": "Login"
+    },
+    "LOGOUT": {
+      "TITLE": "Logged Out",
+      "MESSAGE": "You have been successfully logged out.",
+      "REDIRECT_IN": "Redirecting in {{seconds}}s..."
+    }
+  },
+  "FOOTER": {
+    "ABOUT_US": "About Us",
+    "CONTACT": "Contact",
+    "PRIVACY_POLICY": "Privacy Policy",
+    "TERMS_OF_SERVICE": "Terms of Service",
+    "COPYRIGHT": "© 2026 FitFanShop. All rights reserved."
+  },
+  "COMMON": {
+    "LOADING": "Loading...",
+    "ERROR": "Error",
+    "SUCCESS": "Success",
+    "WARNING": "Warning",
+    "INFO": "Information",
+    "NO_DATA": "No data",
+    "SEARCH": "Search",
+    "FILTER": "Filter",
+    "SORT": "Sort",
+    "PRICE": "Price",
+    "QUANTITY": "Quantity",
+    "TOTAL": "Total",
+    "ADD_TO_CART": "Add to Cart",
+    "BUY_NOW": "Buy Now"
+  },
+  "CART": {
+    "TITLE": "Cart",
+    "EMPTY": "Your cart is empty",
+    "ITEMS": "items",
+    "SUBTOTAL": "Subtotal",
+    "SHIPPING": "Shipping",
+    "FREE": "Free",
+    "TOTAL": "Total",
+    "CHECKOUT": "Checkout",
+    "CONTINUE_SHOPPING": "Continue Shopping",
+    "REMOVE": "Remove"
+  },
+  "PRODUCT": {
+    "DETAILS": "Details",
+    "DESCRIPTION": "Description",
+    "SPECIFICATIONS": "Specifications",
+    "REVIEWS": "Reviews",
+    "RELATED_PRODUCTS": "Related Products",
+    "IN_STOCK": "In Stock",
+    "OUT_OF_STOCK": "Out of Stock",
+    "SIZE": "Size",
+    "COLOR": "Color",
+    "SELECT_SIZE": "Select Size",
+    "SELECT_COLOR": "Select Color"
+  }
+}

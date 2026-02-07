@@ -1,0 +1,112 @@
+{
+  "NAVBAR": {
+    "HOME": "Početna",
+    "CATALOG": "Katalog",
+    "EVENT": "Event",
+    "ABOUT": "O nama",
+    "SEARCH": "Pretraži...",
+    "CART": "Korpa",
+    "LOGIN": "Prijavi se",
+    "PROFILE": "Moj profil",
+    "LOGOUT": "Odjavi se",
+    "ALL_CATEGORIES": "Sve kategorije"
+  },
+  "DIALOGS": {
+    "LOGOUT": {
+      "TITLE": "Odjavi se",
+      "MESSAGE": "Da li ste sigurni da želite da se odjavite?"
+    },
+    "BUTTONS": {
+      "OK": "U redu",
+      "CANCEL": "Otkaži",
+      "YES": "Potvrdi",
+      "NO": "Ne",
+      "CLOSE": "Zatvori",
+      "DELETE": "Obriši",
+      "SAVE": "Sačuvaj"
+    },
+    "TITLES": {
+      "CONFIRM_DELETE": "Potvrdi brisanje",
+      "UNSAVED_CHANGES": "Nesačuvane promene"
+    },
+    "MESSAGES": {
+      "DELETE_CONFIRM": "Da li ste sigurni da želite da obrišete {{name}}?",
+      "UNSAVED_CHANGES": "Imate nesačuvane promene. Da li želite da nastavite bez čuvanja?"
+    }
+  },
+  "AUTH": {
+    "LOGIN": {
+      "TITLE": "Prijavi se",
+      "EMAIL": "Email",
+      "PASSWORD": "Lozinka",
+      "SUBMIT": "Prijavite se",
+      "FORGOT_PASSWORD": "Zaboravili ste lozinku?",
+      "NO_ACCOUNT": "Nemate nalog?",
+      "REGISTER": "Registrujte se"
+    },
+    "REGISTER": {
+      "TITLE": "Registruj se",
+      "FIRST_NAME": "Ime",
+      "LAST_NAME": "Prezime",
+      "EMAIL": "Email",
+      "PASSWORD": "Lozinka",
+      "CONFIRM_PASSWORD": "Potvrdi lozinku",
+      "SUBMIT": "Registruj se",
+      "HAVE_ACCOUNT": "Već imate nalog?",
+      "LOGIN": "Prijavite se"
+    },
+    "LOGOUT": {
+      "TITLE": "Uspešna odjava",
+      "MESSAGE": "Uspešno ste se odjavili sa naloga.",
+      "REDIRECT_IN": "Preusmeravanje za {{seconds}}s..."
+    }
+  },
+  "FOOTER": {
+    "ABOUT_US": "O nama",
+    "CONTACT": "Kontakt",
+    "PRIVACY_POLICY": "Politika privatnosti",
+    "TERMS_OF_SERVICE": "Uslovi korišćenja",
+    "COPYRIGHT": "© 2026 FitFanShop. Sva prava zadržana."
+  },
+  "COMMON": {
+    "LOADING": "Učitavanje...",
+    "ERROR": "Greška",
+    "SUCCESS": "Uspeh",
+    "WARNING": "Upozorenje",
+    "INFO": "Informacija",
+    "NO_DATA": "Nema podataka",
+    "SEARCH": "Pretraži",
+    "FILTER": "Filter",
+    "SORT": "Sortiraj",
+    "PRICE": "Cena",
+    "QUANTITY": "Količina",
+    "TOTAL": "Ukupno",
+    "ADD_TO_CART": "Dodaj u korpu",
+    "BUY_NOW": "Kupi odmah"
+  },
+  "CART": {
+    "TITLE": "Korpa",
+    "EMPTY": "Vaša korpa je prazna",
+    "ITEMS": "artikala",
+    "SUBTOTAL": "Međuzbroj",
+    "SHIPPING": "Dostava",
+    "FREE": "Besplatno",
+    "TOTAL": "Ukupno",
+    "CHECKOUT": "Nastavi na plaćanje",
+    "CONTINUE_SHOPPING": "Nastavi kupovinu",
+    "REMOVE": "Ukloni"
+  },
+  "PRODUCT": {
+    "DETAILS": "Detalji",
+    "DESCRIPTION": "Opis",
+    "SPECIFICATIONS": "Specifikacije",
+    "REVIEWS": "Recenzije",
+    "RELATED_PRODUCTS": "Slični proizvodi",
+    "IN_STOCK": "Na lageru",
+    "OUT_OF_STOCK": "Rasprodato",
+    "SIZE": "Veličina",
+    "COLOR": "Boja",
+    "SELECT_SIZE": "Izaberite veličinu",
+    "SELECT_COLOR": "Izaberite boju"
+  }
+}

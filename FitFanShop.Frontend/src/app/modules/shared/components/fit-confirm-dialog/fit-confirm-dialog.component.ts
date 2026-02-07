@@ -1,6 +1,6 @@
 // src/app/modules/shared/components/fit-confirm-dialog/fit-fit-confirm-dialog.component.ts
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogConfig, DialogButton, DialogType, DialogResult } from '../../models/dialog-config.model';
@@ -17,7 +17,7 @@ export class FitConfirmDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<FitConfirmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public config: DialogConfig,
-    private translate: TranslateService
+    @Optional() private translate: TranslateService | null
   ) {}
 
   onButtonClick(button: DialogButton, result?: any): void {
@@ -91,6 +91,20 @@ export class FitConfirmDialogComponent {
       return button.label;
     }
 
+    // If translate service not available, use default labels
+    if (!this.translate) {
+      const defaultLabels: { [key: string]: string } = {
+        'ok': 'U redu',
+        'cancel': 'Otkaži',
+        'yes': 'Potvrdi',
+        'no': 'Ne',
+        'close': 'Zatvori',
+        'delete': 'Obriši',
+        'save': 'Sačuvaj'
+      };
+      return defaultLabels[button.type] || button.type;
+    }
+
     // If has translation key, use it
     if (button.translationKey) {
       return this.translate.instant(button.translationKey);
@@ -101,14 +115,16 @@ export class FitConfirmDialogComponent {
   }
 
   getTitle(): string {
-    return this.config.titleKey
-      ? this.translate.instant(this.config.titleKey, this.config.titleParams)
-      : this.config.title ?? '';
+    if (this.config.titleKey && this.translate) {
+      return this.translate.instant(this.config.titleKey, this.config.titleParams);
+    }
+    return this.config.title ?? '';
   }
 
   getMessage(): string {
-    return this.config.messageKey
-      ? this.translate.instant(this.config.messageKey, this.config.messageParams)
-      : this.config.message ?? '';
+    if (this.config.messageKey && this.translate) {
+      return this.translate.instant(this.config.messageKey, this.config.messageParams);
+    }
+    return this.config.message ?? '';
   }
 }

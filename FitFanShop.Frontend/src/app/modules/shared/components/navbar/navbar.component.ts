@@ -10,6 +10,8 @@ import { CategoryDto } from '../../../../api-services/catalog/category-api.model
 import { ProductApiService } from '../../../../api-services/catalog/product-api.service';
 import { ProductDto } from '../../../../api-services/catalog/product-api.model';
 import { CartService } from '../../../../core/services/cart/cart.service';
+import { FitConfirmDialogComponent } from '../fit-confirm-dialog/fit-confirm-dialog.component';
+import { DialogType, DialogButton, DialogConfig } from '../../models/dialog-config.model';
 
 @Component({
   selector: 'app-navbar',
@@ -92,13 +94,32 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
-    this.auth.logout().subscribe({
-      next: () => {
-        this.closeProfileDropdown();
-        this.router.navigate(['/']);
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 100);
+    const dialogConfig: DialogConfig = {
+      type: DialogType.QUESTION,
+      title: 'Odjavi se',
+      message: 'Da li ste sigurni da želite da se odjavite?',
+      buttons: [
+        { type: DialogButton.CANCEL, label: 'Otkaži' },
+        { type: DialogButton.YES, label: 'Potvrdi' }
+      ]
+    };
+
+    const dialogRef = this.dialog.open(FitConfirmDialogComponent, {
+      width: '400px',
+      data: dialogConfig
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.button === DialogButton.YES) {
+        this.auth.logout().subscribe({
+          next: () => {
+            this.closeProfileDropdown();
+            this.router.navigate(['/']);
+            setTimeout(() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
+          }
+        });
       }
     });
   }
