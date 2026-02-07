@@ -13,14 +13,14 @@ const routes: Routes = [
       import('./modules/auth/auth-module').then(m => m.AuthModule)
   },
   {
-    path: 'admin',
-    loadChildren: () =>
-      import('./modules/admin/admin.module').then(m => m.AdminModule)
-  },
-  {
     path: 'catalog',
     loadChildren: () =>
       import('./modules/catalog/catalog-module').then(m => m.CatalogModule)
+  },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./modules/admin/admin.module').then(m => m.AdminModule)
   },
   // fallback 404
   { path: '**', redirectTo: '/' }

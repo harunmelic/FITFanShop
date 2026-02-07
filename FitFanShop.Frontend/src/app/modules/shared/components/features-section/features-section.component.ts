@@ -10,23 +10,23 @@ export class FeaturesSectionComponent {
   features = [
     {
       icon: 'shopping_cart',
-      title: 'BRZA DOSTAVA',
-      description: 'Poručite i kroz 48h proizvod je na vašoj adresi.'
+      title: 'FAST DELIVERY',
+      description: 'Order and get your product delivered to your address within 48 hours.'
     },
     {
       icon: 'verified',
-      title: 'KVALITET',
-      description: 'Izrađeno od najkvalitetnijih materijala na tržištu.'
+      title: 'QUALITY',
+      description: 'Made from the highest quality materials on the market.'
     },
     {
       icon: 'local_offer',
-      title: 'SUPER PONUDA',
-      description: 'Budite u toku sa popustima i raznim akcijama.'
+      title: 'GREAT OFFERS',
+      description: 'Stay updated with discounts and various promotions.'
     },
     {
       icon: 'lock',
-      title: 'SIGURNO PLAĆANJE',
-      description: '100% zagarantovano sigurno plaćanje.'
+      title: 'SECURE PAYMENT',
+      description: '100% guaranteed secure payment.'
     }
   ];
 }

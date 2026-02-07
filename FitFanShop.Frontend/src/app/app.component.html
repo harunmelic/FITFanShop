@@ -7,16 +7,13 @@
 <!-- Navbar -->
 <app-navbar *ngIf="!isAdminRoute"></app-navbar>
 
-<!-- Cart Sidebar -->
-<app-cart-sidebar *ngIf="!isAdminRoute"></app-cart-sidebar>
-
-<div [style.padding-top]="isAdminRoute ? '0' : '70px'">
-  <!-- Main Application Container -->
+<!-- Main Application Container -->
+<div class="main-content" [class.no-navbar]="isAdminRoute">
   <router-outlet></router-outlet>
-
-  <!-- Footer -->
-  <app-footer *ngIf="!isAdminRoute"></app-footer>
 </div>
 
-<!-- Scroll to Top Button -->
+<!-- Footer (only if not admin route) -->
+<app-footer *ngIf="!isAdminRoute"></app-footer>
+
+<!-- Scroll to Top Button (only if not admin route) -->
 <app-scroll-to-top *ngIf="!isAdminRoute"></app-scroll-to-top>

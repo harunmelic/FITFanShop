@@ -14,18 +14,18 @@ export class HeroSliderComponent implements OnInit, OnDestroy {
 
   slides = [
     {
-      title: 'UPOTPUNITE',
-      subtitle: 'VAŠU KOLEKCIJU',
-      buttonText: 'KUPI DRES',
+      title: 'COMPLETE',
+      subtitle: 'YOUR COLLECTION',
+      buttonText: 'BUY JERSEY',
       bgColor: '#f5f5f5',
       image: '/images/pictures/image-removebg-preview (1).png',
       actionType: 'catalog',
       categoryName: 'Jerseys'
     },
     {
-      title: 'POSTANI',
-      subtitle: 'ČLAN',
-      buttonText: 'POSTANI ČLAN',
+      title: 'BECOME',
+      subtitle: 'A MEMBER',
+      buttonText: 'BECOME A MEMBER',
       bgColor: '#e8e8e8',
       actionType: 'membership'
     }

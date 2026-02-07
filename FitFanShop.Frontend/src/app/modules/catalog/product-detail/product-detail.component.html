@@ -1,9 +1,9 @@
 <div class="product-detail-page" *ngIf="!isLoading() && product()">
   <!-- Breadcrumbs -->
   <div class="breadcrumbs">
-    <a [routerLink]="['/']">Početna</a>
+    <a [routerLink]="['/']">Home</a>
     <mat-icon>chevron_right</mat-icon>
-    <a (click)="navigateToCatalog()" style="cursor: pointer;">Katalog</a>
+    <a (click)="navigateToCatalog()" style="cursor: pointer;">Catalog</a>
     <mat-icon>chevron_right</mat-icon>
     <span>{{ product()!.name }}</span>
   </div>
@@ -15,10 +15,10 @@
       <div class="product-image">
         <div class="image-placeholder"></div>
         <div class="product-badge" *ngIf="product()!.exclusive">
-          <span>EKSKLUZIVNO</span>
+          <span>EXCLUSIVE</span>
         </div>
         <div class="out-of-stock-overlay" *ngIf="isOutOfStock()">
-          <span>RASPRODATO</span>
+          <span>OUT OF STOCK</span>
         </div>
       </div>
     </div>
@@ -49,7 +49,7 @@
 
       <!-- Size Selection -->
       <div class="size-selection" *ngIf="product()!.variants.length > 0">
-        <h3>Odaberi veličinu:</h3>
+        <h3>Select size:</h3>
         <div class="size-options">
           <button 
             *ngFor="let variant of product()!.variants"
@@ -60,17 +60,17 @@
             [disabled]="variant.stockQuantity === 0"
             (click)="selectVariant(variant)">
             {{ variant.size }}
-            <span class="stock-info" *ngIf="variant.stockQuantity === 0">(Rasprodato)</span>
+            <span class="stock-info" *ngIf="variant.stockQuantity === 0">(Out of stock)</span>
           </button>
         </div>
         <p class="stock-available" *ngIf="selectedVariant() && selectedVariant()!.stockQuantity > 0">
-          Na stanju: {{ selectedVariant()!.stockQuantity }} komada
+          In stock: {{ selectedVariant()!.stockQuantity }} items
         </p>
       </div>
 
       <!-- Quantity -->
       <div class="quantity-section" *ngIf="!isOutOfStock()">
-        <h3>Količina:</h3>
+        <h3>Quantity:</h3>
         <div class="quantity-controls">
           <button 
             mat-icon-button 
@@ -101,7 +101,7 @@
             (click)="addToCart()"
             *ngIf="currentUserService.currentUser(); else guestAddToCart">
             <mat-icon>shopping_cart</mat-icon>
-            Dodaj u korpu
+            Add to cart
           </button>
 
           <ng-template #guestAddToCart>
@@ -111,7 +111,7 @@
               class="add-to-cart-btn login-prompt"
               [routerLink]="['/auth/login']">
               <mat-icon>account_circle</mat-icon>
-              Prijavite se za kupovinu
+              Login to purchase
             </a>
           </ng-template>
 
@@ -128,7 +128,7 @@
           class="share-btn"
           (click)="shareProduct()">
           <mat-icon>share</mat-icon>
-          Podijeli proizvod
+          Share product
         </button>
       </div>
 
@@ -138,13 +138,13 @@
           <mat-expansion-panel-header>
             <mat-panel-title>
               <mat-icon>info</mat-icon>
-              Detalji proizvoda
+              Product details
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="detail-content">
             <p><strong>SKU:</strong> {{ selectedVariant()?.sku || 'N/A' }}</p>
-            <p><strong>Materijal:</strong> 100% pamuk</p>
-            <p><strong>Održavanje:</strong> Pranje na 30°C</p>
+            <p><strong>Material:</strong> 100% cotton</p>
+            <p><strong>Care:</strong> Wash at 30°C</p>
           </div>
         </mat-expansion-panel>
 
@@ -152,12 +152,12 @@
           <mat-expansion-panel-header>
             <mat-panel-title>
               <mat-icon>local_shipping</mat-icon>
-              Dostava i vraćanje
+              Shipping and returns
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="detail-content">
-            <p><strong>Besplatna dostava</strong> za naručivanje preko 100 KM</p>
-            <p><strong>Standardna dostava:</strong> 2-5 radnih dana</p>
+            <p><strong>Free shipping</strong> for orders over 100 KM</p>
+            <p><strong>Standard delivery:</strong> 2-5 business days</p>
           </div>
         </mat-expansion-panel>
       </div>
@@ -166,7 +166,7 @@
 
   <!-- Related Products -->
   <div class="related-products" *ngIf="relatedProducts().length > 0">
-    <h2>Slični proizvodi</h2>
+    <h2>Similar products</h2>
     <div class="products-grid">
       <div *ngFor="let relatedProduct of relatedProducts()" class="related-product-card" [routerLink]="['/catalog/product', relatedProduct.id]">
         <div class="product-image-small">
@@ -190,7 +190,7 @@
       </div>
       
       <ng-template #noReviewsYet>
-        <p class="no-reviews-text">Ovaj proizvod još uvijek nema recenzije.</p>
+        <p class="no-reviews-text">This product has no reviews yet.</p>
       </ng-template>
     </div>
 
@@ -199,29 +199,29 @@
       <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="review-form">
         
         <div class="rating-input-section">
-          <label>Vaša ocjena:</label>
+          <label>Your rating:</label>
           <app-rating-input formControlName="rating"></app-rating-input>
           <mat-error *ngIf="reviewForm.get('rating')?.touched && reviewForm.get('rating')?.hasError('required')">
-            Ocjena je obavezna
+            Rating is required
           </mat-error>
         </div>
 
         <mat-form-field appearance="outline" class="comment-field">
-          <mat-label>Vaš komentar</mat-label>
+          <mat-label>Your comment</mat-label>
           <textarea 
             matInput 
             formControlName="comment" 
             rows="4"
-            placeholder="Podijelite vaše iskustvo sa ovim proizvodom...">
+            placeholder="Share your experience with this product...">
           </textarea>
           <mat-error *ngIf="reviewForm.get('comment')?.hasError('required')">
-            Komentar je obavezan
+            Comment is required
           </mat-error>
           <mat-error *ngIf="reviewForm.get('comment')?.hasError('minlength')">
-            Minimum 10 karaktera
+            Minimum 10 characters
           </mat-error>
           <mat-error *ngIf="reviewForm.get('comment')?.hasError('maxlength')">
-            Maksimum 500 karaktera
+            Maximum 500 characters
           </mat-error>
         </mat-form-field>
 
@@ -234,7 +234,7 @@
             <mat-icon *ngIf="isSubmittingReview()">hourglass_empty</mat-icon>
             <mat-icon *ngIf="!canUserReview() && !isSubmittingReview()">block</mat-icon>
             <mat-icon *ngIf="canUserReview() && !isSubmittingReview()">send</mat-icon>
-            {{ isSubmittingReview() ? 'Šalje se...' : (!canUserReview() ? 'Niste kupili proizvod' : 'Pošaljite recenziju') }}
+            {{ isSubmittingReview() ? 'Sending...' : (!canUserReview() ? 'You haven\'t purchased the product' : 'Submit review') }}
           </button>
         </div>
       </form>
@@ -243,19 +243,19 @@
     <!-- Message for users who can't review -->
     <div class="cannot-review-message" *ngIf="!canUserReview() && currentUserService.currentUser()">
       <mat-icon>info</mat-icon>
-      <p>{{ canReviewReason() || 'Možete ostaviti recenziju samo za proizvode koje ste kupili.' }}</p>
+      <p>{{ canReviewReason() || 'You can only review products you have purchased.' }}</p>
     </div>
 
     <!-- Message for non-logged users to add review -->
     <div class="login-required-message" *ngIf="!currentUserService.currentUser() && reviewSummary().reviews && reviewSummary().reviews.length > 0">
       <mat-icon>account_circle</mat-icon>
-      <p>Da ostavite svoju recenziju, molimo <a [routerLink]="['/auth/login']">prijavite se</a>.</p>
+      <p>To leave your review, please <a [routerLink]="['/auth/login']">log in</a>.</p>
     </div>
 
     <!-- 📝 REVIEWS CAROUSEL -->
     <div class="reviews-carousel" *ngIf="reviewSummary().reviews && reviewSummary().reviews.length > 0">
       <div class="carousel-header">
-        <h3>Recenzije ({{ reviewSummary().totalReviews }})</h3>
+        <h3>Reviews ({{ reviewSummary().totalReviews }})</h3>
         <div class="carousel-controls">
           <button 
             mat-icon-button 
@@ -288,7 +288,7 @@
             mat-icon-button 
             class="autoplay-btn"
             [class.playing]="isCarouselPlaying()"
-            [matTooltip]="isCarouselPlaying() ? 'Zaustavi automatsko puštanje' : 'Pokreni automatsko puštanje'"
+            [matTooltip]="isCarouselPlaying() ? 'Stop autoplay' : 'Start autoplay'"
             (click)="toggleAutoPlay()">
             <mat-icon>{{ isCarouselPlaying() ? 'pause' : 'play_arrow' }}</mat-icon>
           </button>
@@ -307,7 +307,7 @@
                   <div class="user-name-row">
                     <span class="user-name">{{ review.userName }}</span>
                     <span *ngIf="review.isVerifiedPurchase" class="verified-badge">
-                      <mat-icon>verified</mat-icon> Verifikovana kupovina
+                      <mat-icon>verified</mat-icon> Verified purchase
                     </span>
                   </div>
                   <div class="rating-row">
@@ -323,7 +323,7 @@
                 <button 
                   mat-icon-button 
                   class="report-btn"
-                  matTooltip="Prijavite neprikladan sadržaj"
+                  matTooltip="Report inappropriate content"
                   (click)="openReportDialog(review)">
                   <mat-icon>flag</mat-icon>
                 </button>
@@ -344,15 +344,15 @@
 <!-- Loading State -->
 <div class="loading-state" *ngIf="isLoading()">
   <mat-spinner diameter="50"></mat-spinner>
-  <p>Učitavanje proizvoda...</p>
+  <p>Loading product...</p>
 </div>
 
 <!-- Product Not Found -->
 <div class="loading-state" *ngIf="!isLoading() && !product()">
   <mat-icon>error_outline</mat-icon>
-  <h3>Proizvod nije pronađen</h3>
-  <p>Traženi proizvod ne postoji ili nije dostupan.</p>
+  <h3>Product not found</h3>
+  <p>The requested product does not exist or is not available.</p>
   <button mat-raised-button color="primary" (click)="navigateToCatalog()">
-    Nazad na katalog
+    Back to catalog
   </button>
 </div>

@@ -10,12 +10,12 @@
 
     <!-- Navigation Links -->
     <div class="navbar-links">
-      <a href="/" class="nav-link">POČETNA</a>
+      <a href="/" class="nav-link">HOME</a>
       
-      <!-- Katalog Dropdown -->
+      <!-- Catalog Dropdown -->
 <div class="nav-link-dropdown">
         <a class="nav-link" (mouseenter)="toggleKatalogDropdown()" (click)="navigateToCatalog()">
-          KATALOG ▼
+          CATALOG ▼
         </a>
         <div class="dropdown-menu" *ngIf="isKatalogDropdownOpen" (mouseleave)="closeKatalogDropdown()">
           <a class="dropdown-item highlight" (click)="navigateToCatalog()">
@@ -27,13 +27,13 @@
             <a class="dropdown-item" (click)="navigateToCatalog(category.id)">{{ category.name }}</a>
           }
           @empty {
-            <span class="dropdown-item">Nema dostupnih kategorija</span>
+            <span class="dropdown-item">No categories available</span>
           }
         </div>
       </div>
       
       <a href="#" class="nav-link">EVENT</a>
-      <a href="#" class="nav-link" (click)="scrollToFooter(); $event.preventDefault()">O NAMA</a>
+      <a href="#" class="nav-link" (click)="scrollToFooter(); $event.preventDefault()">ABOUT US</a>
     </div>
 
     <!-- Icons -->
@@ -60,7 +60,7 @@
               <span class="profile-name">
                 {{ auth.currentUser()?.firstName && auth.currentUser()?.lastName 
                   ? auth.currentUser()?.firstName + ' ' + auth.currentUser()?.lastName 
-                  : 'Korisnik' }}
+                  : 'User' }}
               </span>
               <span class="profile-email">{{ auth.currentUser()?.email }}</span>
             </div>
@@ -68,11 +68,11 @@
           <div class="profile-menu-divider"></div>
           <a class="profile-menu-item" (click)="closeProfileDropdown()">
             <mat-icon>account_circle</mat-icon>
-            <span>Moj Profil</span>
+            <span>My Profile</span>
           </a>
           <a class="profile-menu-item" (click)="logout()">
             <mat-icon>logout</mat-icon>
-            <span>Odjavi se</span>
+            <span>Logout</span>
           </a>
         </div>
       </div>
@@ -93,7 +93,7 @@
       <input 
         type="text" 
         class="search-input" 
-        placeholder="Pretražite proizvode..."
+        placeholder="Search products..."
         [formControl]="searchControl"
         autocomplete="off"
       >
@@ -107,20 +107,20 @@
     <!-- Loading State -->
     <div class="search-loading" *ngIf="isSearching()">
       <mat-spinner diameter="40"></mat-spinner>
-      <p>Pretraga...</p>
+      <p>Searching...</p>
     </div>
 
     <!-- No Results -->
     <div class="search-empty" *ngIf="searchResults().length === 0 && !isSearching()">
-      <p>{{ searchResults().length }} Rezultata</p>
-      <a (click)="viewAllResults()" class="view-all-link">Pogledaj sve</a>
+      <p>{{ searchResults().length }} Results</p>
+      <a (click)="viewAllResults()" class="view-all-link">View all</a>
     </div>
 
     <!-- Results Grid -->
     <div class="search-results-grid" *ngIf="searchResults().length > 0">
       <div class="results-header">
-        <p>{{ searchResults().length }} Rezultata</p>
-        <a (click)="viewAllResults()" class="view-all-link">Pogledaj sve</a>
+        <p>{{ searchResults().length }} Results</p>
+        <a (click)="viewAllResults()" class="view-all-link">View all</a>
       </div>
       <div class="results-grid">
         <div 

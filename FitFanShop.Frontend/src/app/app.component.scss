@@ -1,0 +1,8 @@
+.main-content {
+  padding-top: 70px; // Height of fixed navbar
+  min-height: 100vh;
+  
+  &.no-navbar {
+    padding-top: 0; // No padding for admin routes (no navbar)
+  }
+}

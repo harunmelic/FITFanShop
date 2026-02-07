@@ -1,6 +1,6 @@
 <div class="products-slider-section">
   <div class="section-header" *ngIf="slides && slides.length > 0 && slides[currentSlide]">
-    <h2>{{ slides[currentSlide]?.title || 'PONUDA' }}</h2>
+    <h2>{{ slides[currentSlide]?.title || 'OFFERS' }}</h2>
     <a (click)="navigateToCatalog()" class="go-to-shop" style="cursor: pointer;">GO TO SHOP</a>
   </div>
 
@@ -13,13 +13,13 @@
           <div class="product-image">
             <div class="placeholder"></div>
             <button class="add-to-cart" (click)="addToCart(product); $event.stopPropagation()">
-              DODAJ U KORPU
+              ADD TO CART
             </button>
           </div>
           <div class="product-info">
             <h3>{{ product.name }}</h3>
             <div class="product-variants" *ngIf="product.variants && product.variants.length > 0">
-              <span class="variants-label">Veličine:</span>
+              <span class="variants-label">Sizes:</span>
               <div class="variants-sizes">
                 <span *ngFor="let variant of product.variants" 
                       class="size-badge"
