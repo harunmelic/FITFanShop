@@ -17,6 +17,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./modules/catalog/catalog-module').then(m => m.CatalogModule)
   },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./modules/admin/admin.module').then(m => m.AdminModule)
+  },
   // fallback 404
   { path: '**', redirectTo: '/' }
 ];

@@ -14,6 +14,7 @@ import {
   RegisterCommand,
   GetSecurityQuestionResponse,
   VerifySecurityAnswerCommand,
+  VerifySecurityAnswerResponse,
   ResetPasswordCommand,
 } from '../../../api-services/auth/auth-api.model';
 
@@ -98,15 +99,15 @@ export class AuthFacadeService {
   /**
    * Verify security answer for password reset.
    */
-  verifySecurityAnswer(email: string, securityAnswer: string): Observable<void> {
+  verifySecurityAnswer(email: string, securityAnswer: string): Observable<VerifySecurityAnswerResponse> {
     return this.api.verifySecurityAnswer({ email, securityAnswer });
   }
 
   /**
    * Reset password using security answer.
    */
-  resetPassword(email: string, securityAnswer: string, newPassword: string, confirmPassword: string): Observable<void> {
-    return this.api.resetPassword({ email, securityAnswer, newPassword, confirmPassword });
+  resetPassword(email: string, resetToken: string, newPassword: string, confirmNewPassword: string): Observable<void> {
+    return this.api.resetPassword({ email, resetToken, newPassword, confirmNewPassword });
   }
 
   /**

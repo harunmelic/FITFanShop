@@ -73,11 +73,17 @@ export interface VerifySecurityAnswerCommand {
   securityAnswer: string;
 }
 
+export interface VerifySecurityAnswerResponse {
+  isValid: boolean;
+  message?: string;
+  resetToken?: string;
+}
+
 export interface ResetPasswordCommand {
   email: string;
-  securityAnswer: string;
+  resetToken: string;
   newPassword: string;
-  confirmPassword: string;
+  confirmNewPassword: string;
 }
 
 /**
