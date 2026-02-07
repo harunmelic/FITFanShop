@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProductsApiService } from '../../../api-services/products/products-api.service';
 import { Product } from '../../../api-services/products/products-api.model';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
+import { EditProductDialogComponent } from './edit-product-dialog/edit-product-dialog.component';
 
 @Component({
   selector: 'app-products',
@@ -30,7 +31,28 @@ export class ProductsComponent implements OnInit {
     
     this.productsApiService.getProducts().subscribe({
       next: (response) => {
-        this.products = response.products;
+        console.log('API Response:', response);
+        console.log('Response type:', typeof response);
+        console.log('Is array?', Array.isArray(response));
+        
+        // Check if response is directly an array
+        if (Array.isArray(response)) {
+          this.products = response;
+        } else if (response && response.products) {
+          this.products = response.products;
+        } else {
+          this.products = [];
+          console.warn('Unexpected API response structure');
+        }
+        
+        console.log('Products loaded:', this.products.length);
+        
+        // Check isEnabled property
+        if (this.products.length > 0) {
+          console.log('First product isEnabled:', this.products[0].isEnabled);
+          console.log('First product full object:', this.products[0]);
+        }
+        
         this.isLoading = false;
       },
       error: (error) => {
@@ -51,6 +73,25 @@ export class ProductsComponent implements OnInit {
       if (result) {
         // Product created successfully, refresh list
         this.loadProducts();
+      }
+    });
+  }
+
+  openEditProductDialog(product: Product): void {
+    const dialogRef = this.dialog.open(EditProductDialogComponent, {
+      width: '600px',
+      disableClose: false,
+      data: { product: product }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog closed with result:', result);
+      if (result) {
+        // Product updated successfully, refresh list
+        console.log('Refreshing products list...');
+        this.loadProducts();
+      } else {
+        console.log('Dialog closed without result, not refreshing');
       }
     });
   }

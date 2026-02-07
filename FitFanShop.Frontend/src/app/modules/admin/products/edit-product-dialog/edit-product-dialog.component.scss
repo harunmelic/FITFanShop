@@ -1,4 +1,4 @@
-.add-product-dialog {
+.edit-product-dialog {
   width: 500px;
   max-width: 95vw;
   display: flex;
@@ -102,6 +102,21 @@
         color: #e74c3c;
         margin-top: -2px;
       }
+
+      &.checkbox-group {
+        label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+          font-size: 13px;
+
+          input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+          }
+        }
+      }
     }
   }
 
@@ -149,7 +164,7 @@
 }
 
 @media (max-width: 768px) {
-  .add-product-dialog {
+  .edit-product-dialog {
     .product-form {
       .form-row {
         grid-template-columns: 1fr;

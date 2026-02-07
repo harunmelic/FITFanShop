@@ -18,10 +18,10 @@ export class ProductsApiService {
 
   /**
    * GET /api/products
-   * Get all products
+   * Get all products (currently only returns enabled products)
    */
-  getProducts(): Observable<GetProductsResponse> {
-    return this.http.get<GetProductsResponse>(`${this.baseUrl}`);
+  getProducts(pageSize: number = 1000): Observable<GetProductsResponse> {
+    return this.http.get<GetProductsResponse>(`${this.baseUrl}?pageSize=${pageSize}`);
   }
 
   /**

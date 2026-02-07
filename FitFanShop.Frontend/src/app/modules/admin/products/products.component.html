@@ -22,11 +22,11 @@
         <button class="btn-primary" (click)="openAddProductDialog()">Dodaj novi proizvod</button>
       </div>
 
-      <div *ngIf="products.length === 0" class="empty-state">
+      <div *ngIf="products && products.length === 0" class="empty-state">
         <p>Nema proizvoda u bazi.</p>
       </div>
 
-      <table *ngIf="products.length > 0" class="products-table">
+      <table *ngIf="products && products.length > 0" class="products-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -45,15 +45,15 @@
             <td>{{ product.name }}</td>
             <td>{{ product.description || 'N/A' }}</td>
             <td>{{ product.price | currency:'EUR' }}</td>
-            <td>{{ product.categoryName || 'N/A' }}</td>
+            <td>{{ product.categoryName || (product.categoryIds && product.categoryIds.length > 0 ? 'ID: ' + product.categoryIds.join(', ') : 'N/A') }}</td>
             <td>{{ product.stock || 0 }}</td>
             <td>
-              <span class="badge" [class.active]="product.isActive" [class.inactive]="!product.isActive">
-                {{ product.isActive ? 'Aktivan' : 'Neaktivan' }}
+              <span class="badge" [class.active]="product.isEnabled" [class.inactive]="!product.isEnabled">
+                {{ product.isEnabled ? 'Aktivan' : 'Neaktivan' }}
               </span>
             </td>
             <td class="actions">
-              <button class="btn-edit">Izmeni</button>
+              <button class="btn-edit" (click)="openEditProductDialog(product)">Izmeni</button>
               <button class="btn-delete" (click)="deleteProduct(product.id)">Obriši</button>
             </td>
           </tr>

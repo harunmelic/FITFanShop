@@ -1,6 +1,6 @@
-<div class="add-product-dialog">
+<div class="edit-product-dialog">
   <div class="dialog-header">
-    <h2>Add New Product</h2>
+    <h2>Edit Product</h2>
   </div>
   
   <div class="dialog-content">
@@ -65,6 +65,14 @@
         <label>Image URL</label>
         <input type="text" formControlName="imageUrl" placeholder="https://example.com/image.jpg">
       </div>
+
+      <!-- Is Enabled -->
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" formControlName="isEnabled">
+          <span>Product is active</span>
+        </label>
+      </div>
     </form>
   </div>
 
@@ -73,8 +81,8 @@
       Cancel
     </button>
     <button class="btn btn-save" (click)="onSubmit()" [disabled]="isSubmitting">
-      <span *ngIf="!isSubmitting">Save</span>
-      <span *ngIf="isSubmitting">Saving...</span>
+      <span *ngIf="!isSubmitting">Update</span>
+      <span *ngIf="isSubmitting">Updating...</span>
     </button>
   </div>
 </div>

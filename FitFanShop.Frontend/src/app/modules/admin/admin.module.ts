@@ -7,6 +7,7 @@ import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { ProductsComponent } from './products/products.component';
 import { PicturesComponent } from './pictures/pictures.component';
 import { AddProductDialogComponent } from './products/add-product-dialog/add-product-dialog.component';
+import { EditProductDialogComponent } from './products/edit-product-dialog/edit-product-dialog.component';
 import { materialModules } from '../shared/material-modules';
 
 @NgModule({
@@ -15,7 +16,8 @@ import { materialModules } from '../shared/material-modules';
     AdminLayoutComponent,
     ProductsComponent,
     PicturesComponent,
-    AddProductDialogComponent
+    AddProductDialogComponent,
+    EditProductDialogComponent
   ],
   imports: [
     CommonModule,

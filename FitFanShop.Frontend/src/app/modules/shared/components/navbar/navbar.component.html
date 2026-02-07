@@ -70,6 +70,10 @@
             <mat-icon>account_circle</mat-icon>
             <span>My Profile</span>
           </a>
+          <a class="profile-menu-item" *ngIf="auth.isAdmin()" [routerLink]="['/admin']" (click)="closeProfileDropdown()">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>Admin Panel</span>
+          </a>
           <a class="profile-menu-item" (click)="logout()">
             <mat-icon>logout</mat-icon>
             <span>Logout</span>
