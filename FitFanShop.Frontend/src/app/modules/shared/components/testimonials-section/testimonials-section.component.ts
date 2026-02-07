@@ -11,7 +11,7 @@ export class TestimonialsSectionComponent {
 
   testimonials = [
     {
-      text: 'Prezadovoljan sam uslugama FITs FanShopa. Preporučujem svakom da poruči neki od proizvoda i sam se uvjeri u kvalitet!',
+      text: 'Prezadovoljan sam uslugama FitFanShopa. Preporučujem svakom da poruči neki od proizvoda i sam se uvjeri u kvalitet!',
       author: 'DANIS MAMELEDŽIJA',
       rating: 5
     },
@@ -21,7 +21,7 @@ export class TestimonialsSectionComponent {
       rating: 5
     },
     {
-      text: 'Sve pohvale za FITs FanShop! Profesionalna usluga i vrhunski proizvodi.',
+      text: 'Sve pohvale za FitFanShop! Profesionalna usluga i vrhunski proizvodi.',
       author: 'HARUN MELIĆ',
       rating: 5
     }

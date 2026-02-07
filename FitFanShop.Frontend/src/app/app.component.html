@@ -1,13 +1,11 @@
-<!-- Loading Screen (globalno) -->
+<!-- Loading Screen -->
 <app-loading-screen></app-loading-screen>
 
 <!-- Global Loading Bar (shown during HTTP requests) -->
 <app-fit-loading-bar></app-fit-loading-bar>
 
-<!-- Landing Page Components (samo ako nije admin ruta) -->
-<ng-container *ngIf="!isAdminRoute">
-  <!-- Navbar -->
-  <app-navbar></app-navbar>
+<!-- Navbar -->
+<app-navbar *ngIf="!isAdminRoute"></app-navbar>
 
   <!-- Hero Slider -->
   <app-hero-slider></app-hero-slider>

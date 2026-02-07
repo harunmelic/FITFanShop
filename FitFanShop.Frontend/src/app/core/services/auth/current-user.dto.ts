@@ -6,5 +6,6 @@ export interface CurrentUserDto {
   isAdmin: boolean;
   isManager: boolean;
   isEmployee: boolean;
+  isMember: boolean; // Premium membership status for 10% discount
   tokenVersion: number;
 }

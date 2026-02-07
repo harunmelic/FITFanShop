@@ -1,0 +1,54 @@
+.membership-dialog {
+  padding: 32px;
+  text-align: center;
+  max-width: 500px;
+
+  .dialog-content {
+    .icon-section {
+      margin-bottom: 24px;
+
+      .lock-icon {
+        font-size: 72px;
+        width: 72px;
+        height: 72px;
+        color: #ff5722;
+      }
+    }
+
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 16px 0;
+      letter-spacing: 1px;
+    }
+
+    .message {
+      font-size: 18px;
+      color: #666;
+      margin: 0 0 32px 0;
+      line-height: 1.6;
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .member-btn {
+      width: 100%;
+      height: 48px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .cancel-btn {
+      width: 100%;
+      height: 48px;
+      font-size: 14px;
+      color: #666;
+    }
+  }
+}

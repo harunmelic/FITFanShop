@@ -34,6 +34,9 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, LoginComm
         if (emailExists)
             throw new FitFanShopBusinessRuleException("EMAIL_ALREADY_EXISTS", "User with this email already exists.");
 
+        // Normalize the security answer before hashing (trim and lowercase)
+        var normalizedSecurityAnswer = request.SecurityAnswer.Trim().ToLowerInvariant();
+        
         var user = new FitFanShopUserEntity
         {
             FirstName = request.FirstName.Trim(),
@@ -43,7 +46,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, LoginComm
             IsEnabled = true,
             RegistrationDate = DateTime.UtcNow,
             SecurityQuestion = request.SecurityQuestion,
-            SecurityAnswerHash = _hasher.HashPassword(null, request.SecurityAnswer)
+            SecurityAnswerHash = _hasher.HashPassword(null, normalizedSecurityAnswer)
         };
 
         user.PasswordHash = _hasher.HashPassword(user, request.Password);

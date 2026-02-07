@@ -46,6 +46,7 @@ public class GetCartQueryHandler : IRequestHandler<GetCartQuery, CartDto>
             {
                 Id = i.Id,
                 ProductVariantId = i.ProductVariantId,
+                ProductId = i.ProductVariant?.Product?.Id,
                 ProductName = i.ProductVariant?.Product?.Name,
                 Size = i.ProductVariant?.Size,
                 ImageUrl = i.ProductVariant?.Product?.Image,

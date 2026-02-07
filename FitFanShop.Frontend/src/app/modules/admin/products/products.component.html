@@ -19,7 +19,7 @@
     <div *ngIf="!isLoading && !errorMessage" class="content-card">
       <div class="card-header">
         <h3>Lista proizvoda</h3>
-        <button class="btn-primary">Dodaj novi proizvod</button>
+        <button class="btn-primary" (click)="openAddProductDialog()">Dodaj novi proizvod</button>
       </div>
 
       <div *ngIf="products.length === 0" class="empty-state">

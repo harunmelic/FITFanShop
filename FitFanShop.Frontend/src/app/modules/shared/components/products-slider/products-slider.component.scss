@@ -142,11 +142,210 @@
     color: #333;
   }
 
-  .price {
-    font-size: 16px;
-    font-weight: 500;
-    color: #4A90E2;
-    margin: 0;
+  .product-variants {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+
+    .variants-label {
+      font-size: 11px;
+      color: #666;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .variants-sizes {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .size-badge {
+      padding: 3px 8px;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #333;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #1976d2;
+        color: white;
+        border-color: #1976d2;
+      }
+
+      &.out-of-stock {
+        background: #ffebee;
+        color: #d32f2f;
+        border-color: #ffcdd2;
+        text-decoration: line-through;
+        opacity: 0.6;
+      }
+    }
+  }
+
+  .price-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+
+    .price-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+
+      .original-price {
+        font-size: 12px;
+        color: #999;
+        text-decoration: line-through;
+      }
+
+      .price {
+        font-size: 16px;
+        font-weight: 500;
+        color: #4A90E2;
+
+        &.discounted {
+          color: #e74c3c;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .discount-badge {
+      background: #e74c3c;
+      color: white;
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+  }
+}
+
+// Variant Selector Overlay
+.variant-selector-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: fadeIn 0.2s ease;
+
+  .variant-selector-content {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 280px;
+    position: relative;
+
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #999;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #333;
+      }
+    }
+
+    h4 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      padding-right: 32px;
+    }
+
+    .selector-label {
+      font-size: 13px;
+      color: #666;
+      margin: 0 0 12px 0;
+    }
+
+    .variant-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .variant-btn {
+        padding: 10px 16px;
+        background: #f5f5f5;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        &:hover:not(:disabled) {
+          background: #1976d2;
+          color: white;
+          border-color: #1976d2;
+        }
+
+        &.selected {
+          background: #1976d2;
+          color: white;
+          border-color: #1976d2;
+        }
+
+        &.out-of-stock {
+          background: #ffebee;
+          color: #c62828;
+          border-color: #ef9a9a;
+          text-decoration: line-through;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+
+        .stock-badge {
+          font-size: 11px;
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

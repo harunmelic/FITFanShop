@@ -22,6 +22,11 @@ import { NewsletterSectionComponent } from './components/newsletter-section/news
 import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.component';
 import { LoadingScreenComponent } from './components/loading-screen/loading-screen.component';
 import { ForgotPasswordDialogComponent } from './components/forgot-password-dialog/forgot-password-dialog.component';
+import { CartSidebarComponent } from './components/cart-sidebar/cart-sidebar.component';
+import { CartItemComponent } from './components/cart-item/cart-item.component';
+import { CartSkeletonComponent } from './components/cart-skeleton/cart-skeleton.component';
+import { ProductVariantSelectorComponent } from './components/product-variant-selector/product-variant-selector.component';
+import { MembershipRequiredDialogComponent } from './components/membership-required-dialog/membership-required-dialog.component';
 
 
 
@@ -43,7 +48,12 @@ import { ForgotPasswordDialogComponent } from './components/forgot-password-dial
     TestimonialsSectionComponent,
     NewsletterSectionComponent,
     ScrollToTopComponent,
-    LoadingScreenComponent
+    LoadingScreenComponent,
+    CartSidebarComponent,
+    CartItemComponent,
+    CartSkeletonComponent,
+    ProductVariantSelectorComponent,
+    MembershipRequiredDialogComponent
   ],
   imports: [
     CommonModule,
@@ -75,6 +85,7 @@ import { ForgotPasswordDialogComponent } from './components/forgot-password-dial
     NewsletterSectionComponent,
     ScrollToTopComponent,
     LoadingScreenComponent,
+    CartSidebarComponent,
     materialModules
   ]
 })

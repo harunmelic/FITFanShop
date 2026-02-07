@@ -10,6 +10,9 @@ export interface ProductDto {
   name: string;
   description: string;
   price: number;
+  originalPrice?: number;
+  discountPercentage?: number;
+  imageUrl?: string;
   isEnabled: boolean;
   exclusive: boolean;
   categoryIds: number[];

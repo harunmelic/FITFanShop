@@ -1,7 +1,7 @@
 <div class="products-slider-section">
   <div class="section-header">
     <h2>{{ slides[currentSlide].title }}</h2>
-    <a href="#" class="go-to-shop">GO TO SHOP</a>
+    <a [routerLink]="['/catalog']" class="go-to-shop">GO TO SHOP</a>
   </div>
 
   <div class="slider-container">
@@ -9,14 +9,34 @@
          *ngFor="let slide of slides; let i = index"
          [class.active]="i === currentSlide">
       <div class="products-grid">
-        <div class="product-card" *ngFor="let product of slide.products">
+        <div class="product-card" *ngFor="let product of slide.products" (click)="goToProduct(product.id)">
           <div class="product-image">
             <div class="placeholder"></div>
-            <button class="add-to-cart" (click)="addToCart(product); $event.stopPropagation()">DODAJ U KORPU 🛍️</button>
+            <button class="add-to-cart" (click)="addToCart(product); $event.stopPropagation()">
+              DODAJ U KORPU
+            </button>
           </div>
           <div class="product-info">
             <h3>{{ product.name }}</h3>
-            <p class="price">{{ product.price }}KM</p>
+            <div class="product-variants" *ngIf="product.variants && product.variants.length > 0">
+              <span class="variants-label">Veličine:</span>
+              <div class="variants-sizes">
+                <span *ngFor="let variant of product.variants" 
+                      class="size-badge"
+                      [class.out-of-stock]="variant.stockQuantity === 0">
+                  {{ variant.size }}
+                </span>
+              </div>
+            </div>
+            <div class="price-section">
+              <div class="price-container">
+                <span class="original-price" *ngIf="getProductDiscount(product).hasDiscount">{{ getProductDiscount(product).originalPrice | number:'1.2-2' }}KM</span>
+                <span class="price" [class.discounted]="getProductDiscount(product).hasDiscount">
+                  {{ getProductDiscount(product).hasDiscount ? (getProductDiscount(product).discountedPrice | number:'1.2-2') : (product.price | number:'1.2-2') }}KM
+                </span>
+              </div>
+              <span class="discount-badge" *ngIf="getProductDiscount(product).hasDiscount">-{{ getProductDiscount(product).discountPercent }}%</span>
+            </div>
           </div>
         </div>
       </div>

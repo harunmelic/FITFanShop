@@ -1,0 +1,244 @@
+<div class="catalog-page">
+  <!-- Header Section -->
+  <div class="catalog-header">
+    <h1>Katalog Proizvoda</h1>
+    <p class="catalog-subtitle">Pregledaj i filtriraj našu ponudu</p>
+  </div>
+
+  <!-- Filters & Products Section -->
+  <div class="catalog-content">
+    <!-- Sidebar Filters -->
+    <aside class="filters-sidebar">
+      <div class="filters-header">
+        <h3>Filteri</h3>
+        <button mat-button class="clear-btn" (click)="clearFilters()">
+          Očisti Sve
+        </button>
+      </div>
+
+      <!-- Search Filter -->
+      <div class="filter-section">
+        <h4>Pretraga</h4>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput 
+                 placeholder="Pretraži proizvode..." 
+                 [formControl]="searchControl">
+        </mat-form-field>
+      </div>
+
+      <!-- Category Filter -->
+      <div class="filter-section" *ngIf="categories().length > 0">
+        <h4>Kategorije</h4>
+        <div class="category-filters">
+          <button 
+            mat-stroked-button
+            class="category-filter-btn"
+            [class.active]="selectedCategoryId() === null"
+            (click)="onCategorySelect(null)">
+            <mat-icon>apps</mat-icon>
+            Svi Proizvodi
+            <span class="count">({{ products().length }})</span>
+          </button>
+          <button 
+            *ngFor="let category of categories()" 
+            mat-stroked-button
+            class="category-filter-btn"
+            [class.active]="selectedCategoryId() === category.id"
+            (click)="onCategorySelect(category.id)">
+            {{ category.name }}
+            <span class="count">({{ getProductCountByCategory(category.id) }})</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Price Filter -->
+      <div class="filter-section">
+        <h4>Raspon Cijene</h4>
+        <div class="price-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Min</mat-label>
+            <input matInput 
+                   type="number" 
+                   placeholder="0"
+                   (change)="onPriceRangeChange($any($event.target).value, maxPrice())">
+            <span matSuffix>KM</span>
+          </mat-form-field>
+          <span class="price-separator">-</span>
+          <mat-form-field appearance="outline">
+            <mat-label>Max</mat-label>
+            <input matInput 
+                   type="number" 
+                   (change)="onPriceRangeChange(minPrice(), $any($event.target).value)">
+            <span matSuffix>KM</span>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Size Filter -->
+      <div class="filter-section" *ngIf="availableSizes().length > 0">
+        <h4>Veličine</h4>
+        <div class="size-filters">
+          <button 
+            *ngFor="let size of availableSizes()" 
+            mat-stroked-button
+            class="size-filter-btn"
+            [class.active]="selectedSizes().includes(size)"
+            (click)="onSizeToggle(size)">
+            {{ size }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Filters Summary -->
+      <div class="active-filters" *ngIf="hasActiveFilters()">
+        <h4>Aktivni Filteri</h4>
+        <div class="filter-chips">
+          <mat-chip *ngIf="selectedCategoryId()" (removed)="onCategorySelect(null)">
+            {{ getCategoryName(selectedCategoryId()!) }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+          <mat-chip *ngIf="searchControl.value" (removed)="searchControl.setValue('')">
+            "{{ searchControl.value }}"
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+          <mat-chip *ngFor="let size of selectedSizes()" (removed)="onSizeToggle(size)">
+            Veličina: {{ size }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Products Area -->
+    <main class="products-area">
+      <!-- Toolbar -->
+      <div class="products-toolbar">
+        <div class="results-count">
+          <strong>{{ filteredProducts().length }}</strong> proizvoda pronađeno
+        </div>
+        <div class="sort-controls">
+          <mat-form-field appearance="outline" class="sort-field">
+            <mat-label>Sortiraj po</mat-label>
+            <mat-select [value]="sortBy()" (selectionChange)="onSortChange($event.value)">
+              <mat-option value="name-asc">Naziv (A-Ž)</mat-option>
+              <mat-option value="name-desc">Naziv (Ž-A)</mat-option>
+              <mat-option value="price-asc">Cijena (Niska - Visoka)</mat-option>
+              <mat-option value="price-desc">Cijena (Visoka - Niska)</mat-option>
+              <mat-option value="rating">Najbolje Ocijenjeno</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading()" class="loading-state">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Učitavanje proizvoda...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading() && filteredProducts().length === 0" class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <h3>Nema pronađenih proizvoda</h3>
+        <p>Pokušajte prilagoditi filtere ili pojam pretrage</p>
+        <button mat-raised-button color="primary" (click)="clearFilters()">
+          Očisti Filtere
+        </button>
+      </div>
+
+      <!-- Products Grid -->
+      <div *ngIf="!isLoading() && paginatedProducts().length > 0" class="products-grid">
+        <div *ngFor="let product of paginatedProducts()" class="product-card">
+          <div class="product-image" (click)="goToProduct(product.id)">
+            <div class="image-placeholder"></div>
+            <div class="product-badge" *ngIf="product.exclusive">
+              <span>EKSKLUZIVNO</span>
+            </div>
+            <div class="out-of-stock-overlay" *ngIf="isOutOfStock(product)">
+              <span>RASPRODATO</span>
+            </div>
+          </div>
+          
+          <div class="product-info">
+            <h3 class="product-name" (click)="goToProduct(product.id)">{{ product.name }}</h3>
+            <p class="product-description">{{ product.description }}</p>
+            
+            <div class="product-rating" *ngIf="product.reviewCount > 0">
+              <mat-icon class="star-icon">star</mat-icon>
+              <span class="rating-value">{{ product.averageRating | number:'1.1-1' }}</span>
+              <span class="review-count">({{ product.reviewCount }})</span>
+            </div>
+
+            <div class="product-variants" *ngIf="product.variants.length > 0">
+              <span class="variants-label">Dostupne veličine:</span>
+              <div class="variants-sizes">
+                <span 
+                  *ngFor="let variant of product.variants" 
+                  class="size-badge"
+                  [class.out-of-stock]="variant.stockQuantity === 0">
+                  {{ variant.size }}
+                </span>
+              </div>
+            </div>
+
+            <div class="product-footer">
+              <div class="product-price">
+                <div class="price-container">
+                  <span class="original-price" *ngIf="getProductDiscount(product).hasDiscount">{{ getProductDiscount(product).originalPrice | number:'1.2-2' }}KM</span>
+                  <span class="price" [class.discounted]="getProductDiscount(product).hasDiscount">
+                    {{ getProductDiscount(product).hasDiscount ? (getProductDiscount(product).discountedPrice | number:'1.2-2') : (product.price | number:'1.2-2') }}KM
+                  </span>
+                </div>
+                <span class="discount-badge" *ngIf="getProductDiscount(product).hasDiscount">-{{ getProductDiscount(product).discountPercent }}%</span>
+              </div>
+              <button 
+                mat-raised-button 
+                color="primary"
+                class="add-to-cart-btn"
+                [disabled]="isOutOfStock(product)"
+                (click)="addToCart(product); $event.stopPropagation()">
+                <mat-icon>shopping_cart</mat-icon>
+                Dodaj u Korpu
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!isLoading() && filteredProducts().length > 0" class="pagination">
+        <div class="pagination-controls">
+          <button 
+            mat-icon-button 
+            class="pagination-btn"
+            [disabled]="currentPage() === 1"
+            (click)="prevPage()">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          
+          <div class="pagination-numbers">
+            <button 
+              *ngFor="let page of getPageNumbers()"
+              mat-button
+              class="page-number"
+              [class.active]="page === currentPage()"
+              [class.ellipsis]="page === -1"
+              [disabled]="page === -1"
+              (click)="page !== -1 && goToPage(page)">
+              {{ page === -1 ? '...' : page }}
+            </button>
+          </div>
+          
+          <button 
+            mat-icon-button 
+            class="pagination-btn"
+            [disabled]="currentPage() === totalPages()"
+            (click)="nextPage()">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

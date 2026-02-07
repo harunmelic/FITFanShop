@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ProductsApiService } from '../../../api-services/products/products-api.service';
 import { Product } from '../../../api-services/products/products-api.model';
+import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
 
 @Component({
   selector: 'app-products',
@@ -13,7 +15,10 @@ export class ProductsComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
-  constructor(private productsApiService: ProductsApiService) { }
+  constructor(
+    private productsApiService: ProductsApiService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();
@@ -32,6 +37,20 @@ export class ProductsComponent implements OnInit {
         console.error('Error loading products:', error);
         this.errorMessage = 'Greška pri učitavanju proizvoda';
         this.isLoading = false;
+      }
+    });
+  }
+
+  openAddProductDialog(): void {
+    const dialogRef = this.dialog.open(AddProductDialogComponent, {
+      width: '600px',
+      disableClose: false
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Proizvod je uspešno kreiran, osvežavamo listu
+        this.loadProducts();
       }
     });
   }

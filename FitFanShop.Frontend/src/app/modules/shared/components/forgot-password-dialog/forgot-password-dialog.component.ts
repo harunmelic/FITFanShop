@@ -39,10 +39,10 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
       ]],
       confirmPassword: ['', [Validators.required]],
     },
-    { validators: this.passwordMatchValidator }
+    { validators: ForgotPasswordDialogComponent.passwordMatchValidator }
   );
 
-  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  private static passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const newPassword = control.get('newPassword')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
 
@@ -77,7 +77,7 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
           errorMsg = err.error.message;
         }
         
-        this.stopLoading(errorMsg);
+        this.stopLoading();
         this.toaster.error(errorMsg);
       },
     });
@@ -116,7 +116,7 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
           errorMsg = 'Netačan odgovor na sigurnosno pitanje.';
         }
         
-        this.stopLoading(errorMsg);
+        this.stopLoading();
         this.toaster.error(errorMsg);
       },
     });
@@ -149,7 +149,7 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
           errorMsg = 'Nevažeći zahtev. Proverite unete podatke.';
         }
         
-        this.stopLoading(errorMsg);
+        this.stopLoading();
         this.toaster.error(errorMsg);
       },
     });

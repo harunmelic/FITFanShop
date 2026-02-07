@@ -1,7 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ProductApiService } from '../../../../api-services/catalog/product-api.service';
 import { ProductDto } from '../../../../api-services/catalog/product-api.model';
 import { CartService } from '../../../../core/services/cart/cart.service';
+import { DiscountApiService } from '../../../../api-services/commerce/discount-api.service';
+import { DiscountDto } from '../../../../api-services/commerce/discount-api.model';
+import { CurrentUserService } from '../../../../core/services/auth/current-user.service';
+import { ProductVariantSelectorComponent } from '../product-variant-selector/product-variant-selector.component';
 
 @Component({
   selector: 'app-products-slider',
@@ -12,14 +18,20 @@ import { CartService } from '../../../../core/services/cart/cart.service';
 export class ProductsSliderComponent implements OnInit {
   private productService = inject(ProductApiService);
   private cartService = inject(CartService);
+  private discountService = inject(DiscountApiService);
+  private currentUserService = inject(CurrentUserService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
   
   currentSlide = 0;
   products = signal<ProductDto[]>([]);
+  activeDiscounts = signal<DiscountDto[]>([]);
 
   slides: { title: string; products: ProductDto[] }[] = [];
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadActiveDiscounts();
   }
 
   loadProducts(): void {
@@ -32,15 +44,15 @@ export class ProductsSliderComponent implements OnInit {
         // Split into 3 slides of 4 products each
         this.slides = [
           {
-            title: 'PONUDA DRESOVA',
+            title: 'PONUDA',
             products: selectedProducts.slice(0, 4)
           },
           {
-            title: 'PONUDA OPREME',
+            title: 'PONUDA',
             products: selectedProducts.slice(4, 8)
           },
           {
-            title: 'EKSKLUZIVNA KOLEKCIJA',
+            title: 'PONUDA',
             products: selectedProducts.slice(8, 12)
           }
         ];
@@ -79,10 +91,30 @@ export class ProductsSliderComponent implements OnInit {
   }
 
   addToCart(product: ProductDto): void {
-    // Get first available variant
-    const variant = product.variants.find(v => v.stockQuantity > 0);
-    if (variant) {
-      this.cartService.addItem(variant.id, 1);
+    // Provjeri da li proizvod ima više od jedne varijante ili ako ima samo jednu, ali nije ONE SIZE
+    const hasMultipleVariants = product.variants.length > 1;
+    const singleVariantNotOneSize = product.variants.length === 1 && 
+                                    product.variants[0].size.toUpperCase() !== 'ONE SIZE';
+    
+    if (hasMultipleVariants || singleVariantNotOneSize) {
+      // Otvori dijalog za odabir varijante
+      const dialogRef = this.dialog.open(ProductVariantSelectorComponent, {
+        width: '500px',
+        maxWidth: '90vw',
+        data: { product }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.cartService.addItem(result.variantId, result.quantity);
+        }
+      });
+    } else {
+      // Ako je ONE SIZE, dodaj direktno
+      const variant = product.variants.find(v => v.stockQuantity > 0);
+      if (variant) {
+        this.cartService.addItem(variant.id, 1);
+      }
     }
   }
 
@@ -96,5 +128,56 @@ export class ProductsSliderComponent implements OnInit {
 
   goToSlide(index: number) {
     this.currentSlide = index;
+  }
+
+  goToProduct(productId: number): void {
+    this.router.navigate(['/catalog/product', productId]);
+  }
+
+  loadActiveDiscounts(): void {
+    this.discountService.getActive().subscribe({
+      next: (discounts) => {
+        this.activeDiscounts.set(discounts);
+      },
+      error: (error) => {
+        console.error('Error loading discounts:', error);
+      }
+    });
+  }
+
+  getProductDiscount(product: ProductDto): { hasDiscount: boolean; discountPercent: number; originalPrice: number; discountedPrice: number } {
+    const discounts = this.activeDiscounts();
+    const user = this.currentUserService.currentUser();
+    const isMember = user?.isMember || false;
+    
+    // Filter applicable discounts
+    const applicableDiscounts = discounts.filter(d => {
+      if (d.membersOnly && !isMember) return false;
+      
+      const now = new Date();
+      const isActiveByDate = new Date(d.startDate) <= now && new Date(d.endDate) >= now;
+      if (!isActiveByDate) return false;
+      
+      if (d.productIds && d.productIds.length > 0) {
+        return d.productIds.includes(product.id);
+      }
+      
+      return true;
+    });
+    
+    if (applicableDiscounts.length === 0) {
+      return { hasDiscount: false, discountPercent: 0, originalPrice: 0, discountedPrice: 0 };
+    }
+    
+    const maxDiscountPercent = Math.max(...applicableDiscounts.map(d => d.percentage));
+    const originalPrice = product.price;
+    const discountedPrice = originalPrice * (1 - maxDiscountPercent / 100);
+    
+    return {
+      hasDiscount: true,
+      discountPercent: maxDiscountPercent,
+      originalPrice,
+      discountedPrice
+    };
   }
 }

@@ -1,0 +1,159 @@
+.add-product-dialog {
+  width: 650px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .dialog-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+
+    h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+  }
+
+  .dialog-content {
+    padding: 20px 24px;
+    overflow: hidden;
+  }
+
+  .product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #333;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #333;
+        background: #fff;
+        transition: all 0.2s ease;
+
+        &::placeholder {
+          color: #999;
+        }
+
+        &:focus {
+          outline: none;
+          border-color: #4a90e2;
+          box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        &:disabled {
+          background: #f5f5f5;
+          cursor: not-allowed;
+        }
+      }
+
+      textarea {
+        resize: none;
+        min-height: 60px;
+        font-family: inherit;
+      }
+
+      .input-with-prefix {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .prefix {
+          position: absolute;
+          left: 14px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #666;
+          pointer-events: none;
+        }
+
+        input {
+          padding-left: 36px;
+        }
+      }
+
+      .error-message {
+        font-size: 11px;
+        color: #e74c3c;
+        margin-top: -2px;
+      }
+    }
+  }
+
+  .dialog-actions {
+    padding: 16px 24px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    .btn {
+      padding: 10px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &.btn-cancel {
+        background: #f5f5f5;
+        color: #666;
+
+        &:hover:not(:disabled) {
+          background: #e0e0e0;
+        }
+      }
+
+      &.btn-save {
+        background: #4a90e2;
+        color: #fff;
+
+        &:hover:not(:disabled) {
+          background: #357abd;
+          box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .add-product-dialog {
+    .product-form {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
