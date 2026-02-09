@@ -57,7 +57,7 @@ export class ProductsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading products:', error);
-        this.errorMessage = 'Greška pri učitavanju proizvoda';
+        this.errorMessage = 'Error loading products';
         this.isLoading = false;
       }
     });
@@ -97,14 +97,14 @@ export class ProductsComponent implements OnInit {
   }
 
   deleteProduct(id: number): void {
-    if (confirm('Da li ste sigurni da želite obrisati ovaj proizvod?')) {
+    if (confirm('Are you sure you want to delete this product?')) {
       this.productsApiService.deleteProduct(id).subscribe({
         next: () => {
           this.loadProducts();
         },
         error: (error) => {
           console.error('Error deleting product:', error);
-          this.errorMessage = 'Greška pri brisanju proizvoda';
+          this.errorMessage = 'Error deleting product';
         }
       });
     }

@@ -1,13 +1,13 @@
 <div class="products-page">
   <div class="page-header">
     <h2>Products Management</h2>
-    <p>Upravljanje proizvodima</p>
+    <p>Manage your products</p>
   </div>
   
   <div class="page-content">
     <!-- Loading spinner -->
     <div *ngIf="isLoading" class="loading-container">
-      <p>Učitavanje proizvoda...</p>
+      <p>Loading products...</p>
     </div>
 
     <!-- Error message -->
@@ -18,25 +18,25 @@
     <!-- Products table -->
     <div *ngIf="!isLoading && !errorMessage" class="content-card">
       <div class="card-header">
-        <h3>Lista proizvoda</h3>
-        <button class="btn-primary" (click)="openAddProductDialog()">Dodaj novi proizvod</button>
+        <h3>Products List</h3>
+        <button class="btn-primary" (click)="openAddProductDialog()">Add New Product</button>
       </div>
 
       <div *ngIf="products && products.length === 0" class="empty-state">
-        <p>Nema proizvoda u bazi.</p>
+        <p>No products in database.</p>
       </div>
 
       <table *ngIf="products && products.length > 0" class="products-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Naziv</th>
-            <th>Opis</th>
-            <th>Cijena</th>
-            <th>Kategorija</th>
-            <th>Zalihe</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Stock</th>
             <th>Status</th>
-            <th>Akcije</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -49,12 +49,12 @@
             <td>{{ product.stock || 0 }}</td>
             <td>
               <span class="badge" [class.active]="product.isEnabled" [class.inactive]="!product.isEnabled">
-                {{ product.isEnabled ? 'Aktivan' : 'Neaktivan' }}
+                {{ product.isEnabled ? 'Active' : 'Inactive' }}
               </span>
             </td>
             <td class="actions">
-              <button class="btn-edit" (click)="openEditProductDialog(product)">Izmeni</button>
-              <button class="btn-delete" (click)="deleteProduct(product.id)">Obriši</button>
+              <button class="btn-edit" (click)="openEditProductDialog(product)">Edit</button>
+              <button class="btn-delete" (click)="deleteProduct(product.id)">Delete</button>
             </td>
           </tr>
         </tbody>
