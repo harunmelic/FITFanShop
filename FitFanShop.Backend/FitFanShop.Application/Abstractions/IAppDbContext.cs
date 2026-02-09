@@ -2,6 +2,7 @@ using FitFanShop.Domain.Entities.Catalog;
 using FitFanShop.Domain.Entities.Commerce;
 using FitFanShop.Domain.Entities.Discounts;
 using FitFanShop.Domain.Entities.Identity;
+using FitFanShop.Domain.Entities.Media;
 using FitFanShop.Domain.Entities.Memberships;
 using FitFanShop.Domain.Entities.Notifications;
 using FitFanShop.Domain.Entities.Reviews;
@@ -35,6 +36,7 @@ public interface IAppDbContext
     DbSet<EventEntity> Events { get; }
     DbSet<TicketTypeEntity> TicketTypes { get; }
     DbSet<TicketEntity> Tickets { get; }
+    DbSet<ImageEntity> Images { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
     DatabaseFacade Database { get; }
 }

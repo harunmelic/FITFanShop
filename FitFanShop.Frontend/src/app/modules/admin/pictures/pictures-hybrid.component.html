@@ -1,0 +1,170 @@
+<div class="pictures-page">
+  <div class="page-header">
+    <h2>Pictures Management</h2>
+    <p>Upload and manage your product images</p>
+  </div>
+  
+  <div class="page-content">
+    <!-- Storage Mode Info -->
+    <div class="content-card">
+      <div class="storage-mode-info">
+        <div class="mode-indicator" [class]="storageMode">
+          <div class="mode-icon">
+            <svg *ngIf="storageMode === 'api'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.11-.89-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            <svg *ngIf="storageMode === 'localStorage'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <div class="mode-details">
+            <h4 *ngIf="storageMode === 'api'">🌐 Server Storage Active</h4>
+            <h4 *ngIf="storageMode === 'localStorage'">💾 Local Storage Mode</h4>
+            <p *ngIf="storageMode === 'api'">Images stored on server with unlimited space</p>
+            <p *ngIf="storageMode === 'localStorage'">Browser storage (5MB limit) • Will auto-upgrade when backend is ready</p>
+          </div>
+        </div>
+        
+        <button *ngIf="!backendAvailable" class="btn-test-connection" (click)="testBackendConnection()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+          Test & Sync to Server
+        </button>
+
+        <button *ngIf="backendAvailable && images.length > 0" class="btn-clean-broken" (click)="cleanBrokenImages()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+          </svg>
+          Clean Broken
+        </button>
+
+        <button *ngIf="backendAvailable" class="btn-debug-backend" (click)="debugBackendStaticFiles()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 11H6.83l3.58-3.59L9 6l-6 6 6 6 1.41-1.41L6.83 13H21z"/>
+          </svg>
+          Debug Static Files
+        </button>
+      </div>
+      
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-label">Images:</span>
+          <span class="stat-value">{{ getStorageStats() }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total Size:</span>
+          <span class="stat-value">{{ getTotalStorageSizeFormatted() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Zone -->
+    <div class="content-card">
+      <div class="card-header">
+        <h3>Upload Images</h3>
+      </div>
+      
+      <div 
+        class="upload-zone"
+        [class.dragging]="isDragging"
+        [class.uploading]="isUploading"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        (click)="!isUploading && fileInput.click()">
+        
+        <div class="upload-icon" *ngIf="!isUploading">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+          </svg>
+        </div>
+
+        <div class="upload-spinner" *ngIf="isUploading">
+          <svg class="spinner" viewBox="0 0 50 50">
+            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="4"></circle>
+          </svg>
+        </div>
+        
+        <h4 *ngIf="!isUploading">Drag & Drop images here</h4>
+        <h4 *ngIf="isUploading && storageMode === 'api'">Uploading to server...</h4>
+        <h4 *ngIf="isUploading && storageMode === 'localStorage'">Processing locally...</h4>
+        <p *ngIf="!isUploading">or click to browse</p>
+        <p *ngIf="isUploading">Please wait</p>
+        <span class="format-info" *ngIf="!isUploading">Supported: JPEG, PNG, GIF, WebP (Max 10MB)</span>
+        
+        <input 
+          #fileInput
+          type="file" 
+          class="file-input-hidden"
+          accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+          aria-label="Upload images"
+          multiple
+          (change)="onFileSelected($event)">
+      </div>
+    </div>
+
+    <!-- Image Gallery -->
+    <div class="content-card" *ngIf="images.length > 0">
+      <div class="gallery-header">
+        <div class="gallery-info">
+          <h3>Uploaded Images ({{ images.length }})</h3>
+          <p class="storage-info" *ngIf="storageMode === 'localStorage'">
+            Browser storage used: {{ getTotalStorageSizeFormatted() }} / 5MB limit
+          </p>
+          <p class="storage-info" *ngIf="storageMode === 'api'">
+            Server storage used: {{ getTotalStorageSizeFormatted() }}
+          </p>
+        </div>
+        <button class="btn-clear-all" (click)="clearAllImages()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          </svg>
+          Clear All
+        </button>
+      </div>
+      
+      <div class="image-grid">
+        <div class="image-card" *ngFor="let image of images">
+          <div class="image-preview">
+            <img [src]="image.url" [alt]="image.name" [title]="image.name">
+            <div class="image-overlay">
+              <button class="btn-icon" (click)="copyToClipboard(image.url)" title="Copy URL">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                </svg>
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteImage(image)" title="Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+              </button>
+            </div>
+            <!-- Source indicator -->
+            <div class="source-badge" *ngIf="image.source === 'api'">🌐</div>
+            <div class="source-badge local" *ngIf="image.source === 'localStorage'">💾</div>
+          </div>
+          
+          <div class="image-info">
+            <p class="image-name" [title]="image.name">{{ image.name }}</p>
+            <p class="image-size">{{ formatFileSize(image.size) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="content-card empty-state" *ngIf="images.length === 0">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+        </svg>
+      </div>
+      <h4>No images uploaded yet</h4>
+      <p>Upload your first image using the drag & drop zone above</p>
+      <p class="hint" *ngIf="!backendAvailable">
+        Currently using browser storage. Images will automatically sync to server when backend is connected.
+      </p>
+    </div>
+  </div>
+</div>

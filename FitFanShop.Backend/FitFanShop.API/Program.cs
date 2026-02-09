@@ -3,6 +3,7 @@ using FitFanShop.API.Middleware;
 using FitFanShop.Application;
 using FitFanShop.Infrastructure;
 using FitFanShop.Shared.Options;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +72,17 @@ try
     app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
     app.UseRequestLocalization();
+
+    // Serve static files from wwwroot (default)
+    app.UseStaticFiles();
+
+    // Serve uploaded images
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(
+            Path.Combine(app.Environment.WebRootPath, "uploads")),
+        RequestPath = "/uploads"
+    });
 
     app.UseHttpsRedirection();
     app.UseCors("AllowAngularDev");

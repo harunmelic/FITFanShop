@@ -1,10 +1,19 @@
-<div class="admin-layout">
+<div class="admin-layout" [class.sidebar-open]="sidebarOpen">
+  <!-- Mobile overlay -->
+  <div class="sidebar-overlay" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
+
   <aside class="admin-sidebar">
     <div class="admin-logo">
       <h2>Admin Panel</h2>
       <div class="logo-image">
         <img src="/images/logos/Asset 1.png" alt="FitFanShop Logo">
       </div>
+      <button class="btn-close-sidebar" (click)="closeSidebar()" title="Close menu" aria-label="Close menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
     
     <nav class="admin-nav">
@@ -21,16 +30,32 @@
         <li class="nav-divider"></li>
         <li>
           <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
             Dashboard
           </a>
         </li>
         <li>
           <a routerLink="/admin/products" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
             Products
           </a>
         </li>
         <li>
           <a routerLink="/admin/pictures" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
             Pictures
           </a>
         </li>
@@ -41,10 +66,18 @@
   <div class="admin-main">
     <header class="admin-header">
       <div class="admin-header-content">
-        <h1>Admin Panel</h1>
+        <div class="header-left">
+          <button class="btn-hamburger" (click)="toggleSidebar()" title="Open menu" aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <h1>Admin Panel</h1>
+        </div>
         <div class="admin-user">
-          <!-- Admin name will be displayed here -->
-          <span>Administrator</span>
+          <span class="admin-user-label">Administrator</span>
           <button class="btn-logout" (click)="logout()">Logout</button>
         </div>
       </div>

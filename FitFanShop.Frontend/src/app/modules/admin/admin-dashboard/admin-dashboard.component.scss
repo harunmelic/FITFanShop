@@ -40,3 +40,32 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .admin-dashboard {
+    .dashboard-header {
+      margin-bottom: 20px;
+
+      h2 {
+        font-size: 1.4rem;
+      }
+    }
+
+    .dashboard-content .info-card {
+      padding: 20px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-dashboard {
+    .dashboard-header h2 {
+      font-size: 1.2rem;
+    }
+
+    .dashboard-content .info-card {
+      padding: 16px;
+      border-radius: 6px;
+    }
+  }
+}

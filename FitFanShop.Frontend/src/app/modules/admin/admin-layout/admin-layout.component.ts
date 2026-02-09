@@ -15,9 +15,23 @@ export class AdminLayoutComponent implements OnInit {
   private dialog = inject(MatDialog);
   private auth = inject(AuthFacadeService);
 
+  sidebarOpen = false;
+
   constructor(private router: Router) { }
 
   ngOnInit(): void {
+    // Close sidebar on route change (mobile)
+    this.router.events.subscribe(() => {
+      this.sidebarOpen = false;
+    });
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen = false;
   }
 
   logout(): void {

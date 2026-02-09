@@ -26,39 +26,76 @@
         <p>No products in database.</p>
       </div>
 
-      <table *ngIf="products && products.length > 0" class="products-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th>Stock</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let product of products">
-            <td>{{ product.id }}</td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.description || 'N/A' }}</td>
-            <td>{{ product.price | currency:'EUR' }}</td>
-            <td>{{ product.categoryName || (product.categoryIds && product.categoryIds.length > 0 ? 'ID: ' + product.categoryIds.join(', ') : 'N/A') }}</td>
-            <td>{{ getTotalStock(product) }}{{ getStockUnitDisplay(product) }}</td>
-            <td>
-              <span class="badge" [class.active]="product.isEnabled" [class.inactive]="!product.isEnabled">
-                {{ product.isEnabled ? 'Active' : 'Inactive' }}
-              </span>
-            </td>
-            <td class="actions">
-              <button class="btn-edit" (click)="openEditProductDialog(product)">Edit</button>
-              <button class="btn-delete" (click)="deleteProduct(product)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Desktop table -->
+      <div class="table-wrapper" *ngIf="products && products.length > 0">
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Category</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of products">
+              <td>{{ product.id }}</td>
+              <td>{{ product.name }}</td>
+              <td>{{ product.description || 'N/A' }}</td>
+              <td>{{ product.price | currency:'EUR' }}</td>
+              <td>{{ product.categoryName || (product.categoryIds && product.categoryIds.length > 0 ? 'ID: ' + product.categoryIds.join(', ') : 'N/A') }}</td>
+              <td>{{ getTotalStock(product) }}{{ getStockUnitDisplay(product) }}</td>
+              <td>
+                <span class="badge" [class.active]="product.isEnabled" [class.inactive]="!product.isEnabled">
+                  {{ product.isEnabled ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="actions">
+                <button class="btn-edit" (click)="openEditProductDialog(product)">Edit</button>
+                <button class="btn-delete" (click)="deleteProduct(product)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="mobile-cards" *ngIf="products && products.length > 0">
+        <div class="product-card" *ngFor="let product of products">
+          <div class="product-card-header">
+            <strong class="product-card-name">{{ product.name }}</strong>
+            <span class="badge" [class.active]="product.isEnabled" [class.inactive]="!product.isEnabled">
+              {{ product.isEnabled ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-row">
+              <span class="label">ID</span>
+              <span>{{ product.id }}</span>
+            </div>
+            <div class="product-card-row">
+              <span class="label">Price</span>
+              <span class="price">{{ product.price | currency:'EUR' }}</span>
+            </div>
+            <div class="product-card-row">
+              <span class="label">Category</span>
+              <span>{{ product.categoryName || (product.categoryIds && product.categoryIds.length > 0 ? 'ID: ' + product.categoryIds.join(', ') : 'N/A') }}</span>
+            </div>
+            <div class="product-card-row">
+              <span class="label">Stock</span>
+              <span>{{ getTotalStock(product) }}{{ getStockUnitDisplay(product) }}</span>
+            </div>
+          </div>
+          <div class="product-card-actions">
+            <button class="btn-edit" (click)="openEditProductDialog(product)">Edit</button>
+            <button class="btn-delete" (click)="deleteProduct(product)">Delete</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -5,6 +5,7 @@ using FitFanShop.Domain.Entities.Catalog;
 using FitFanShop.Domain.Entities.Commerce;
 using FitFanShop.Domain.Entities.Discounts;
 using FitFanShop.Domain.Entities.Identity;
+using FitFanShop.Domain.Entities.Media;
 using FitFanShop.Domain.Entities.Memberships;
 using FitFanShop.Domain.Entities.Notifications;
 using FitFanShop.Domain.Entities.Reviews;
@@ -48,6 +49,7 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<EventEntity> Events => Set<EventEntity>();
     public DbSet<TicketTypeEntity> TicketTypes => Set<TicketTypeEntity>();
     public DbSet<TicketEntity> Tickets => Set<TicketEntity>();
+    public DbSet<ImageEntity> Images => Set<ImageEntity>();
 
     private readonly TimeProvider _clock;
     public DatabaseContext(DbContextOptions<DatabaseContext> options, TimeProvider clock) : base(options)

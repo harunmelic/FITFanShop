@@ -2,6 +2,7 @@ using FitFanShop.Application.Abstractions;
 using FitFanShop.Infrastructure.Common;
 using FitFanShop.Infrastructure.Database;
 using FitFanShop.Infrastructure.Database.Interceptors;
+using FitFanShop.Infrastructure.Services;
 using FitFanShop.Shared.Constants;
 using FitFanShop.Shared.Options;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<DatabaseContext>());
         services.AddScoped<IPasswordHasher<FitFanShopUserEntity>, PasswordHasher<FitFanShopUserEntity>>();
         services.AddTransient<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IFileStorageService, FileStorageService>();
         services.AddHttpContextAccessor();
         services.AddScoped<IAppCurrentUser, AppCurrentUser>();
         services.AddSingleton<TimeProvider>(TimeProvider.System);

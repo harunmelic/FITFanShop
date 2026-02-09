@@ -64,6 +64,8 @@
         padding: 24px 30px;
         border-bottom: 2px solid #f0f0f0;
         background: linear-gradient(to bottom, #fafbfc 0%, #ffffff 100%);
+        gap: 12px;
+        flex-wrap: wrap;
 
         h3 {
           font-size: 1.5rem;
@@ -84,6 +86,7 @@
           font-weight: 600;
           transition: all 0.2s ease;
           box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+          white-space: nowrap;
 
           &:hover {
             background: linear-gradient(135deg, #5dade2 0%, #3498db 100%);
@@ -109,9 +112,16 @@
         }
       }
 
+      // ── Desktop table ──
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
       .products-table {
         width: 100%;
         border-collapse: collapse;
+        min-width: 700px;
 
         thead {
           background: linear-gradient(to bottom, #f8f9fa 0%, #f1f3f5 100%);
@@ -125,6 +135,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
           }
         }
 
@@ -135,8 +146,6 @@
 
             &:hover {
               background-color: #f8f9fa;
-              transform: scale(1.001);
-              box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
             }
 
             &:last-child {
@@ -221,6 +230,214 @@
             }
           }
         }
+      }
+
+      // ── Mobile cards (hidden by default) ──
+      .mobile-cards {
+        display: none;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════
+//  Responsive breakpoints
+// ═══════════════════════════════════
+
+@media (max-width: 992px) {
+  .products-page {
+    .page-header h2 {
+      font-size: 1.6rem;
+    }
+
+    .page-content .content-card {
+      .card-header {
+        padding: 20px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .products-page {
+    .page-header {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+
+      h2 {
+        font-size: 1.4rem;
+      }
+    }
+
+    .page-content .content-card {
+      .card-header {
+        padding: 16px;
+        flex-direction: column;
+        align-items: stretch;
+
+        h3 {
+          font-size: 1.2rem;
+        }
+
+        .btn-primary {
+          text-align: center;
+          padding: 10px 20px;
+        }
+      }
+
+      // Hide desktop table, show cards
+      .table-wrapper {
+        display: none;
+      }
+
+      .mobile-cards {
+        display: block;
+        padding: 12px;
+
+        .product-card {
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
+          margin-bottom: 12px;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+          .product-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e2e8f0;
+            gap: 8px;
+
+            .product-card-name {
+              font-size: 15px;
+              color: #2c3e50;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              min-width: 0;
+            }
+
+            .badge {
+              padding: 4px 10px;
+              border-radius: 12px;
+              font-size: 10px;
+              font-weight: 600;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              white-space: nowrap;
+              flex-shrink: 0;
+
+              &.active {
+                background: #d4edda;
+                color: #155724;
+              }
+
+              &.inactive {
+                background: #f8d7da;
+                color: #721c24;
+              }
+            }
+          }
+
+          .product-card-body {
+            padding: 12px 16px;
+
+            .product-card-row {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 6px 0;
+              font-size: 13px;
+              color: #555;
+              border-bottom: 1px solid #f0f0f0;
+
+              &:last-child {
+                border-bottom: none;
+              }
+
+              .label {
+                font-weight: 600;
+                color: #7f8c8d;
+                text-transform: uppercase;
+                font-size: 11px;
+                letter-spacing: 0.3px;
+              }
+
+              .price {
+                font-weight: 600;
+                color: #2c3e50;
+              }
+            }
+          }
+
+          .product-card-actions {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            border-top: 1px solid #e2e8f0;
+            background: #fafbfc;
+
+            button {
+              flex: 1;
+              padding: 10px;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 13px;
+              font-weight: 600;
+              transition: all 0.2s ease;
+              text-align: center;
+
+              &.btn-edit {
+                background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+                color: white;
+
+                &:hover {
+                  background: linear-gradient(135deg, #5dade2 0%, #3498db 100%);
+                }
+              }
+
+              &.btn-delete {
+                background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+                color: white;
+
+                &:hover {
+                  background: linear-gradient(135deg, #ec7063 0%, #e74c3c 100%);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .products-page {
+    .page-header h2 {
+      font-size: 1.2rem;
+    }
+
+    .page-content .content-card {
+      border-radius: 8px;
+
+      .card-header {
+        padding: 14px;
+
+        h3 { font-size: 1.1rem; }
+
+        .btn-primary {
+          font-size: 13px;
+          padding: 10px 16px;
+        }
+      }
+
+      .mobile-cards {
+        padding: 8px;
       }
     }
   }

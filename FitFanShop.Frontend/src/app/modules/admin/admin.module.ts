@@ -5,7 +5,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { ProductsComponent } from './products/products.component';
-import { PicturesComponent } from './pictures/pictures.component';
+import { PicturesHybridComponent } from './pictures/pictures-hybrid.component';
 import { AddProductDialogComponent } from './products/add-product-dialog/add-product-dialog.component';
 import { EditProductDialogComponent } from './products/edit-product-dialog/edit-product-dialog.component';
 import { DeleteConfirmationDialogComponent } from './products/delete-confirmation-dialog/delete-confirmation-dialog.component';
@@ -16,7 +16,7 @@ import { materialModules } from '../shared/material-modules';
     AdminDashboardComponent,
     AdminLayoutComponent,
     ProductsComponent,
-    PicturesComponent,
+    PicturesHybridComponent,
     AddProductDialogComponent,
     EditProductDialogComponent,
     DeleteConfirmationDialogComponent

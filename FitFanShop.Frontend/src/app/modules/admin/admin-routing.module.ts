@@ -4,7 +4,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { AdminGuard } from '../../core/guards/admin.guard';
 import { ProductsComponent } from './products/products.component';
-import { PicturesComponent } from './pictures/pictures.component';
+import { PicturesHybridComponent } from './pictures/pictures-hybrid.component';
 
 const routes: Routes = [
   {
@@ -22,7 +22,7 @@ const routes: Routes = [
       },
       {
         path: 'pictures',
-        component: PicturesComponent
+        component: PicturesHybridComponent
       }
     ]
   }
