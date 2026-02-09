@@ -46,7 +46,7 @@
             <td>{{ product.description || 'N/A' }}</td>
             <td>{{ product.price | currency:'EUR' }}</td>
             <td>{{ product.categoryName || (product.categoryIds && product.categoryIds.length > 0 ? 'ID: ' + product.categoryIds.join(', ') : 'N/A') }}</td>
-            <td>{{ product.stock || 0 }}</td>
+            <td>{{ getTotalStock(product) }}{{ getStockUnitDisplay(product) }}</td>
             <td>
               <span class="badge" [class.active]="product.isEnabled" [class.inactive]="!product.isEnabled">
                 {{ product.isEnabled ? 'Active' : 'Inactive' }}

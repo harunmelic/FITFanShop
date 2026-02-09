@@ -1,3 +1,9 @@
+// Center dialog vertically
+::ng-deep .mat-mdc-dialog-surface.mdc-dialog__surface {
+  display: flex !important;
+  align-items: center !important;
+}
+
 .edit-product-dialog {
   width: 500px;
   max-width: 95vw;
@@ -26,12 +32,44 @@
   .product-form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 16px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .sizes-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+
+      .size-input {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+          font-size: 11px;
+          font-weight: 600;
+          color: #555;
+          text-align: center;
+        }
+
+        input {
+          text-align: center;
+          padding: 6px 4px;
+          font-size: 12px;
+          width: 100%;
+          min-width: 50px;
+        }
+      }
     }
 
     .form-group {
@@ -46,7 +84,8 @@
       }
 
       input,
-      textarea {
+      textarea,
+      select {
         width: 100%;
         padding: 8px 10px;
         border: 1px solid #ddd;
@@ -69,6 +108,20 @@
         &:disabled {
           background: #f5f5f5;
           cursor: not-allowed;
+        }
+      }
+
+      select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 16px;
+        padding-right: 32px;
+
+        option {
+          padding: 8px;
         }
       }
 
@@ -104,16 +157,22 @@
       }
 
       &.checkbox-group {
+        flex-direction: row;
+        align-items: center;
+
         label {
           display: flex;
           align-items: center;
           gap: 8px;
           cursor: pointer;
-          font-size: 13px;
 
           input[type="checkbox"] {
             width: auto;
             cursor: pointer;
+          }
+
+          span {
+            font-size: 13px;
           }
         }
       }

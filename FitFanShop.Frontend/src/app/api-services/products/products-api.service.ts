@@ -20,8 +20,8 @@ export class ProductsApiService {
    * GET /api/products
    * Get all products (currently only returns enabled products)
    */
-  getProducts(pageSize: number = 1000): Observable<GetProductsResponse> {
-    return this.http.get<GetProductsResponse>(`${this.baseUrl}?pageSize=${pageSize}`);
+  getProducts(pageSize: number = 1000, includeVariants: boolean = true): Observable<GetProductsResponse> {
+    return this.http.get<GetProductsResponse>(`${this.baseUrl}?pageSize=${pageSize}&includeVariants=${includeVariants}`);
   }
 
   /**

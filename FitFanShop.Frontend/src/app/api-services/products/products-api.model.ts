@@ -8,6 +8,7 @@ export interface Product {
   categoryIds?: number[];  // Backend returns array of category IDs
   categoryName?: string;
   stock?: number;
+  variants?: ProductVariant[];  // Product variants with stock info
   isEnabled?: boolean;  // Changed from isActive to match backend
   createdAt?: Date;
   updatedAt?: Date;
@@ -29,11 +30,14 @@ export interface CreateProductCommand {
 }
 
 export interface ProductVariant {
+  id?: number;
   size?: string;
   color?: string;
   sku?: string;
   price?: number;
-  stock?: number;
+  stock?: number;  // For backward compatibility
+  stockQuantity?: number;  // Backend uses this
+  stockUnit?: string;
 }
 
 export interface UpdateProductCommand {
@@ -44,5 +48,6 @@ export interface UpdateProductCommand {
   imageUrl?: string;
   categoryId?: number;
   stock?: number;
+  variants?: ProductVariant[];  // Added variants for updating stock quantities
   isEnabled?: boolean;  // Changed from isActive to match backend
 }
