@@ -2,8 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProductsApiService } from '../../../../api-services/products/products-api.service';
-import { Product, UpdateProductCommand } from '../../../../api-services/products/products-api.model';
+import { Product, UpdateProductCommand, ProductVariant } from '../../../../api-services/products/products-api.model';
 import { ToasterService } from '../../../../core/services/toaster.service';
+import { CategoryApiService } from '../../../../api-services/catalog/category-api.service';
+import { CategoryDto } from '../../../../api-services/catalog/category-api.model';
+import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.service';
 
 @Component({
   selector: 'app-edit-product-dialog',
@@ -14,27 +17,62 @@ import { ToasterService } from '../../../../core/services/toaster.service';
 export class EditProductDialogComponent implements OnInit {
   productForm: FormGroup;
   isSubmitting = false;
+  categories: CategoryDto[] = [];
+  isLoadingCategories = false;
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<EditProductDialogComponent>,
     private productsApiService: ProductsApiService,
     private toasterService: ToasterService,
+    private categoryApiService: CategoryApiService,
+    private authFacadeService: AuthFacadeService,
     @Inject(MAT_DIALOG_DATA) public data: { product: Product }
   ) {
+    // Initialize size quantities from variants
+    const getSizeQuantity = (size: string): number => {
+      const variant = data.product.variants?.find(v => v.size === size);
+      return variant?.stockQuantity || variant?.stock || 0;
+    };
+
+    const getStockUnit = (): string => {
+      return data.product.variants?.[0]?.stockUnit || 'pcs';
+    };
+
     // Initialize form with existing product data
     this.productForm = this.fb.group({
       name: [data.product.name, [Validators.required, Validators.minLength(3)]],
       description: [data.product.description || ''],
       price: [data.product.price, [Validators.required, Validators.min(0)]],
       imageUrl: [data.product.imageUrl || ''],
-      categoryId: [data.product.categoryId, [Validators.required]],
-      stock: [data.product.stock || 0, [Validators.min(0)]],
+      categoryId: [data.product.categoryIds?.[0] || data.product.categoryId, [Validators.required]],
+      sizeS: [getSizeQuantity('S'), [Validators.min(0)]],
+      sizeM: [getSizeQuantity('M'), [Validators.min(0)]],
+      sizeL: [getSizeQuantity('L'), [Validators.min(0)]],
+      sizeXL: [getSizeQuantity('XL'), [Validators.min(0)]],
+      sizeXXL: [getSizeQuantity('XXL'), [Validators.min(0)]],
+      stockUnit: [getStockUnit()],
       isEnabled: [data.product.isEnabled ?? true]
     });
   }
 
   ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.isLoadingCategories = true;
+    this.categoryApiService.getAll().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+        this.isLoadingCategories = false;
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+        this.toasterService.error('Error loading categories');
+        this.isLoadingCategories = false;
+      }
+    });
   }
 
   onSubmit(): void {
@@ -46,6 +84,56 @@ export class EditProductDialogComponent implements OnInit {
     this.isSubmitting = true;
     const formValue = this.productForm.value;
     
+    // Create/update variants for each size 
+    const variants: any[] = [];
+    const sizes = [
+      { name: 'S', quantity: formValue.sizeS },
+      { name: 'M', quantity: formValue.sizeM },
+      { name: 'L', quantity: formValue.sizeL },
+      { name: 'XL', quantity: formValue.sizeXL },
+      { name: 'XXL', quantity: formValue.sizeXXL }
+    ];
+
+    // Update existing variants or create new ones
+    sizes.forEach(size => {
+      const existingVariant = this.data.product.variants?.find(v => v.size === size.name);
+      
+      if (existingVariant) {
+        // Update existing variant with new quantity
+        variants.push({
+          id: existingVariant.id,  // Keep existing ID
+          size: size.name,
+          sku: existingVariant.sku,  // Keep existing SKU
+          price: formValue.price,
+          stockQuantity: size.quantity || 0,  // Update quantity (allow 0)
+          stockUnit: existingVariant.stockUnit || 'pcs'
+        });
+      } else if (size.quantity > 0) {
+        // Create new variant only if quantity > 0
+        variants.push({
+          size: size.name,
+          sku: `${formValue.name.replace(/\s+/g, '-').toLowerCase()}-${size.name.toLowerCase()}`,
+          price: formValue.price,
+          stockQuantity: size.quantity,
+          stockUnit: formValue.stockUnit || 'pcs'
+        });
+      }
+    });
+
+    // Keep any non-size variants (like Default) from original product
+    this.data.product.variants?.forEach(variant => {
+      if (!sizes.find(s => s.name === variant.size) && variant.size !== 'Default') {
+        variants.push({
+          id: variant.id,
+          size: variant.size,
+          sku: variant.sku,
+          price: formValue.price,
+          stockQuantity: variant.stockQuantity || 0,
+          stockUnit: variant.stockUnit || 'pcs'
+        });
+      }
+    });
+    
     const command: UpdateProductCommand = {
       id: this.data.product.id,
       name: formValue.name,
@@ -53,11 +141,30 @@ export class EditProductDialogComponent implements OnInit {
       description: formValue.description || undefined,
       imageUrl: formValue.imageUrl || undefined,
       categoryId: formValue.categoryId,
-      stock: formValue.stock || 0,
+      variants: variants,  // Include variants for updating stock quantities
       isEnabled: formValue.isEnabled
     };
 
-    console.log('Updating product:', command);
+    console.log('Updating product with command:', command);
+    console.log('Created variants:', variants);
+
+    // Check auth status before making request
+    if (!this.authFacadeService.isAuthenticated()) {
+      console.error('User not authenticated!');
+      this.toasterService.error('Your session has expired. Please log in again.');
+      this.isSubmitting = false;
+      return;
+    }
+    
+    const currentUser = this.authFacadeService.currentUser();
+    if (!currentUser?.isAdmin) {
+      console.error('User is not admin - insufficient permissions!');
+      this.toasterService.error('You do not have administrator permissions.');
+      this.isSubmitting = false;
+      return;
+    }
+
+    console.log('User is authenticated admin, proceeding with update...');
 
     this.productsApiService.updateProduct(this.data.product.id, command).subscribe({
       next: (product) => {
@@ -69,12 +176,14 @@ export class EditProductDialogComponent implements OnInit {
       error: (error) => {
         console.error('Full error object:', error);
         console.error('Error status:', error.status);
+        console.error('Error statusText:', error.statusText);
         console.error('Error body:', error.error);
+        console.error('Error headers:', error.headers);
         
         if (error.status === 400) {
           this.toasterService.error('Validation error: ' + (error.error?.title || 'Invalid data'));
         } else if (error.status === 401) {
-          this.toasterService.error('Not authorized. Please login.');
+          this.toasterService.error('Session expired or insufficient permissions. Please log in as admin.');
         } else if (error.status === 403) {
           this.toasterService.error('Access denied. Admin rights required.');
         } else if (error.status === 404) {

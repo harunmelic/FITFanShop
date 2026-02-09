@@ -40,22 +40,53 @@
         <textarea formControlName="description" rows="2" placeholder="Enter product description"></textarea>
       </div>
 
-      <div class="form-row">
-        <!-- Stock -->
-        <div class="form-group">
-          <label>Stock</label>
-          <input type="number" formControlName="stock" placeholder="0">
-          <span class="error-message" *ngIf="f['stock'].touched && f['stock'].hasError('min')">
-            Stock must be greater than or equal to 0
-          </span>
+      <!-- Size Stock Quantities -->
+      <div class="form-group full-width">
+        <label>Stock Quantity by Size</label>
+        <div class="sizes-grid">
+          <div class="size-input">
+            <label for="sizeS">Size S</label>
+            <input id="sizeS" type="number" formControlName="sizeS" placeholder="0">
+          </div>
+          <div class="size-input">
+            <label for="sizeM">Size M</label>
+            <input id="sizeM" type="number" formControlName="sizeM" placeholder="0">
+          </div>
+          <div class="size-input">
+            <label for="sizeL">Size L</label>
+            <input id="sizeL" type="number" formControlName="sizeL" placeholder="0">
+          </div>
+          <div class="size-input">
+            <label for="sizeXL">Size XL</label>
+            <input id="sizeXL" type="number" formControlName="sizeXL" placeholder="0">
+          </div>
+          <div class="size-input">
+            <label for="sizeXXL">Size XXL</label>
+            <input id="sizeXXL" type="number" formControlName="sizeXXL" placeholder="0">
+          </div>
         </div>
+      </div>
 
-        <!-- Category ID -->
+      <div class="form-row">
+        <!-- Stock Unit -->
         <div class="form-group">
-          <label>Category ID *</label>
-          <input type="number" formControlName="categoryId" placeholder="Enter category ID">
+          <label for="stockUnit">Stock Unit</label>
+          <input id="stockUnit" type="text" formControlName="stockUnit" placeholder="pcs">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Category -->
+        <div class="form-group">
+          <label for="categoryId">Category *</label>
+          <select id="categoryId" formControlName="categoryId">
+            <option [value]="null" disabled>Select category</option>
+            <option *ngFor="let category of categories" [value]="category.id">
+              {{ category.name }} (ID: {{ category.id }})
+            </option>
+          </select>
           <span class="error-message" *ngIf="f['categoryId'].touched && f['categoryId'].hasError('required')">
-            Category ID is required
+            Category is required
           </span>
         </div>
       </div>

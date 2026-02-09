@@ -31,10 +31,6 @@ export class ProductsComponent implements OnInit {
     
     this.productsApiService.getProducts().subscribe({
       next: (response) => {
-        console.log('API Response:', response);
-        console.log('Response type:', typeof response);
-        console.log('Is array?', Array.isArray(response));
-        
         // Check if response is directly an array
         if (Array.isArray(response)) {
           this.products = response;
@@ -42,15 +38,6 @@ export class ProductsComponent implements OnInit {
           this.products = response.products;
         } else {
           this.products = [];
-          console.warn('Unexpected API response structure');
-        }
-        
-        console.log('Products loaded:', this.products.length);
-        
-        // Check isEnabled property
-        if (this.products.length > 0) {
-          console.log('First product isEnabled:', this.products[0].isEnabled);
-          console.log('First product full object:', this.products[0]);
         }
         
         this.isLoading = false;
@@ -108,5 +95,26 @@ export class ProductsComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Calculate total stock from all product variants
+  getTotalStock(product: Product): number {
+    if (!product.variants || product.variants.length === 0) {
+      return product.stock || 0;
+    }
+    // Backend uses stockQuantity, fallback to stock for backward compatibility
+    const total = product.variants.reduce((total, variant) => total + (variant.stockQuantity || variant.stock || 0), 0);
+    return total;
+  }
+
+  // Get stock unit display (showing all unique units)
+  getStockUnitDisplay(product: Product): string {
+    if (!product.variants || product.variants.length === 0) {
+      return '';
+    }
+    const units = product.variants
+      .map(v => v.stockUnit)
+      .filter((unit, index, self) => unit && self.indexOf(unit) === index);
+    return units.length > 0 ? ` ${units.join(', ')}` : '';
   }
 }
