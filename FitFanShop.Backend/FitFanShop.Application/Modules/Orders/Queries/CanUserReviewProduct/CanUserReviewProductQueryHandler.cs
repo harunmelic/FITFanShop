@@ -24,7 +24,7 @@ public class CanUserReviewProductQueryHandler : IRequestHandler<CanUserReviewPro
             return new CanUserReviewProductDto
             {
                 CanReview = false,
-                Reason = "Morate biti prijavljeni da biste napisali recenziju"
+                Reason = "You must be logged in to write a review"
             };
         }
 
@@ -48,7 +48,7 @@ public class CanUserReviewProductQueryHandler : IRequestHandler<CanUserReviewPro
             return new CanUserReviewProductDto
             {
                 CanReview = false,
-                Reason = "Morate kupiti ovaj proizvod prije nego ga možete recenzirati"
+                Reason = "You must purchase this product before you can review it"
             };
         }
 
@@ -59,7 +59,7 @@ public class CanUserReviewProductQueryHandler : IRequestHandler<CanUserReviewPro
             {
                 CanReview = false,
                 HasAlreadyReviewed = true,
-                Reason = "Već ste recenzirali ovaj proizvod"
+                Reason = "You have already reviewed this product"
             };
         }
 
@@ -70,7 +70,7 @@ public class CanUserReviewProductQueryHandler : IRequestHandler<CanUserReviewPro
             return new CanUserReviewProductDto
             {
                 CanReview = false,
-                Reason = "Možete recenzirati samo proizvode iz potvrđenih ili isporučenih narudžbi"
+                Reason = "You can only review products from confirmed or delivered orders"
             };
         }
 

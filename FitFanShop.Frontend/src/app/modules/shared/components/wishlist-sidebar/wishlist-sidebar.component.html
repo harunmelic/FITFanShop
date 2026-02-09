@@ -1,0 +1,111 @@
+<!-- Overlay -->
+<div 
+  class="wishlist-overlay" 
+  [class.show]="wishlistService.isSidebarOpen()"
+  (click)="onOverlayClick()"
+></div>
+
+<!-- Sidebar -->
+<div class="wishlist-sidebar" [class.open]="wishlistService.isSidebarOpen()">
+  <!-- Header -->
+  <div class="sidebar-header">
+    <h3>Wishlist ({{ wishlistService.itemCount() }})</h3>
+    <div class="header-actions">
+      <button 
+        *ngIf="wishlistService.itemCount() > 0" 
+        class="clear-all-btn" 
+        (click)="onClearWishlist()"
+        matTooltip="Clear wishlist"
+      >
+        <mat-icon>delete_sweep</mat-icon>
+      </button>
+      <button class="close-btn" (click)="wishlistService.closeSidebar()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="sidebar-content">
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="wishlistService.isLoadingWishlist()">
+      <div class="skeleton-item" *ngFor="let i of [1, 2, 3]">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-price"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-wishlist" *ngIf="!wishlistService.isLoadingWishlist() && wishlistService.itemCount() === 0">
+      <mat-icon>favorite_border</mat-icon>
+      <p>Your wishlist is empty</p>
+      <p class="subtitle">Save items you love for later!</p>
+      <button class="continue-shopping-btn" (click)="wishlistService.closeSidebar()">
+        Continue shopping
+      </button>
+    </div>
+
+    <!-- Wishlist Items -->
+    <div class="wishlist-items" *ngIf="!wishlistService.isLoadingWishlist() && wishlistService.itemCount() > 0">
+      <div class="wishlist-item" *ngFor="let item of wishlistService.wishlistItems()">
+        <div class="item-image">
+          <div class="image-placeholder">
+            <mat-icon *ngIf="!item.imageUrl">image</mat-icon>
+            <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.productName">
+          </div>
+          <div class="availability-badge" [class.unavailable]="!item.isAvailable">
+            {{ item.isAvailable ? 'In Stock' : 'Out of Stock' }}
+          </div>
+        </div>
+
+        <div class="item-details">
+          <h4 class="item-name" (click)="navigateToProduct(item.productId)">{{ item.productName }}</h4>
+          <p class="item-category" *ngIf="item.categoryName">{{ item.categoryName }}</p>
+          
+          <div class="item-price">
+            <div *ngIf="getDiscountInfo(item).hasDiscount" class="discount-price">
+              <span class="original-price">{{ getDiscountInfo(item).originalPrice | number:'1.2-2' }} KM</span>
+              <span class="discounted-price">{{ getDiscountInfo(item).discountedPrice | number:'1.2-2' }} KM</span>
+              <span class="discount-badge">-{{ getDiscountInfo(item).discountPercent }}%</span>
+            </div>
+            <span class="price" *ngIf="!getDiscountInfo(item).hasDiscount">
+              {{ item.price | number:'1.2-2' }} KM
+            </span>
+          </div>
+
+          <div class="item-actions">
+            <button 
+              mat-raised-button 
+              color="primary"
+              class="add-to-cart-btn"
+              [disabled]="!item.isAvailable"
+              (click)="addToCart(item)"
+            >
+              <mat-icon>shopping_cart</mat-icon>
+              Add to Cart
+            </button>
+
+            <button 
+              mat-icon-button 
+              class="remove-btn"
+              (click)="onRemoveItem(item.id)"
+              matTooltip="Remove from wishlist"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="sidebar-footer" *ngIf="!wishlistService.isLoadingWishlist() && wishlistService.itemCount() > 0">
+    <button class="continue-shopping-btn" (click)="wishlistService.closeSidebar()">
+      Continue shopping
+    </button>
+  </div>
+</div>
