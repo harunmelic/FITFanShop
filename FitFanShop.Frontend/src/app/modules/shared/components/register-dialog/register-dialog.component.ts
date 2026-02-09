@@ -34,11 +34,11 @@ export class RegisterDialogComponent extends BaseComponent {
 
   // Predefined security questions
   securityQuestions = [
-    'Ime vašeg prvog ljubimca?',
-    'Grad u kojem ste rođeni?',
-    'Omiljeni film?',
-    'Prezime majke prije udaje?',
-    'Nadimak iz djetinjstva?',
+    'What is your first pet\'s name?',
+    'What city were you born in?',
+    'What is your favorite movie?',
+    'What is your mother\'s maiden name?',
+    'What is your childhood nickname?',
   ];
 
   // Step 1: Personal Info
@@ -107,7 +107,7 @@ export class RegisterDialogComponent extends BaseComponent {
     this.auth.register(payload).subscribe({
       next: () => {
         this.stopLoading();
-        this.toaster.success('Uspešna registracija! Dobrodošli!');
+        this.toaster.success('Registration successful! Welcome!');
         this.dialogRef.close(true);
         setTimeout(() => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -116,7 +116,7 @@ export class RegisterDialogComponent extends BaseComponent {
       error: (err) => {
         console.error('Register error:', err);
         
-        let errorMsg = 'Greška pri registraciji. Pokušajte ponovo.';
+        let errorMsg = 'Registration error. Please try again.';
         
         // Check for specific backend error messages
         if (err.error?.message) {
@@ -124,9 +124,9 @@ export class RegisterDialogComponent extends BaseComponent {
         } else if (err.error?.title) {
           errorMsg = err.error.title;
         } else if (err.status === 400) {
-          errorMsg = 'Email je već zauzet.';
+          errorMsg = 'Email is already taken.';
         } else if (err.status === 500) {
-          errorMsg = 'Serverska greška. Pokušajte kasnije.';
+          errorMsg = 'Server error. Please try later.';
         }
         
         this.stopLoading(errorMsg);
@@ -157,35 +157,35 @@ export class RegisterDialogComponent extends BaseComponent {
     if (password.length >= 8) {
       score += 1;
     } else {
-      feedback.push('Koristite najmanje 8 karaktera');
+      feedback.push('Use at least 8 characters');
     }
 
     // Uppercase letter
     if (/[A-Z]/.test(password)) {
       score += 1;
     } else {
-      feedback.push('Dodajte veliko slovo');
+      feedback.push('Add an uppercase letter');
     }
 
     // Lowercase letter
     if (/[a-z]/.test(password)) {
       score += 1;
     } else {
-      feedback.push('Dodajte malo slovo');
+      feedback.push('Add a lowercase letter');
     }
 
     // Numbers
     if (/[0-9]/.test(password)) {
       score += 1;
     } else {
-      feedback.push('Dodajte broj');
+      feedback.push('Add a number');
     }
 
     // Special characters
     if (/[^A-Za-z0-9]/.test(password)) {
       score += 1;
     } else {
-      feedback.push('Dodajte specijalni karakter (!@#$%^&*)');
+      feedback.push('Add a special character (!@#$%^&*)');
     }
 
     // Determine strength level
@@ -193,19 +193,19 @@ export class RegisterDialogComponent extends BaseComponent {
     let color: string;
 
     if (score <= 1) {
-      label = 'Vrlo slaba';
+      label = 'Very weak';
       color = '#f44336'; // Red
     } else if (score === 2) {
-      label = 'Slaba';
+      label = 'Weak';
       color = '#ff9800'; // Orange
     } else if (score === 3) {
-      label = 'Srednja';
+      label = 'Medium';
       color = '#ffc107'; // Yellow
     } else if (score === 4) {
-      label = 'Jaka';
+      label = 'Strong';
       color = '#8bc34a'; // Light Green
     } else {
-      label = 'Vrlo jaka';
+      label = 'Very strong';
       color = '#4caf50'; // Green
     }
 
