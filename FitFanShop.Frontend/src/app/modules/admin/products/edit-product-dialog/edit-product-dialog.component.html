@@ -43,7 +43,15 @@
       <!-- Size Stock Quantities -->
       <div class="form-group full-width">
         <label>Stock Quantity by Size</label>
-        <div class="sizes-grid">
+        
+        <!-- One Size products (like scarves, bags, etc.) -->
+        <div *ngIf="!hasMultipleSizes" class="size-input-single">
+          <label for="sizeOneSize">Stock Quantity (One Size)</label>
+          <input id="sizeOneSize" type="number" formControlName="sizeOneSize" placeholder="0">
+        </div>
+
+        <!-- Multi-size products (like t-shirts, hoodies, etc.) -->
+        <div *ngIf="hasMultipleSizes" class="sizes-grid">
           <div class="size-input">
             <label for="sizeS">Size S</label>
             <input id="sizeS" type="number" formControlName="sizeS" placeholder="0">

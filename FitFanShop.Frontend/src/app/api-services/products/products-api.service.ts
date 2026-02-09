@@ -28,8 +28,8 @@ export class ProductsApiService {
    * GET /api/products/:id
    * Get product by ID
    */
-  getProductById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.baseUrl}/${id}`);
+  getProductById(id: number, includeVariants: boolean = true): Observable<Product> {
+    return this.http.get<Product>(`${this.baseUrl}/${id}?includeVariants=${includeVariants}`);
   }
 
   /**

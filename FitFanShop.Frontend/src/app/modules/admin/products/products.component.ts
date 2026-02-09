@@ -29,7 +29,8 @@ export class ProductsComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     
-    this.productsApiService.getProducts().subscribe({
+    // Ensure variants are included in the response
+    this.productsApiService.getProducts(1000, true).subscribe({
       next: (response) => {
         // Check if response is directly an array
         if (Array.isArray(response)) {

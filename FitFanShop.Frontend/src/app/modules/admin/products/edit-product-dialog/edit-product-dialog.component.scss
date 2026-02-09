@@ -72,6 +72,25 @@
       }
     }
 
+    .size-input-single {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+      max-width: 200px;
+
+      label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      input {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
+
     .form-group {
       display: flex;
       flex-direction: column;

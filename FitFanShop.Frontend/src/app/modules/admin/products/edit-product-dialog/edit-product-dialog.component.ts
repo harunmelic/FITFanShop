@@ -17,8 +17,10 @@ import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.se
 export class EditProductDialogComponent implements OnInit {
   productForm: FormGroup;
   isSubmitting = false;
+  isLoadingProduct = false;
   categories: CategoryDto[] = [];
   isLoadingCategories = false;
+  hasMultipleSizes = true; // Will be updated based on variants
 
   constructor(
     private fb: FormBuilder,
@@ -29,35 +31,143 @@ export class EditProductDialogComponent implements OnInit {
     private authFacadeService: AuthFacadeService,
     @Inject(MAT_DIALOG_DATA) public data: { product: Product }
   ) {
-    // Initialize size quantities from variants
-    const getSizeQuantity = (size: string): number => {
-      const variant = data.product.variants?.find(v => v.size === size);
-      return variant?.stockQuantity || variant?.stock || 0;
-    };
-
-    const getStockUnit = (): string => {
-      return data.product.variants?.[0]?.stockUnit || 'pcs';
-    };
-
-    // Initialize form with existing product data
+    // Initialize form with existing product data (stock will be refreshed in ngOnInit)
     this.productForm = this.fb.group({
       name: [data.product.name, [Validators.required, Validators.minLength(3)]],
       description: [data.product.description || ''],
       price: [data.product.price, [Validators.required, Validators.min(0)]],
       imageUrl: [data.product.imageUrl || ''],
       categoryId: [data.product.categoryIds?.[0] || data.product.categoryId, [Validators.required]],
-      sizeS: [getSizeQuantity('S'), [Validators.min(0)]],
-      sizeM: [getSizeQuantity('M'), [Validators.min(0)]],
-      sizeL: [getSizeQuantity('L'), [Validators.min(0)]],
-      sizeXL: [getSizeQuantity('XL'), [Validators.min(0)]],
-      sizeXXL: [getSizeQuantity('XXL'), [Validators.min(0)]],
-      stockUnit: [getStockUnit()],
+      sizeS: [0, [Validators.min(0)]],
+      sizeM: [0, [Validators.min(0)]],
+      sizeL: [0, [Validators.min(0)]],
+      sizeXL: [0, [Validators.min(0)]],
+      sizeXXL: [0, [Validators.min(0)]],
+      sizeOneSize: [0, [Validators.min(0)]], // For "One Size" products
+      stockUnit: ['pcs'],
       isEnabled: [data.product.isEnabled ?? true]
     });
   }
 
   ngOnInit(): void {
     this.loadCategories();
+    this.loadFullProduct();
+  }
+
+  /**
+   * Fetch the full product by ID to ensure we have complete variant data.
+   * The product passed from the list may not include variants.
+   */
+  private loadFullProduct(): void {
+    this.isLoadingProduct = true;
+    console.log('=== LOADING FULL PRODUCT ===');
+    console.log('Product ID:', this.data.product.id);
+    console.log('Initial product data:', this.data.product);
+    console.log('Initial variants:', this.data.product.variants);
+    
+    this.productsApiService.getProductById(this.data.product.id).subscribe({
+      next: (product) => {
+        console.log('=== API RESPONSE ===');
+        console.log('Fetched full product:', product);
+        console.log('Variants array:', product.variants);
+        console.log('Variants length:', product.variants?.length);
+        if (product.variants) {
+          product.variants.forEach((v, i) => {
+            console.log(`Variant ${i}:`, {
+              id: v.id,
+              size: v.size,
+              stockQuantity: v.stockQuantity,
+              stock: v.stock,
+              stockUnit: v.stockUnit
+            });
+          });
+        }
+        // Update the data reference so onSubmit uses fresh variant IDs
+        this.data.product = product;
+        this.populateStockFromVariants(product.variants);
+        this.isLoadingProduct = false;
+      },
+      error: (error) => {
+        console.error('Error fetching product details, falling back to list data:', error);
+        // Fall back to whatever data we already have
+        this.populateStockFromVariants(this.data.product.variants);
+        this.isLoadingProduct = false;
+      }
+    });
+  }
+
+  /**
+   * Populate the size stock fields from variant data.
+   * Uses case-insensitive matching and nullish coalescing for correct 0 handling.
+   */
+  private populateStockFromVariants(variants?: ProductVariant[]): void {
+    console.log('=== POPULATING STOCK FROM VARIANTS ===');
+    console.log('Variants received:', variants);
+    
+    if (!variants || variants.length === 0) {
+      console.log('No variants found');
+      this.hasMultipleSizes = true;
+      return;
+    }
+
+    // Check if this product uses standard sizes or "One Size" / "Default"
+    const standardSizes = ['S', 'M', 'L', 'XL', 'XXL'];
+    const hasStandardSizes = variants.some(v => 
+      standardSizes.some(size => v.size?.trim().toUpperCase() === size)
+    );
+    const hasOneSize = variants.some(v => 
+      v.size?.trim().toUpperCase() === 'ONE SIZE' || 
+      v.size?.trim().toUpperCase() === 'DEFAULT' ||
+      v.size?.trim().toUpperCase() === 'ONESIZE'
+    );
+
+    console.log('Has standard sizes:', hasStandardSizes);
+    console.log('Has One Size:', hasOneSize);
+
+    this.hasMultipleSizes = hasStandardSizes || variants.length > 1;
+    
+    const getSizeQuantity = (size: string): number => {
+      const variant = variants?.find(v => {
+        const match = v.size?.trim().toUpperCase() === size.toUpperCase();
+        if (match) {
+          console.log(`Found variant for size ${size}:`, v);
+        }
+        return match;
+      });
+      const quantity = variant?.stockQuantity ?? variant?.stock ?? 0;
+      console.log(`Size ${size} quantity: ${quantity}`);
+      return quantity;
+    };
+
+    const getOneSizeQuantity = (): number => {
+      // Look for "One Size", "Default", or just take first variant
+      const variant = variants.find(v => 
+        v.size?.trim().toUpperCase() === 'ONE SIZE' || 
+        v.size?.trim().toUpperCase() === 'DEFAULT' ||
+        v.size?.trim().toUpperCase() === 'ONESIZE'
+      ) || variants[0];
+      
+      const quantity = variant?.stockQuantity ?? variant?.stock ?? 0;
+      console.log('One Size quantity:', quantity);
+      return quantity;
+    };
+
+    const stockUnit = variants?.[0]?.stockUnit || 'pcs';
+    console.log('Stock unit:', stockUnit);
+
+    const stockValues = {
+      sizeS: getSizeQuantity('S'),
+      sizeM: getSizeQuantity('M'),
+      sizeL: getSizeQuantity('L'),
+      sizeXL: getSizeQuantity('XL'),
+      sizeXXL: getSizeQuantity('XXL'),
+      sizeOneSize: getOneSizeQuantity(),
+      stockUnit: stockUnit,
+    };
+    
+    console.log('Patching form with values:', stockValues);
+    this.productForm.patchValue(stockValues);
+    console.log('Form values after patch:', this.productForm.value);
   }
 
   loadCategories(): void {
@@ -84,48 +194,82 @@ export class EditProductDialogComponent implements OnInit {
     this.isSubmitting = true;
     const formValue = this.productForm.value;
     
-    // Map sizes to their quantities
-    const sizes = [
-      { name: 'S', quantity: formValue.sizeS },
-      { name: 'M', quantity: formValue.sizeM },
-      { name: 'L', quantity: formValue.sizeL },
-      { name: 'XL', quantity: formValue.sizeXL },
-      { name: 'XXL', quantity: formValue.sizeXXL }
-    ];
-
-    // Build variants array - include existing variants with their IDs
+    // Build variants array - preserve existing variants structure
     const variants: any[] = [];
     
-    sizes.forEach(size => {
-      const existingVariant = this.data.product.variants?.find(v => v.size === size.name);
-      
-      if (existingVariant) {
-        // Update existing variant - MUST include id for backend to update
+    // Check if product has "One Size" variant
+    const existingOneSizeVariant = this.data.product.variants?.find(v => 
+      v.size?.trim().toUpperCase() === 'ONE SIZE' || 
+      v.size?.trim().toUpperCase() === 'DEFAULT' ||
+      v.size?.trim().toUpperCase() === 'ONESIZE'
+    );
+
+    if (existingOneSizeVariant || (!this.hasMultipleSizes && formValue.sizeOneSize > 0)) {
+      // This is a "One Size" product
+      if (existingOneSizeVariant) {
+        // Update existing One Size variant
         variants.push({
-          id: existingVariant.id,
-          size: size.name,
-          sku: existingVariant.sku,
+          id: existingOneSizeVariant.id,
+          size: existingOneSizeVariant.size, // Preserve original size name
+          sku: existingOneSizeVariant.sku,
           price: formValue.price,
-          stockQuantity: size.quantity,
-          stockUnit: existingVariant.stockUnit || formValue.stockUnit || 'pcs'
+          stockQuantity: formValue.sizeOneSize,
+          stockUnit: existingOneSizeVariant.stockUnit || formValue.stockUnit || 'pcs'
         });
-      } else if (size.quantity > 0) {
-        // Create new variant only if quantity > 0
+      } else if (formValue.sizeOneSize > 0) {
+        // Create new One Size variant
         variants.push({
-          size: size.name,
-          sku: `${formValue.name.replace(/\s+/g, '-').toLowerCase()}-${size.name.toLowerCase()}`,
+          size: 'One Size',
+          sku: `${formValue.name.replace(/\s+/g, '-').toLowerCase()}-one`,
           price: formValue.price,
-          stockQuantity: size.quantity,
+          stockQuantity: formValue.sizeOneSize,
           stockUnit: formValue.stockUnit || 'pcs'
         });
       }
-    });
+    } else {
+      // Standard multi-size product (S/M/L/XL/XXL)
+      const sizes = [
+        { name: 'S', quantity: formValue.sizeS },
+        { name: 'M', quantity: formValue.sizeM },
+        { name: 'L', quantity: formValue.sizeL },
+        { name: 'XL', quantity: formValue.sizeXL },
+        { name: 'XXL', quantity: formValue.sizeXXL }
+      ];
+
+      sizes.forEach(size => {
+        // Case-insensitive search for existing variant
+        const existingVariant = this.data.product.variants?.find(v => 
+          v.size?.trim().toUpperCase() === size.name.toUpperCase()
+        );
+        
+        if (existingVariant) {
+          // Update existing variant - MUST include id for backend to update
+          variants.push({
+            id: existingVariant.id,
+            size: existingVariant.size, // Preserve original case
+            sku: existingVariant.sku,
+            price: formValue.price,
+            stockQuantity: size.quantity,
+            stockUnit: existingVariant.stockUnit || formValue.stockUnit || 'pcs'
+          });
+        } else if (size.quantity > 0) {
+          // Create new variant only if quantity > 0
+          variants.push({
+            size: size.name,
+            sku: `${formValue.name.replace(/\s+/g, '-').toLowerCase()}-${size.name.toLowerCase()}`,
+            price: formValue.price,
+            stockQuantity: size.quantity,
+            stockUnit: formValue.stockUnit || 'pcs'
+          });
+        }
+      });
+    }
 
     // If no variants at all, create a default one
     if (variants.length === 0) {
       variants.push({
-        size: 'Default',
-        sku: `${formValue.name.replace(/\s+/g, '-').toLowerCase()}-default`,
+        size: 'One Size',
+        sku: `${formValue.name.replace(/\s+/g, '-').toLowerCase()}-one`,
         price: formValue.price,
         stockQuantity: 0,
         stockUnit: formValue.stockUnit || 'pcs'
