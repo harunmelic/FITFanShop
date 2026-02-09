@@ -10,6 +10,7 @@ import { CategoryDto } from '../../../../api-services/catalog/category-api.model
 import { ProductApiService } from '../../../../api-services/catalog/product-api.service';
 import { ProductDto } from '../../../../api-services/catalog/product-api.model';
 import { CartService } from '../../../../core/services/cart/cart.service';
+import { WishlistService } from '../../../../core/services/wishlist/wishlist.service';
 import { FitConfirmDialogComponent } from '../fit-confirm-dialog/fit-confirm-dialog.component';
 import { DialogType, DialogButton, DialogConfig } from '../../models/dialog-config.model';
 
@@ -26,6 +27,7 @@ export class NavbarComponent implements OnInit {
   private productService = inject(ProductApiService);
   auth = inject(AuthFacadeService);
   cartService = inject(CartService);
+  wishlistService = inject(WishlistService);
 
   categories = signal<CategoryDto[]>([]);
   isKatalogDropdownOpen = false;
@@ -40,7 +42,7 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
     this.setupSearchListener();
-    // Cart is automatically loaded in CartService when user logs in
+    // Cart and Wishlist are automatically loaded in their services when user logs in
   }
 
   setupSearchListener(): void {

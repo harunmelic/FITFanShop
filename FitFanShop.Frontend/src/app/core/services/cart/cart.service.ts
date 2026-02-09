@@ -79,7 +79,7 @@ export class CartService {
 
   addItem(productVariantId: number, quantity: number = 1): void {
     if (!this.auth.isAuthenticated()) {
-      this.toaster.warning('Morate biti prijavljeni da biste dodali proizvod u korpu');
+      this.toaster.warning('You must be logged in to add products to cart');
       return;
     }
 
@@ -91,12 +91,12 @@ export class CartService {
     this.cartApi.addItem(command).pipe(
       tap((cart) => {
         this.cart.set(cart);
-        this.toaster.success('Proizvod je dodat u korpu!');
+        this.toaster.success('Product added to cart!');
       })
     ).subscribe({
       error: (error) => {
         console.error('Error adding item to cart:', error);
-        this.toaster.error('Greška prilikom dodavanja u korpu');
+        this.toaster.error('Error adding product to cart');
       }
     });
   }
@@ -106,19 +106,19 @@ export class CartService {
     const item = this.cartItems().find(i => i.id === itemId);
     
     if (item && item.stock && quantity > item.stock) {
-      this.toaster.error(`Dostupno samo ${item.stock} ${item.stock === 1 ? 'komad' : 'komada'}!`);
+      this.toaster.error(`Only ${item.stock} ${item.stock === 1 ? 'item' : 'items'} available!`);
       return;
     }
 
     this.cartApi.updateItem(itemId, { quantity }).pipe(
       tap((cart) => {
         this.cart.set(cart);
-        this.toaster.success('Količina je ažurirana');
+        this.toaster.success('Quantity updated');
       })
     ).subscribe({
       error: (error) => {
         console.error('Error updating cart item:', error);
-        this.toaster.error('Greška prilikom ažuriranja');
+        this.toaster.error('Error updating quantity');
       }
     });
   }
@@ -127,12 +127,12 @@ export class CartService {
     this.cartApi.removeItem(itemId).pipe(
       tap(() => {
         this.loadCart(); // Reload cart after removing item
-        this.toaster.success('Proizvod je uklonjen iz korpe');
+        this.toaster.success('Product removed from cart');
       })
     ).subscribe({
       error: (error) => {
         console.error('Error removing cart item:', error);
-        this.toaster.error('Greška prilikom uklanjanja');
+        this.toaster.error('Error removing product');
       }
     });
   }
@@ -141,12 +141,12 @@ export class CartService {
     this.cartApi.clearCart().pipe(
       tap(() => {
         this.cart.set(null);
-        this.toaster.success('Korpa je ispražnjena');
+        this.toaster.success('Cart cleared');
       })
     ).subscribe({
       error: (error) => {
         console.error('Error clearing cart:', error);
-        this.toaster.error('Greška prilikom pražnjenja korpe');
+        this.toaster.error('Error clearing cart');
       }
     });
   }
@@ -162,7 +162,7 @@ export class CartService {
     this.removeItem(itemId);
     this.savedForLater.update(items => [...items, item]);
     this.isLoading.set(false);
-    this.toaster.success('Proizvod je sačuvan za kasnije');
+    this.toaster.success('Product saved for later');
   }
 
   moveToCart(item: CartItemDto): void {
@@ -181,7 +181,7 @@ export class CartService {
 
   removeFromSavedForLater(itemId: number): void {
     this.savedForLater.update(items => items.filter(i => i.id !== itemId));
-    this.toaster.success('Proizvod je uklonjen');
+    this.toaster.success('Product removed');
   }
 
   // Sidebar controls

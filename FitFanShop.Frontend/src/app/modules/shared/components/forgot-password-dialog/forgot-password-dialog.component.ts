@@ -55,7 +55,7 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
   onGetSecurityQuestion(): void {
     const email = this.verifyForm.get('email')?.value;
     if (!email || this.verifyForm.get('email')?.invalid) {
-      this.toaster.error('Unesite validan email');
+      this.toaster.error('Please enter a valid email');
       return;
     }
 
@@ -65,14 +65,14 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
       next: (response) => {
         this.securityQuestion = response.securityQuestion;
         this.stopLoading();
-        this.toaster.info('Odgovorite na sigurnosno pitanje');
+        this.toaster.info('Please answer the security question');
       },
       error: (err) => {
         console.error('Get security question error:', err);
-        let errorMsg = 'Greška prilikom dobijanja sigurnosnog pitanja.';
+        let errorMsg = 'Error getting security question.';
         
         if (err.status === 404) {
-          errorMsg = 'Korisnik sa ovim emailom ne postoji.';
+          errorMsg = 'User with this email does not exist.';
         } else if (err.error?.message) {
           errorMsg = err.error.message;
         }
@@ -100,20 +100,20 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
         if (response.isValid) {
           this.resetToken = response.resetToken || '';
           this.step = 'reset';
-          this.toaster.success('Verifikacija uspešna! Unesite novu šifru.');
+          this.toaster.success('Verification successful! Enter your new password.');
         } else {
-          const errorMsg = response.message || 'Netačan odgovor na sigurnosno pitanje.';
+          const errorMsg = response.message || 'Incorrect answer to security question.';
           this.toaster.error(errorMsg);
         }
       },
       error: (err) => {
         console.error('Verify error:', err);
-        let errorMsg = 'Netačan odgovor na sigurnosno pitanje.';
+        let errorMsg = 'Incorrect answer to security question.';
         
         if (err.error?.message) {
           errorMsg = err.error.message;
         } else if (err.status === 400) {
-          errorMsg = 'Netačan odgovor na sigurnosno pitanje.';
+          errorMsg = 'Incorrect answer to security question.';
         }
         
         this.stopLoading();
@@ -136,17 +136,17 @@ export class ForgotPasswordDialogComponent extends BaseComponent {
     this.auth.resetPassword(email, this.resetToken, newPassword, confirmNewPassword).subscribe({
       next: () => {
         this.stopLoading();
-        this.toaster.success('Šifra uspješno promijenjena! Prijavite se sa novom šifrom.');
+        this.toaster.success('Password changed successfully! Log in with your new password.');
         this.dialogRef.close(true);
       },
       error: (err) => {
         console.error('Reset password error:', err);
-        let errorMsg = 'Greška pri promjeni šifre. Pokušajte ponovo.';
+        let errorMsg = 'Error changing password. Please try again.';
         
         if (err.error?.message) {
           errorMsg = err.error.message;
         } else if (err.status === 400) {
-          errorMsg = 'Nevažeći zahtev. Proverite unete podatke.';
+          errorMsg = 'Invalid request. Please check your input.';
         }
         
         this.stopLoading();

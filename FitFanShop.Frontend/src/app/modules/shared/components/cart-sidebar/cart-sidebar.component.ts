@@ -61,7 +61,7 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
   }
 
   onClearCart(): void {
-    if (confirm('Da li ste sigurni da želite da uklonite sve artikle iz korpe?')) {
+    if (confirm('Are you sure you want to remove all items from the cart?')) {
       this.cartService.clearCart();
     }
   }
