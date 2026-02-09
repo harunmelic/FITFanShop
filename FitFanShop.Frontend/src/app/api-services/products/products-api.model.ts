@@ -46,7 +46,7 @@ export interface UpdateProductCommand {
   description?: string;
   price: number;
   imageUrl?: string;
-  categoryId?: number;
+  categoryIds: number[];  // Array of category IDs (matching CreateProductCommand and backend)
   stock?: number;
   variants?: ProductVariant[];  // Added variants for updating stock quantities
   isEnabled?: boolean;  // Changed from isActive to match backend

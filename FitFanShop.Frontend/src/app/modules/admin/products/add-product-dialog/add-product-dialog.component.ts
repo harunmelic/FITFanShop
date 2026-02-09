@@ -109,7 +109,7 @@ export class AddProductDialogComponent implements OnInit {
       price: formValue.price,
       description: formValue.description || undefined,
       imageUrl: formValue.imageUrl || undefined,
-      categoryIds: formValue.categoryId ? [formValue.categoryId] : [],
+      categoryIds: formValue.categoryId ? [Number(formValue.categoryId)] : [],
       variants: variants
     };
 

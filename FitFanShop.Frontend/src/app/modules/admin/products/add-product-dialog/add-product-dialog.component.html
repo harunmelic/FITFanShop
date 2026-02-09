@@ -80,8 +80,8 @@
         <div class="form-group">
           <label for="categoryId">Category *</label>
           <select id="categoryId" formControlName="categoryId">
-            <option [value]="null" disabled>Select category</option>
-            <option *ngFor="let category of categories" [value]="category.id">
+            <option [ngValue]="null" disabled>Select category</option>
+            <option *ngFor="let category of categories" [ngValue]="category.id">
               {{ category.name }} (ID: {{ category.id }})
             </option>
           </select>

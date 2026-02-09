@@ -18,6 +18,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     {
         var product = await _ctx.Products
             .Include(p => p.ProductCategories)
+            .Include(p => p.Variants)
             .Include(p => p.Reviews)
             .FirstOrDefaultAsync(p => p.Id == command.Id, ct);
 
@@ -76,7 +77,63 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             }
         }
 
+        if (command.Variants != null)
+        {
+            var incomingVariantIds = command.Variants
+                .Where(v => v.Id.HasValue)
+                .Select(v => v.Id!.Value)
+                .ToHashSet();
+
+            var existingVariants = product.Variants.Where(v => !v.IsDeleted).ToList();
+
+            // Remove variants not in the incoming list
+            foreach (var existing in existingVariants)
+            {
+                if (!incomingVariantIds.Contains(existing.Id))
+                {
+                    existing.IsDeleted = true;
+                }
+            }
+
+            foreach (var v in command.Variants)
+            {
+                if (v.Id.HasValue)
+                {
+                    // Update existing variant
+                    var existing = product.Variants.FirstOrDefault(e => e.Id == v.Id.Value && !e.IsDeleted);
+                    if (existing != null)
+                    {
+                        existing.Size = v.Size;
+                        existing.StockQuantity = v.StockQuantity;
+                    }
+                }
+                else
+                {
+                    // Create new variant
+                    var newVariant = new ProductVariantEntity
+                    {
+                        ProductId = product.Id,
+                        Size = v.Size,
+                        StockQuantity = v.StockQuantity,
+                        CreatedAtUtc = DateTime.UtcNow
+                    };
+                    product.Variants.Add(newVariant);
+                }
+            }
+        }
+
         await _ctx.SaveChangesAsync(ct);
+
+        // Generate SKU for new variants that don't have one
+        var variantsWithoutSku = product.Variants.Where(v => !v.IsDeleted && string.IsNullOrEmpty(v.Sku)).ToList();
+        if (variantsWithoutSku.Any())
+        {
+            foreach (var variant in variantsWithoutSku)
+            {
+                variant.Sku = $"FCFIT-{product.Id:D3}-{variant.Size.ToUpper()}";
+            }
+            await _ctx.SaveChangesAsync(ct);
+        }
 
         return new ProductDto
         {
@@ -87,6 +144,16 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             IsEnabled = product.IsEnabled,
             Exclusive = product.Exclusive,
             CategoryIds = product.ProductCategories.Where(pc => !pc.IsDeleted).Select(pc => pc.CategoryId).ToList(),
+            Variants = product.Variants
+                .Where(v => !v.IsDeleted)
+                .Select(v => new ProductVariantDto
+                {
+                    Id = v.Id,
+                    Size = v.Size,
+                    StockQuantity = v.StockQuantity,
+                    Sku = v.Sku ?? string.Empty
+                })
+                .ToList(),
             ReviewCount = product.Reviews.Count(r => !r.IsDeleted),
             AverageRating = product.Reviews.Any(r => !r.IsDeleted) 
                 ? (decimal)Math.Round(product.Reviews.Where(r => !r.IsDeleted).Average(r => r.Rating), 2) 

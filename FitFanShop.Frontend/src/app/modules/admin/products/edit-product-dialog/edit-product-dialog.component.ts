@@ -84,8 +84,7 @@ export class EditProductDialogComponent implements OnInit {
     this.isSubmitting = true;
     const formValue = this.productForm.value;
     
-    // Create/update variants for each size 
-    const variants: any[] = [];
+    // Map sizes to their quantities
     const sizes = [
       { name: 'S', quantity: formValue.sizeS },
       { name: 'M', quantity: formValue.sizeM },
@@ -94,19 +93,21 @@ export class EditProductDialogComponent implements OnInit {
       { name: 'XXL', quantity: formValue.sizeXXL }
     ];
 
-    // Update existing variants or create new ones
+    // Build variants array - include existing variants with their IDs
+    const variants: any[] = [];
+    
     sizes.forEach(size => {
       const existingVariant = this.data.product.variants?.find(v => v.size === size.name);
       
       if (existingVariant) {
-        // Update existing variant with new quantity
+        // Update existing variant - MUST include id for backend to update
         variants.push({
-          id: existingVariant.id,  // Keep existing ID
+          id: existingVariant.id,
           size: size.name,
-          sku: existingVariant.sku,  // Keep existing SKU
+          sku: existingVariant.sku,
           price: formValue.price,
-          stockQuantity: size.quantity || 0,  // Update quantity (allow 0)
-          stockUnit: existingVariant.stockUnit || 'pcs'
+          stockQuantity: size.quantity,
+          stockUnit: existingVariant.stockUnit || formValue.stockUnit || 'pcs'
         });
       } else if (size.quantity > 0) {
         // Create new variant only if quantity > 0
@@ -120,19 +121,16 @@ export class EditProductDialogComponent implements OnInit {
       }
     });
 
-    // Keep any non-size variants (like Default) from original product
-    this.data.product.variants?.forEach(variant => {
-      if (!sizes.find(s => s.name === variant.size) && variant.size !== 'Default') {
-        variants.push({
-          id: variant.id,
-          size: variant.size,
-          sku: variant.sku,
-          price: formValue.price,
-          stockQuantity: variant.stockQuantity || 0,
-          stockUnit: variant.stockUnit || 'pcs'
-        });
-      }
-    });
+    // If no variants at all, create a default one
+    if (variants.length === 0) {
+      variants.push({
+        size: 'Default',
+        sku: `${formValue.name.replace(/\s+/g, '-').toLowerCase()}-default`,
+        price: formValue.price,
+        stockQuantity: 0,
+        stockUnit: formValue.stockUnit || 'pcs'
+      });
+    }
     
     const command: UpdateProductCommand = {
       id: this.data.product.id,
@@ -140,13 +138,16 @@ export class EditProductDialogComponent implements OnInit {
       price: formValue.price,
       description: formValue.description || undefined,
       imageUrl: formValue.imageUrl || undefined,
-      categoryId: formValue.categoryId,
+      categoryIds: formValue.categoryId ? [Number(formValue.categoryId)] : [],
       variants: variants,  // Include variants for updating stock quantities
       isEnabled: formValue.isEnabled
     };
 
-    console.log('Updating product with command:', command);
-    console.log('Created variants:', variants);
+    console.log('=== UPDATE PRODUCT REQUEST ===');
+    console.log('Product ID:', this.data.product.id);
+    console.log('Command:', JSON.stringify(command, null, 2));
+    console.log('Variants count:', variants.length);
+    console.log('Variants:', variants);
 
     // Check auth status before making request
     if (!this.authFacadeService.isAuthenticated()) {
@@ -168,12 +169,15 @@ export class EditProductDialogComponent implements OnInit {
 
     this.productsApiService.updateProduct(this.data.product.id, command).subscribe({
       next: (product) => {
-        console.log('Update successful, received product:', product);
+        console.log('=== UPDATE SUCCESS ===');
+        console.log('Received product:', product);
+        console.log('Received variants:', product.variants);
         this.toasterService.success('Product updated successfully!');
         this.dialogRef.close(product);
         this.isSubmitting = false;
       },
       error: (error) => {
+        console.error('=== UPDATE ERROR ===');
         console.error('Full error object:', error);
         console.error('Error status:', error.status);
         console.error('Error statusText:', error.statusText);
@@ -181,7 +185,8 @@ export class EditProductDialogComponent implements OnInit {
         console.error('Error headers:', error.headers);
         
         if (error.status === 400) {
-          this.toasterService.error('Validation error: ' + (error.error?.title || 'Invalid data'));
+          console.error('Validation error details:', error.error);
+          this.toasterService.error('Validation error: ' + (error.error?.title || JSON.stringify(error.error) || 'Invalid data'));
         } else if (error.status === 401) {
           this.toasterService.error('Session expired or insufficient permissions. Please log in as admin.');
         } else if (error.status === 403) {
@@ -189,7 +194,7 @@ export class EditProductDialogComponent implements OnInit {
         } else if (error.status === 404) {
           this.toasterService.error('Product not found.');
         } else {
-          this.toasterService.error('Error updating product.');
+          this.toasterService.error('Error updating product: ' + (error.error?.message || error.message || 'Unknown error'));
         }
         
         this.isSubmitting = false;
