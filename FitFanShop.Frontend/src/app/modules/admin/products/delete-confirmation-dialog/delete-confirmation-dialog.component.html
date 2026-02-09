@@ -1,0 +1,22 @@
+<div class="delete-confirmation-dialog">
+  <div class="dialog-header">
+    <h2>{{ data.title }}</h2>
+  </div>
+  
+  <div class="dialog-content">
+    <p class="message">{{ data.message }}</p>
+    <p class="product-name" *ngIf="data.productName">
+      <strong>{{ data.productName }}</strong>
+    </p>
+    <p class="warning-text">Ova akcija ne može biti poništena.</p>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="btn btn-cancel" (click)="onCancel()">
+      Otkaži
+    </button>
+    <button class="btn btn-delete" (click)="onConfirm()">
+      Obriši
+    </button>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { ProductsApiService } from '../../../api-services/products/products-api.
 import { Product } from '../../../api-services/products/products-api.model';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
 import { EditProductDialogComponent } from './edit-product-dialog/edit-product-dialog.component';
+import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 @Component({
   selector: 'app-products',
@@ -84,18 +85,30 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  deleteProduct(id: number): void {
-    if (confirm('Are you sure you want to delete this product?')) {
-      this.productsApiService.deleteProduct(id).subscribe({
-        next: () => {
-          this.loadProducts();
-        },
-        error: (error) => {
-          console.error('Error deleting product:', error);
-          this.errorMessage = 'Error deleting product';
-        }
-      });
-    }
+  deleteProduct(product: Product): void {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      width: '420px',
+      panelClass: 'delete-confirmation-dialog-container',
+      data: {
+        title: 'Obriši proizvod',
+        message: 'Da li ste sigurni da želite da obrišete ovaj proizvod?',
+        productName: product.name
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.productsApiService.deleteProduct(product.id).subscribe({
+          next: () => {
+            this.loadProducts();
+          },
+          error: (error) => {
+            console.error('Error deleting product:', error);
+            this.errorMessage = 'Error deleting product';
+          }
+        });
+      }
+    });
   }
 
   // Calculate total stock from all product variants

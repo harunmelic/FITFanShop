@@ -8,6 +8,7 @@ import { ProductsComponent } from './products/products.component';
 import { PicturesComponent } from './pictures/pictures.component';
 import { AddProductDialogComponent } from './products/add-product-dialog/add-product-dialog.component';
 import { EditProductDialogComponent } from './products/edit-product-dialog/edit-product-dialog.component';
+import { DeleteConfirmationDialogComponent } from './products/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { materialModules } from '../shared/material-modules';
 
 @NgModule({
@@ -17,7 +18,8 @@ import { materialModules } from '../shared/material-modules';
     ProductsComponent,
     PicturesComponent,
     AddProductDialogComponent,
-    EditProductDialogComponent
+    EditProductDialogComponent,
+    DeleteConfirmationDialogComponent
   ],
   imports: [
     CommonModule,
