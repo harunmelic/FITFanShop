@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductApiService } from '../../../api-services/catalog/product-api.service';
 import { ProductDto, ProductVariantDto } from '../../../api-services/catalog/product-api.model';
 import { CartService } from '../../../core/services/cart/cart.service';
+import { WishlistService } from '../../../core/services/wishlist/wishlist.service';
 import { DiscountApiService } from '../../../api-services/commerce/discount-api.service';
 import { DiscountDto } from '../../../api-services/commerce/discount-api.model';
 import { CurrentUserService } from '../../../core/services/auth/current-user.service';
@@ -27,6 +28,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   private productService = inject(ProductApiService);
   private discountService = inject(DiscountApiService);
   private cartService = inject(CartService);
+  private wishlistService = inject(WishlistService);
   public currentUserService = inject(CurrentUserService);
   private dialog = inject(MatDialog);
   private reviewService = inject(ReviewApiService);
@@ -40,7 +42,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   quantity = signal<number>(1);
   activeDiscounts = signal<DiscountDto[]>([]);
   relatedProducts = signal<ProductDto[]>([]);
-  isInWishlist = signal<boolean>(false);
+  isInWishlist = computed(() => {
+    const product = this.product();
+    return product ? this.wishlistService.isInWishlist(product.id) : false;
+  });
   reviewSummary = signal<ProductReviewSummaryDto>({ averageRating: 0, totalReviews: 0, reviews: [] });
   canReview = signal<boolean>(false);
   canReviewReason = signal<string>('');
@@ -99,8 +104,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
           if (firstAvailable) {
             this.selectedVariant.set(firstAvailable);
           }
-          // Check if in wishlist (simulation)
-          this.checkIfInWishlist(id);
           
           // Load reviews after product is loaded
           this.loadReviews(id);
@@ -224,7 +227,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     const variant = this.selectedVariant();
     
     if (!product || !variant) {
-      this.toaster.error('Molimo odaberite varijantu proizvoda');
+      this.toaster.error('Please select a product variant');
       return;
     }
 
@@ -235,9 +238,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
     // Add to cart using CartService
     this.cartService.addItem(variant.id, this.quantity());
-    
-    // Open cart sidebar to show the added item
-    this.cartService.openSidebar();
   }
 
   buyNow(): void {
@@ -245,7 +245,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     const variant = this.selectedVariant();
     
     if (!product || !variant) {
-      this.toaster.error('Molimo odaberite varijantu proizvoda');
+      this.toaster.error('Please select a product variant');
       return;
     }
 
@@ -267,11 +267,11 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const newStatus = !this.isInWishlist();
-    this.isInWishlist.set(newStatus);
-    
-    // Here you would normally call an API to update wishlist status
-    console.log(newStatus ? 'Added to wishlist' : 'Removed from wishlist');
+    const product = this.product();
+    if (!product) return;
+
+    // The service handles the toggle and UI updates automatically via signals
+    this.wishlistService.toggleWishlist(product.id);
   }
 
   private openMembershipRequiredDialog(): void {
@@ -279,11 +279,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       width: '400px',
       maxWidth: '90vw'
     });
-  }
-
-  private checkIfInWishlist(productId: number): void {
-    // Simulation - in real app, you'd check against user's wishlist
-    this.isInWishlist.set(false);
   }
 
   loadReviews(productId: number): void {
@@ -347,7 +342,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     const currentUser = this.currentUserService.currentUser();
     if (!currentUser) {
       this.canReview.set(false);
-      this.canReviewReason.set('Morate biti prijavljeni da biste ostavili recenziju');
+      this.canReviewReason.set('You must be logged in to leave a review');
       this.currentOrderItemId.set(null);
       return;
     }
@@ -361,7 +356,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error checking review eligibility:', error);
         this.canReview.set(false);
-        this.canReviewReason.set('Greška prilikom provjere prava za recenziju');
+        this.canReviewReason.set('Error checking review eligibility');
         this.currentOrderItemId.set(null);
       }
     });
@@ -377,12 +372,12 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     const currentUser = this.currentUserService.currentUser();
     
     if (!productId) {
-      this.toaster.error('Greška: Proizvod nije pronađen');
+      this.toaster.error('Error: Product not found');
       return;
     }
 
     if (!currentUser) {
-      this.toaster.error('Morate biti prijavljeni da biste ostavili recenziju');
+      this.toaster.error('You must be logged in to leave a review');
       return;
     }
 
@@ -448,7 +443,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
     this.reviewService.createReview(reviewCommand).subscribe({
       next: () => {
-        this.toaster.success('Recenzija je uspješno poslata!');
+        this.toaster.success('Review submitted successfully!');
         this.reviewForm.reset();
         this.loadReviews(productId);
         this.canReview.set(false);
@@ -460,23 +455,23 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         this.isSubmittingReview.set(false);
         
         if (error.status === 400) {
-          const errorMsg = error.error?.message || 'Neispravni podaci';
-          this.toaster.error(`Greška: ${errorMsg}`);
+          const errorMsg = error.error?.message || 'Invalid data';
+          this.toaster.error(`Error: ${errorMsg}`);
         } else if (error.status === 404) {
           if (error.error?.message?.includes('Order item')) {
-            this.toaster.error('Narudžba nije pronađena - ne možete ostaviti recenziju za ovaj proizvod');
+            this.toaster.error('Order not found - you cannot review this product');
             this.canReview.set(false);
             this.currentOrderItemId.set(null);
           } else {
-            this.toaster.warning('API za recenzije trenutno nije dostupan. Molimo pokušajte ponovo kasnije.');
+            this.toaster.warning('Review API is currently unavailable. Please try again later.');
           }
         } else if (error.status === 409) {
-          this.toaster.error('Već ste komentarisali ovo');
+          this.toaster.error('You have already reviewed this product');
           this.canReview.set(false);
         } else if (error.status === 0 || error.status >= 500) {
-          this.toaster.warning('API za recenzije trenutno nije dostupan. Molimo pokušajte ponovo kasnije.');
+          this.toaster.warning('Review API is currently unavailable. Please try again later.');
         } else {
-          this.toaster.error('Greška prilikom slanja recenzije. Molimo pokušajte ponovo.');
+          this.toaster.error('Error submitting review. Please try again.');
         }
       }
     });
@@ -565,11 +560,11 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       if (result) {
         this.reviewService.reportReview(result).subscribe({
           next: () => {
-            this.toaster.success('Prijava je uspješno poslata. Hvala vam!');
+            this.toaster.success('Report submitted successfully. Thank you!');
           },
           error: (error) => {
             console.warn('Report API not available:', error);
-            this.toaster.warning('Report funkcija trenutno nije dostupna.');
+            this.toaster.warning('Report feature is currently unavailable.');
           }
         });
       }
@@ -589,7 +584,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
           this.actuallySubmitReview(productId, firstItem.id);
         } else {
           console.warn('❌ No reviewable items found');
-          this.toaster.error('Niste kupili ovaj proizvod ili već ste ostavili recenziju');
+          this.toaster.error('You have not purchased this product or have already reviewed it');
           this.isSubmittingReview.set(false);
           this.canReview.set(false);
         }
@@ -602,7 +597,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         const mockOrderItemId = Math.abs(userId * productId) % 10000 + 1000; // Create deterministic ID
         
         console.log('🎲 Last resort: using deterministic mock orderItemId:', mockOrderItemId);
-        this.toaster.warning('Koristim rezervnu metodu - recenzija možda neće biti povezana sa narudžbinom');
+        this.toaster.warning('Using fallback method - review may not be linked to order');
         this.actuallySubmitReview(productId, mockOrderItemId);
       }
     });
@@ -637,7 +632,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     } else {
       // Fallback - copy URL to clipboard
       navigator.clipboard.writeText(window.location.href);
-      this.toaster.success('URL kopiran u clipboard');
+      this.toaster.success('URL copied to clipboard');
     }
   }
 

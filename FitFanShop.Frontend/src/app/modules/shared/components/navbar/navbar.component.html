@@ -42,6 +42,16 @@
         <mat-icon>search</mat-icon>
       </button>
 
+      <button mat-icon-button class="icon-button" (click)="wishlistService.openSidebar()">
+        <mat-icon>favorite</mat-icon>
+      </button>
+      <span class="cart-count">({{ wishlistService.itemCount() }})</span>
+
+      <button mat-icon-button class="icon-button" (click)="cartService.openSidebar()">
+        <mat-icon>shopping_cart</mat-icon>
+      </button>
+      <span class="cart-count">({{ cartService.itemCount() }})</span>
+
       <!-- Profile Icon with Dropdown -->
       <div class="profile-dropdown">
         <button 
@@ -80,11 +90,6 @@
           </a>
         </div>
       </div>
-
-      <button mat-icon-button class="icon-button" (click)="cartService.openSidebar()">
-        <mat-icon>shopping_cart</mat-icon>
-      </button>
-      <span class="cart-count">({{ cartService.itemCount() }})</span>
     </div>
   </div>
 </nav>

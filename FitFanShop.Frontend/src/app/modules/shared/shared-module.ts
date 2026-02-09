@@ -30,6 +30,7 @@ import { MembershipRequiredDialogComponent } from './components/membership-requi
 import { RatingDisplayComponent } from './components/rating/rating-display/rating-display.component';
 import { RatingInputComponent } from './components/rating/rating-input/rating-input.component';
 import { ReportReviewDialogComponent } from './components/report-review-dialog/report-review-dialog.component';
+import { WishlistSidebarComponent } from './components/wishlist-sidebar/wishlist-sidebar.component';
 
 
 
@@ -59,7 +60,8 @@ import { ReportReviewDialogComponent } from './components/report-review-dialog/r
     MembershipRequiredDialogComponent,
     ReportReviewDialogComponent,
     RatingDisplayComponent,
-    RatingInputComponent
+    RatingInputComponent,
+    WishlistSidebarComponent
   ],
   imports: [
     CommonModule,
@@ -92,6 +94,7 @@ import { ReportReviewDialogComponent } from './components/report-review-dialog/r
     ScrollToTopComponent,
     LoadingScreenComponent,
     CartSidebarComponent,
+    WishlistSidebarComponent,
     RatingDisplayComponent,
     RatingInputComponent,
     ...materialModules
