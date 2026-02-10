@@ -12,6 +12,9 @@ import { DeleteConfirmationDialogComponent } from './products/delete-confirmatio
 import { CategoriesComponent } from './categories/categories.component';
 import { AddCategoryDialogComponent } from './categories/add-category-dialog/add-category-dialog.component';
 import { EditCategoryDialogComponent } from './categories/edit-category-dialog/edit-category-dialog.component';
+import { UsersComponent } from './users/users.component';
+import { AddUserDialogComponent } from './users/add-user-dialog/add-user-dialog.component';
+import { EditUserDialogComponent } from './users/edit-user-dialog/edit-user-dialog.component';
 import { materialModules } from '../shared/material-modules';
 
 @NgModule({
@@ -25,7 +28,10 @@ import { materialModules } from '../shared/material-modules';
     DeleteConfirmationDialogComponent,
     CategoriesComponent,
     AddCategoryDialogComponent,
-    EditCategoryDialogComponent
+    EditCategoryDialogComponent,
+    UsersComponent,
+    AddUserDialogComponent,
+    EditUserDialogComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,115 @@
+<div class="users-page">
+  <div class="page-header">
+    <h2>Users Management</h2>
+    <p>Manage system users</p>
+  </div>
+
+  <div class="page-content">
+    <!-- Loading spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+      <p>Loading users...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Users table -->
+    <div *ngIf="!isLoading && !errorMessage" class="content-card">
+      <div class="card-header">
+        <h3>Users List</h3>
+        <button class="btn-primary" (click)="openAddUserDialog()">Add New User</button>
+      </div>
+
+      <div *ngIf="users && users.length === 0" class="empty-state">
+        <p>No users in database.</p>
+      </div>
+
+      <!-- Desktop table -->
+      <div class="table-wrapper" *ngIf="users && users.length > 0">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>{{ user.id }}</td>
+              <td>{{ user.firstName }}</td>
+              <td>{{ user.lastName }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
+                  {{ user.role }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+                  {{ user.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="actions">
+                <!-- <button class="btn-edit" (click)="openEditUserDialog(user)">Edit</button> -->
+                <button 
+                  class="btn-delete" 
+                  (click)="deleteUser(user)"
+                  [disabled]="isCurrentUser(user)"
+                  [title]="isCurrentUser(user) ? 'You cannot delete your own account' : 'Delete user'">
+                  Delete
+                </button>
+                <span *ngIf="isCurrentUser(user)" class="current-user-badge">You</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="mobile-cards" *ngIf="users && users.length > 0">
+        <div class="user-card" *ngFor="let user of users">
+          <div class="user-card-header">
+            <strong class="user-card-name">{{ user.firstName }} {{ user.lastName }}</strong>
+            <span class="badge" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+              {{ user.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+          <div class="user-card-body">
+            <div class="user-card-row">
+              <span class="label">ID</span>
+              <span>{{ user.id }}</span>
+            </div>
+            <div class="user-card-row">
+              <span class="label">Email</span>
+              <span>{{ user.email }}</span>
+            </div>
+            <div class="user-card-row">
+              <span class="label">Role</span>
+              <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
+                {{ user.role }}
+              </span>
+            </div>
+          </div>
+          <div class="user-card-actions">
+            <!-- <button class="btn-edit" (click)="openEditUserDialog(user)">Edit</button> -->
+            <button 
+              class="btn-delete" 
+              (click)="deleteUser(user)"
+              [disabled]="isCurrentUser(user)"
+              [title]="isCurrentUser(user) ? 'You cannot delete your own account' : 'Delete user'">
+              Delete
+            </button>
+            <span *ngIf="isCurrentUser(user)" class="current-user-badge">You</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

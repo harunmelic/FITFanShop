@@ -6,6 +6,7 @@ import { AdminGuard } from '../../core/guards/admin.guard';
 import { ProductsComponent } from './products/products.component';
 import { PicturesHybridComponent } from './pictures/pictures-hybrid.component';
 import { CategoriesComponent } from './categories/categories.component';
+import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,10 @@ const routes: Routes = [
       {
         path: 'pictures',
         component: PicturesHybridComponent
+      },
+      {
+        path: 'users',
+        component: UsersComponent
       }
     ]
   }
