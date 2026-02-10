@@ -1,0 +1,45 @@
+<div class="edit-category-dialog">
+  <div class="dialog-header">
+    <h2>Edit Category</h2>
+  </div>
+
+  <div class="dialog-content">
+    <form [formGroup]="categoryForm" class="category-form">
+      <!-- Name -->
+      <div class="form-group">
+        <label>Category Name *</label>
+        <input type="text" formControlName="name" placeholder="Enter category name">
+        <span class="error-message" *ngIf="f['name'].touched && f['name'].hasError('required')">
+          Name is required
+        </span>
+        <span class="error-message" *ngIf="f['name'].touched && f['name'].hasError('minlength')">
+          Name must be at least 2 characters
+        </span>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" rows="3" placeholder="Enter category description"></textarea>
+      </div>
+
+      <!-- Is Enabled -->
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" formControlName="isEnabled">
+          <span>Category is active</span>
+        </label>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="btn btn-cancel" (click)="onCancel()" [disabled]="isSubmitting">
+      Cancel
+    </button>
+    <button class="btn btn-save" (click)="onSubmit()" [disabled]="isSubmitting">
+      <span *ngIf="!isSubmitting">Update</span>
+      <span *ngIf="isSubmitting">Updating...</span>
+    </button>
+  </div>
+</div>

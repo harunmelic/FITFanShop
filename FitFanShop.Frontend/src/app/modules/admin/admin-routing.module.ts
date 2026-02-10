@@ -5,6 +5,7 @@ import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { AdminGuard } from '../../core/guards/admin.guard';
 import { ProductsComponent } from './products/products.component';
 import { PicturesHybridComponent } from './pictures/pictures-hybrid.component';
+import { CategoriesComponent } from './categories/categories.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
       {
         path: 'products',
         component: ProductsComponent
+      },
+      {
+        path: 'categories',
+        component: CategoriesComponent
       },
       {
         path: 'pictures',

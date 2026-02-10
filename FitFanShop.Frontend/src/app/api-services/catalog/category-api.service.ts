@@ -18,4 +18,16 @@ export class CategoryApiService {
   getById(id: number): Observable<CategoryDto> {
     return this.http.get<CategoryDto>(`${this.apiUrl}/${id}`);
   }
+
+  create(category: Partial<CategoryDto>): Observable<CategoryDto> {
+    return this.http.post<CategoryDto>(this.apiUrl, category);
+  }
+
+  update(id: number, category: Partial<CategoryDto>): Observable<CategoryDto> {
+    return this.http.put<CategoryDto>(`${this.apiUrl}/${id}`, category);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

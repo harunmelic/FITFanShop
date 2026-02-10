@@ -1,0 +1,87 @@
+<div class="categories-page">
+  <div class="page-header">
+    <h2>Categories Management</h2>
+    <p>Manage your categories</p>
+  </div>
+
+  <div class="page-content">
+    <!-- Loading spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+      <p>Loading categories...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Categories table -->
+    <div *ngIf="!isLoading && !errorMessage" class="content-card">
+      <div class="card-header">
+        <h3>Categories List</h3>
+        <button class="btn-primary" (click)="openAddCategoryDialog()">Add New Category</button>
+      </div>
+
+      <div *ngIf="categories && categories.length === 0" class="empty-state">
+        <p>No categories in database.</p>
+      </div>
+
+      <!-- Desktop table -->
+      <div class="table-wrapper" *ngIf="categories && categories.length > 0">
+        <table class="categories-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let category of categories">
+              <td>{{ category.id }}</td>
+              <td>{{ category.name }}</td>
+              <td>{{ category.description || 'N/A' }}</td>
+              <td>
+                <span class="badge" [class.active]="category.isEnabled" [class.inactive]="!category.isEnabled">
+                  {{ category.isEnabled ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="actions">
+                <button class="btn-edit" (click)="openEditCategoryDialog(category)">Edit</button>
+                <button class="btn-delete" (click)="deleteCategory(category)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="mobile-cards" *ngIf="categories && categories.length > 0">
+        <div class="category-card" *ngFor="let category of categories">
+          <div class="category-card-header">
+            <strong class="category-card-name">{{ category.name }}</strong>
+            <span class="badge" [class.active]="category.isEnabled" [class.inactive]="!category.isEnabled">
+              {{ category.isEnabled ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+          <div class="category-card-body">
+            <div class="category-card-row">
+              <span class="label">ID</span>
+              <span>{{ category.id }}</span>
+            </div>
+            <div class="category-card-row">
+              <span class="label">Description</span>
+              <span>{{ category.description || 'N/A' }}</span>
+            </div>
+          </div>
+          <div class="category-card-actions">
+            <button class="btn-edit" (click)="openEditCategoryDialog(category)">Edit</button>
+            <button class="btn-delete" (click)="deleteCategory(category)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
