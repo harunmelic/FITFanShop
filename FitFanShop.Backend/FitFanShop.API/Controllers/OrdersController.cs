@@ -25,10 +25,10 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<int>> Create([FromBody] CreateOrderCommand command)
+    public async Task<ActionResult<CreateOrderResponse>> Create([FromBody] CreateOrderCommand command)
     {
-        var orderId = await _mediator.Send(command);
-        return Ok(orderId);
+        var response = await _mediator.Send(command);
+        return Ok(response);
     }
 
     [HttpGet("my-orders")]
@@ -58,7 +58,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPatch("{id}/status")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public async Task<ActionResult> UpdateStatus(int id, [FromBody] UpdateOrderStatusDto dto)
     {
         await _mediator.Send(new UpdateOrderStatusCommand { OrderId = id, Status = dto.Status });

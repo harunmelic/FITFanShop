@@ -89,25 +89,26 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
   loadProduct(id: number): void {
     this.isLoading.set(true);
-    
-    this.productService.getAll({
-      isEnabled: true,
-      page: 1,
-      pageSize: 100
-    }).subscribe({
-      next: (products) => {
-        const product = products.find(p => p.id === id);
-        if (product) {
-          this.product.set(product);
-          // Auto-select first available variant
+
+    this.productService.getById(id).subscribe({
+      next: (product) => {
+        this.product.set(product);
+
+        // Keep selected variant if it still exists; otherwise auto-select first available
+        const currentVariantId = this.selectedVariant()?.id;
+        const stillAvailable = currentVariantId
+          ? product.variants.find(v => v.id === currentVariantId)
+          : null;
+
+        if (stillAvailable) {
+          this.selectedVariant.set(stillAvailable);
+        } else {
           const firstAvailable = product.variants.find(v => v.stockQuantity > 0);
-          if (firstAvailable) {
-            this.selectedVariant.set(firstAvailable);
-          }
-          
-          // Load reviews after product is loaded
-          this.loadReviews(id);
+          this.selectedVariant.set(firstAvailable ?? null);
         }
+
+        // Load reviews after product is loaded
+        this.loadReviews(id);
         this.isLoading.set(false);
       },
       error: (error) => {

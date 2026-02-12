@@ -1,6 +1,9 @@
 import { Component, inject, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { CartService } from '../../../../core/services/cart/cart.service';
 import { CartItemDto } from '../../../../api-services/commerce/cart-api.model';
+import { OrderApiService } from '../../../../api-services/commerce/order-api.service';
+import { ToasterService } from '../../../../core/services/toaster.service';
 
 @Component({
   selector: 'app-cart-sidebar',
@@ -10,7 +13,11 @@ import { CartItemDto } from '../../../../api-services/commerce/cart-api.model';
 })
 export class CartSidebarComponent implements OnInit, OnDestroy {
   cartService = inject(CartService);
+  private router = inject(Router);
+  private orderService = inject(OrderApiService);
+  private toaster = inject(ToasterService);
   showSavedItems = false;
+  isCreatingOrder = false;
 
   ngOnInit(): void {
     // Prevent body scroll when sidebar is open
@@ -67,7 +74,44 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
   }
 
   proceedToCheckout(): void {
-    // TODO: Navigate to checkout
-    console.log('Proceeding to checkout...');
+    if (this.cartService.itemCount() === 0) {
+      this.toaster.error('Your cart is empty');
+      return;
+    }
+
+    this.isCreatingOrder = true;
+
+    // Build products list from cart items
+    const products = this.cartService.cartItems()
+      .filter(item => item.productVariantId)
+      .map(item => ({
+        productVariantId: item.productVariantId!,
+        quantity: item.quantity
+      }));
+
+    const tickets = this.cartService.cartItems()
+      .filter(item => item.ticketTypeId)
+      .map(item => ({
+        ticketTypeId: item.ticketTypeId!,
+        quantity: item.quantity
+      }));
+
+    // Create Pending order
+    this.orderService.createOrder({ products, tickets }).subscribe({
+      next: (response) => {
+        this.toaster.success('Order created! Please complete payment details.');
+        this.cartService.closeSidebar();
+        // Navigate to checkout with orderId
+        this.router.navigate(['/checkout'], {
+          queryParams: { orderId: response.orderId }
+        });
+        this.isCreatingOrder = false;
+      },
+      error: (error) => {
+        console.error('Order creation error:', error);
+        this.toaster.error('Failed to create order. Please try again.');
+        this.isCreatingOrder = false;
+      }
+    });
   }
 }

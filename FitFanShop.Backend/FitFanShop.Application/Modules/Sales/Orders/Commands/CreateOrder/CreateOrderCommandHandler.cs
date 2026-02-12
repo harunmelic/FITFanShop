@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitFanShop.Application.Modules.Sales.Orders.Commands.CreateOrder;
 
-public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int>
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResponse>
 {
     private readonly IAppDbContext _ctx;
     private readonly IAppCurrentUser _currentUser;
@@ -18,7 +18,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int
         _currentUser = currentUser;
     }
 
-    public async Task<int> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         var userId = _currentUser.UserId;
         if (userId == null)
@@ -50,7 +50,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int
                     .Include(x => x.Product)
                     .ThenInclude(x => x.DiscountProducts)
                     .ThenInclude(dp => dp.Discount)
-                    .IgnoreQueryFilters() // Provjerava sve, ukljuèujuæi obrisane
+                    .IgnoreQueryFilters()
                     .FirstOrDefaultAsync(x => x.Id == p.ProductVariantId, cancellationToken);
                 
                 if (variant == null)
@@ -143,7 +143,14 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int
             
             await _ctx.SaveChangesAsync(cancellationToken);
             await tx.CommitAsync(cancellationToken);
-            return order.Id;
+
+            return new CreateOrderResponse
+            {
+                OrderId = order.Id,
+                OrderNumber = $"ORD-{order.Id:D6}",
+                Total = order.TotalAmount,
+                Status = "Pending"
+            };
         }
         catch
         {

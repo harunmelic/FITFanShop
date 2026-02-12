@@ -343,15 +343,21 @@
     cursor: pointer;
     transition: all 0.2s ease;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background-color: #000;
       transform: translateY(-1px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    &:active {
+    &:active:not(:disabled) {
       transform: translateY(0);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+      opacity: 0.6;
     }
   }
 

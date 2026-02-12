@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CheckoutComponent } from './modules/shared/components/checkout/checkout.component';
+import { CheckoutSuccessComponent } from './modules/shared/components/checkout-success/checkout-success.component';
+import { myAuthGuard } from './core/guards/my-auth-guard';
 
 const routes: Routes = [
   {
@@ -21,6 +24,18 @@ const routes: Routes = [
     path: 'admin',
     loadChildren: () =>
       import('./modules/admin/admin.module').then(m => m.AdminModule)
+  },
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
+    canActivate: [myAuthGuard],
+    data: { requireAuth: true }
+  },
+  {
+    path: 'checkout/success',
+    component: CheckoutSuccessComponent,
+    canActivate: [myAuthGuard],
+    data: { requireAuth: true }
   },
   // fallback 404
   { path: '**', redirectTo: '/' }

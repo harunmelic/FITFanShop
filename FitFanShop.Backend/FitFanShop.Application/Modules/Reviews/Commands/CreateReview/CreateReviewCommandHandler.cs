@@ -35,11 +35,11 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, R
             throw new FitFanShopNotFoundException($"Order item with id {request.OrderItemId} not found.");
 
         if (orderItem.Order == null || orderItem.Order.UserId != userId.Value)
-            throw new FitFanShopBusinessRuleException("Unauthorized", "Možete recenzirati samo proizvode koje ste kupili.");
+            throw new FitFanShopBusinessRuleException("Unauthorized", "You can only review products you have purchased.");
 
         // Check if review already exists for this OrderItem
         if (orderItem.Review != null)
-            throw new FitFanShopBusinessRuleException("ReviewAlreadyExists", "Već ste recenzirali ovaj proizvod.");
+            throw new FitFanShopBusinessRuleException("ReviewAlreadyExists", "You have already reviewed this product.");
 
         // Check if the order is confirmed or delivered
         var order = await _ctx.Orders
@@ -52,7 +52,7 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, R
         var allowedStatuses = new[] { "Confirmed", "Delivered" };
         if (!allowedStatuses.Contains(order.Status.Name))
             throw new FitFanShopBusinessRuleException("OrderNotConfirmedOrDelivered", 
-                "Možete recenzirati samo proizvode iz potvrđenih ili isporučenih narudžbi.");
+                "You can only review products from confirmed or delivered orders.");
 
         // Get ProductId from ProductVariant
         if (orderItem.ProductVariant == null)

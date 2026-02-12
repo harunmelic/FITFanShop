@@ -31,6 +31,8 @@ import { RatingDisplayComponent } from './components/rating/rating-display/ratin
 import { RatingInputComponent } from './components/rating/rating-input/rating-input.component';
 import { ReportReviewDialogComponent } from './components/report-review-dialog/report-review-dialog.component';
 import { WishlistSidebarComponent } from './components/wishlist-sidebar/wishlist-sidebar.component';
+import { CheckoutComponent } from './components/checkout/checkout.component';
+import { CheckoutSuccessComponent } from './components/checkout-success/checkout-success.component';
 
 
 
@@ -61,7 +63,9 @@ import { WishlistSidebarComponent } from './components/wishlist-sidebar/wishlist
     ReportReviewDialogComponent,
     RatingDisplayComponent,
     RatingInputComponent,
-    WishlistSidebarComponent
+    WishlistSidebarComponent,
+    CheckoutComponent,
+    CheckoutSuccessComponent
   ],
   imports: [
     CommonModule,

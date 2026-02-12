@@ -1,0 +1,66 @@
+<div class="success-page">
+  <div class="success-container">
+    <div class="success-card">
+      <div class="success-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+
+      <h1>Order Placed Successfully!</h1>
+      <p class="success-message">
+        Thank you for your purchase. Your order has been received and is being processed.
+      </p>
+
+      <div class="order-details">
+        <div class="detail-row">
+          <span class="label">Order Number:</span>
+          <span class="value">{{ orderNumber() }}</span>
+        </div>
+        <div class="detail-row total">
+          <span class="label">Total Amount:</span>
+          <span class="value">{{ orderTotal() | number:'1.2-2' }} KM</span>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <mat-icon>email</mat-icon>
+        <p>A confirmation email has been sent to your registered email address with order details.</p>
+      </div>
+
+      <div class="next-steps">
+        <h3>What happens next?</h3>
+        <div class="step">
+          <mat-icon>inventory</mat-icon>
+          <div>
+            <strong>Order Processing</strong>
+            <p>We're preparing your items for shipment</p>
+          </div>
+        </div>
+        <div class="step">
+          <mat-icon>local_shipping</mat-icon>
+          <div>
+            <strong>Shipping</strong>
+            <p>Your order will be shipped within 2-3 business days</p>
+          </div>
+        </div>
+        <div class="step">
+          <mat-icon>home</mat-icon>
+          <div>
+            <strong>Delivery</strong>
+            <p>Estimated delivery: 5-7 business days</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button mat-button color="primary" (click)="continueShopping()">
+          <mat-icon>shopping_bag</mat-icon>
+          Continue Shopping
+        </button>
+        <button mat-button (click)="viewOrders()">
+          <mat-icon>receipt_long</mat-icon>
+          View Orders
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

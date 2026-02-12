@@ -132,8 +132,9 @@
       </div>
     </div>
 
-    <button class="checkout-btn" (click)="proceedToCheckout()">
-      Proceed to checkout
+    <button class="checkout-btn" (click)="proceedToCheckout()" [disabled]="isCreatingOrder || cartService.itemCount() === 0">
+      <span *ngIf="!isCreatingOrder">Proceed to checkout</span>
+      <span *ngIf="isCreatingOrder">Creating order...</span>
     </button>
     
     <button class="continue-shopping-btn" (click)="cartService.closeSidebar()">

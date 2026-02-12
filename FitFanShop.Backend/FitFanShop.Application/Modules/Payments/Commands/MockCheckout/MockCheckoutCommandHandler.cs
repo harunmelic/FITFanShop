@@ -29,7 +29,7 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
         if (userId == null)
             throw new UnauthorizedAccessException("User not authenticated.");
 
-        // 1. Dohvati Cart korisnika
+        // 1. Get user's cart
         var cart = await _ctx.Carts
             .Include(c => c.Items)
                 .ThenInclude(i => i.ProductVariant)
@@ -42,7 +42,7 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
 
         var activeItems = cart.Items.Where(i => !i.IsDeleted).ToList();
 
-        // 2. Validacija: Provjeri da li svi ProductVariants postoje u bazi
+        // 2. Validation: Check if all ProductVariants exist in the database
         var productVariantIds = activeItems
             .Where(i => i.ProductVariantId.HasValue)
             .Select(i => i.ProductVariantId!.Value)
@@ -64,7 +64,7 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
             }
         }
 
-        // 3. Kreiraj Order iz Cart-a
+        // 3. Create Order from Cart
         var createOrderCommand = new CreateOrderCommand
         {
             Products = activeItems
@@ -83,19 +83,19 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
                 }).ToList()
         };
 
-        var orderId = await _mediator.Send(createOrderCommand, ct);
+        var orderResponse = await _mediator.Send(createOrderCommand, ct);
 
-        // 4. Dohvati kreiran Order da vidimo TotalAmount
+        // 4. Fetch created Order to get TotalAmount
         var order = await _ctx.Orders
-            .FirstOrDefaultAsync(o => o.Id == orderId, ct);
+            .FirstOrDefaultAsync(o => o.Id == orderResponse.OrderId, ct);
 
         if (order == null)
-            throw new FitFanShopNotFoundException($"Order {orderId} not found.");
+            throw new FitFanShopNotFoundException($"Order {orderResponse.OrderId} not found.");
 
-        // 4. Kreiraj Mock Payment
+        // 5. Create Mock Payment
         var payment = new PaymentEntity
         {
-            OrderId = orderId,
+            OrderId = orderResponse.OrderId,
             PaymentMethod = "Mock",
             Amount = order.TotalAmount,
             CreatedAtUtc = DateTime.UtcNow
@@ -103,7 +103,7 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
 
         _ctx.Payments.Add(payment);
 
-        // 5. Automatski promijeni status na "Confirmed" nakon uspješnog plaæanja
+        // 6. Automatically change status to "Confirmed" after successful payment
         var confirmedStatus = await _ctx.OrderStatuses
             .FirstOrDefaultAsync(s => s.Name == "Confirmed", ct);
 
@@ -113,14 +113,14 @@ public class MockCheckoutCommandHandler : IRequestHandler<MockCheckoutCommand, M
             order.ModifiedAtUtc = DateTime.UtcNow;
         }
 
-        // 6. Isprazni Cart (hard delete)
+        // 7. Empty Cart (hard delete)
         _ctx.CartItems.RemoveRange(activeItems);
 
         await _ctx.SaveChangesAsync(ct);
 
         return new MockCheckoutResultDto
         {
-            OrderId = orderId,
+            OrderId = orderResponse.OrderId,
             PaymentId = payment.Id,
             TotalAmount = order.TotalAmount,
             Message = "Payment successful! Order created."

@@ -61,11 +61,11 @@ public class CheckoutCommandHandler : IRequestHandler<CheckoutCommand, int>
             Tickets = tickets
         };
 
-        var orderId = await _mediator.Send(createOrderCommand, cancellationToken);
+        var orderResponse = await _mediator.Send(createOrderCommand, cancellationToken);
 
         _ctx.CartItems.RemoveRange(activeItems);
         await _ctx.SaveChangesAsync(cancellationToken);
 
-        return orderId;
+        return orderResponse.OrderId;
     }
 }

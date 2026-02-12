@@ -12,8 +12,10 @@
     }
 
     &.half-filled {
-      color: #ffc107;
-      opacity: 0.6;
+      color: transparent;
+      background: linear-gradient(90deg, #ffc107 50%, #e0e0e0 50%);
+      -webkit-background-clip: text;
+      background-clip: text;
     }
 
     &.empty {
