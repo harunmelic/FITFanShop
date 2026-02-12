@@ -151,7 +151,8 @@ export class CheckoutComponent implements OnInit {
     });
 
     const totalDiscount = memberDiscount + productDiscounts;
-    const shippingCost = subtotal >= 100 ? 0 : 15;
+    const hasPhysicalProducts = items.some(item => !!item.productVariantId || item.isProduct === true);
+    const shippingCost = hasPhysicalProducts ? (subtotal >= 100 ? 0 : 15) : 0;
     
     return subtotal - totalDiscount + shippingCost;
   }

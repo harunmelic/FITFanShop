@@ -21,9 +21,11 @@ export class CartService {
   private cart = signal<CartDto | null>(null);
   private savedForLater = signal<CartItemDto[]>([]);
   private activeDiscounts = signal<DiscountDto[]>([]);
+  private readonly savedForLaterStoragePrefix = 'fitfanshop_saved_for_later_user_';
   isLoading = signal<boolean>(false);
   isLoadingCart = signal<boolean>(false);
   isSidebarOpen = signal<boolean>(false);
+  isAuthenticated = computed(() => this.auth.isAuthenticated());
   
   cartItems = computed(() => this.cart()?.items || []);
   itemCount = computed(() => this.cart()?.itemCount || 0);
@@ -40,10 +42,12 @@ export class CartService {
         // User logged in - load cart from database
         this.loadCart();
         this.loadActiveDiscounts();
+        this.loadSavedForLater();
       } else {
         // User logged out - reset cart
         this.cart.set(null);
         this.activeDiscounts.set([]);
+        this.savedForLater.set([]);
       }
     });
   }
@@ -101,6 +105,29 @@ export class CartService {
     });
   }
 
+  addTicket(ticketTypeId: number, quantity: number = 1): void {
+    if (!this.auth.isAuthenticated()) {
+      this.toaster.warning('You must be logged in to add tickets to cart');
+      return;
+    }
+
+    const command: AddCartItemCommand = {
+      ticketTypeId,
+      quantity
+    };
+
+    this.cartApi.addItem(command).pipe(
+      tap((cart) => {
+        this.cart.set(cart);
+      })
+    ).subscribe({
+      error: (error) => {
+        console.error('Error adding ticket to cart:', error);
+        this.toaster.error('Error adding ticket to cart');
+      }
+    });
+  }
+
   updateItemQuantity(itemId: number, quantity: number): void {
     // Find the item to check stock
     const item = this.cartItems().find(i => i.id === itemId);
@@ -153,6 +180,11 @@ export class CartService {
 
   // Save for Later functionality
   saveForLater(itemId: number): void {
+    if (!this.auth.isAuthenticated()) {
+      this.toaster.warning('Please login to use save for later');
+      return;
+    }
+
     const item = this.cartItems().find(i => i.id === itemId);
     if (!item) return;
 
@@ -161,6 +193,7 @@ export class CartService {
     // Move from cart to saved for later
     this.removeItem(itemId);
     this.savedForLater.update(items => [...items, item]);
+    this.persistSavedForLater();
     this.isLoading.set(false);
     this.toaster.success('Product saved for later');
   }
@@ -174,14 +207,65 @@ export class CartService {
     // Add back to cart
     if (item.productVariantId) {
       this.addItem(item.productVariantId, item.quantity);
+    } else if (item.ticketTypeId) {
+      this.addTicket(item.ticketTypeId, item.quantity);
     }
+
+    this.persistSavedForLater();
     
     this.isLoading.set(false);
   }
 
   removeFromSavedForLater(itemId: number): void {
     this.savedForLater.update(items => items.filter(i => i.id !== itemId));
+    this.persistSavedForLater();
     this.toaster.success('Product removed');
+  }
+
+  private loadSavedForLater(): void {
+    const storageKey = this.getSavedForLaterStorageKey();
+    if (!storageKey) {
+      this.savedForLater.set([]);
+      return;
+    }
+
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) {
+        this.savedForLater.set([]);
+        return;
+      }
+
+      const parsed = JSON.parse(saved) as CartItemDto[];
+      this.savedForLater.set(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      this.savedForLater.set([]);
+    }
+  }
+
+  private persistSavedForLater(): void {
+    const storageKey = this.getSavedForLaterStorageKey();
+    if (!storageKey) {
+      return;
+    }
+
+    const savedItems = this.savedForLater();
+
+    if (savedItems.length === 0) {
+      localStorage.removeItem(storageKey);
+      return;
+    }
+
+    localStorage.setItem(storageKey, JSON.stringify(savedItems));
+  }
+
+  private getSavedForLaterStorageKey(): string | null {
+    const userId = this.currentUser.currentUser()?.userId;
+    if (!userId) {
+      return null;
+    }
+
+    return `${this.savedForLaterStoragePrefix}${userId}`;
   }
 
   // Sidebar controls
@@ -275,8 +359,10 @@ export class CartService {
 
     const totalDiscount = memberDiscount + productDiscounts;
 
-    // Calculate shipping (free if over 100 KM)
-    const shippingCost = subtotal >= 100 ? 0 : 15;
+    // Calculate shipping
+    // If cart has only tickets (no physical products), shipping is always 0
+    const hasPhysicalProducts = items.some(item => !!item.productVariantId || item.isProduct === true);
+    const shippingCost = hasPhysicalProducts ? (subtotal >= 100 ? 0 : 15) : 0;
 
     // Calculate tax (17% VAT) - prices already include VAT
     // Extract VAT from price: VAT = price - (price / 1.17)

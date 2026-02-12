@@ -1,0 +1,54 @@
+<div class="event-page">
+  <div class="event-container">
+    <div class="event-header">
+      <h1>Upcoming Events</h1>
+      <p>Choose your event and reserve tickets by ticket type.</p>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading()">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading events...</p>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading() && events().length === 0">
+      <mat-icon>event_busy</mat-icon>
+      <h3>No upcoming events</h3>
+      <p>Please check back soon.</p>
+    </div>
+
+    <div class="events-grid" *ngIf="!isLoading() && events().length > 0">
+      <mat-card class="event-card" *ngFor="let event of events()" (click)="openEvent(event.id)">
+        <mat-card-content>
+          <div class="event-top">
+            <div>
+              <h2>{{ event.name }}</h2>
+              <p class="event-location">
+                <mat-icon>place</mat-icon>
+                {{ event.location }}
+              </p>
+            </div>
+            <span class="badge" [class.sold-out]="!event.ticketsAvailable">
+              {{ event.ticketsAvailable ? 'Tickets available' : 'Sold out' }}
+            </span>
+          </div>
+
+          <div class="event-meta">
+            <p>
+              <mat-icon>schedule</mat-icon>
+              {{ formatDate(event.eventDate) }}
+            </p>
+            <p class="from-price" *ngIf="minPriceFor(event.id) !== null">
+              <mat-icon>sell</mat-icon>
+              From {{ minPriceFor(event.id) | number:'1.2-2' }} KM
+            </p>
+          </div>
+
+          <button mat-button color="primary" (click)="openEvent(event.id); $event.stopPropagation()">
+            View Tickets
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="event-detail-page">
+  <div class="event-detail-container">
+    <div class="loading-state" *ngIf="isLoading()">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading event details...</p>
+    </div>
+
+    <div *ngIf="!isLoading() && event() as eventData">
+      <div class="detail-header">
+        <button mat-button (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to events
+        </button>
+
+        <h1>{{ eventData.name }}</h1>
+        <p class="description" *ngIf="eventData.description">{{ eventData.description }}</p>
+
+        <div class="meta">
+          <span><mat-icon>schedule</mat-icon>{{ eventDateFormatted() }}</span>
+          <span><mat-icon>place</mat-icon>{{ eventData.location }}</span>
+        </div>
+      </div>
+
+      <div class="ticket-section">
+        <h2>Ticket Types</h2>
+
+        <div class="ticket-list" *ngIf="eventData.ticketTypes.length > 0; else noTickets">
+          <div class="ticket-card" *ngFor="let ticket of eventData.ticketTypes">
+            <div class="ticket-info">
+              <h3>{{ ticket.name }}</h3>
+              <p *ngIf="ticket.description">{{ ticket.description }}</p>
+              <div class="row">
+                <span class="price">{{ ticket.price | number:'1.2-2' }} KM</span>
+                <span class="stock" [class.low]="ticket.totalAvailable <= 10">
+                  {{ ticket.totalAvailable }} left
+                </span>
+              </div>
+            </div>
+
+            <div class="ticket-actions">
+              <div class="qty-controls" [class.disabled]="!ticket.isAvailable">
+                <button mat-icon-button (click)="decrement(ticket.id)" [disabled]="selectedCount(ticket.id) === 0 || !ticket.isAvailable">
+                  <mat-icon>remove</mat-icon>
+                </button>
+                <span>{{ selectedCount(ticket.id) }}</span>
+                <button mat-icon-button (click)="increment(ticket)" [disabled]="selectedCount(ticket.id) >= ticket.totalAvailable || !ticket.isAvailable">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noTickets>
+          <div class="empty-state">
+            <mat-icon>confirmation_number</mat-icon>
+            <p>No ticket types available for this event.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="summary" *ngIf="totalSelectedTickets() > 0">
+        <p>{{ totalSelectedTickets() }} ticket(s) selected</p>
+        <h3>{{ totalPrice() | number:'1.2-2' }} KM</h3>
+      </div>
+
+      <div class="action-bar">
+        <button mat-button color="primary" (click)="addSelectedToCart()" [disabled]="isAdding() || totalSelectedTickets() === 0">
+          <mat-icon>shopping_cart</mat-icon>
+          Add tickets to cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

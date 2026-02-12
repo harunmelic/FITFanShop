@@ -5,8 +5,6 @@ import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
-import { CategoryApiService } from '../../../../api-services/catalog/category-api.service';
-import { CategoryDto } from '../../../../api-services/catalog/category-api.model';
 import { ProductApiService } from '../../../../api-services/catalog/product-api.service';
 import { ProductDto } from '../../../../api-services/catalog/product-api.model';
 import { CartService } from '../../../../core/services/cart/cart.service';
@@ -23,14 +21,11 @@ import { DialogType, DialogButton, DialogConfig } from '../../models/dialog-conf
 export class NavbarComponent implements OnInit {
   private dialog = inject(MatDialog);
   private router = inject(Router);
-  private categoryService = inject(CategoryApiService);
   private productService = inject(ProductApiService);
   auth = inject(AuthFacadeService);
   cartService = inject(CartService);
   wishlistService = inject(WishlistService);
 
-  categories = signal<CategoryDto[]>([]);
-  isKatalogDropdownOpen = false;
   isProfileDropdownOpen = false;
   
   // Search functionality
@@ -40,7 +35,6 @@ export class NavbarComponent implements OnInit {
   isSearching = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.loadCategories();
     this.setupSearchListener();
     // Cart and Wishlist are automatically loaded in their services when user logs in
   }
@@ -58,23 +52,9 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  loadCategories(): void {
-    this.categoryService.getAll(1, 100).subscribe({
-      next: (categories) => {
-        this.categories.set(categories.filter(c => c.isEnabled));
-      },
-      error: (error) => {
-        console.error('Error loading categories:', error);
-      }
-    });
-  }
-
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    if (!target.closest('.nav-link-dropdown')) {
-      this.isKatalogDropdownOpen = false;
-    }
     if (!target.closest('.profile-dropdown')) {
       this.isProfileDropdownOpen = false;
     }
@@ -124,29 +104,6 @@ export class NavbarComponent implements OnInit {
         });
       }
     });
-  }
-
-  toggleKatalogDropdown(): void {
-    this.isKatalogDropdownOpen = !this.isKatalogDropdownOpen;
-  }
-
-  closeKatalogDropdown(): void {
-    this.isKatalogDropdownOpen = false;
-  }
-
-  navigateToCatalog(categoryId?: number): void {
-    this.closeKatalogDropdown();
-    
-    if (categoryId) {
-      this.router.navigate(['/catalog'], { queryParams: { categoryId } });
-    } else {
-      this.router.navigate(['/catalog']);
-    }
-    
-    // Scroll to top after navigation
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
   }
 
   scrollToFooter(): void {

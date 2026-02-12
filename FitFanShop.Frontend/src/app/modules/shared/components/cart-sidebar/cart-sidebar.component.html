@@ -53,7 +53,7 @@
     </div>
 
     <!-- Saved for Later Section -->
-    <div class="saved-section" *ngIf="!cartService.isLoadingCart() && cartService.savedItems().length > 0">
+    <div class="saved-section" *ngIf="cartService.isAuthenticated() && !cartService.isLoadingCart() && cartService.savedItems().length > 0">
       <button class="saved-header" (click)="toggleSavedItems()">
         <mat-icon>{{ showSavedItems ? 'expand_less' : 'expand_more' }}</mat-icon>
         <span>Saved for later ({{ cartService.savedItems().length }})</span>
@@ -109,7 +109,7 @@
       </div>
 
       <!-- Free shipping info -->
-      <div class="free-shipping-info" *ngIf="cartService.priceBreakdown().subtotal < 100 && cartService.priceBreakdown().subtotal > 0">
+      <div class="free-shipping-info" *ngIf="hasPhysicalProducts() && cartService.priceBreakdown().subtotal < 100 && cartService.priceBreakdown().subtotal > 0">
         <mat-icon>local_shipping</mat-icon>
         <span>Only {{ (100 - cartService.priceBreakdown().subtotal) | number:'1.2-2' }} KM until free shipping!</span>
       </div>

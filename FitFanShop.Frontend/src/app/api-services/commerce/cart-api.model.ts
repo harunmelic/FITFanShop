@@ -5,6 +5,12 @@ export interface CartItemDto {
   quantity: number;
   price: number;
   productName: string;
+  ticketTypeName?: string;
+  eventName?: string;
+  eventDate?: string;
+  available?: boolean;
+  isProduct?: boolean;
+  isTicket?: boolean;
   variantDetails?: string;
   size?: string; // Variant size
   imageUrl?: string;

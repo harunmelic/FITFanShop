@@ -9,10 +9,13 @@
 
     <div class="item-details">
       <h4 class="item-name">
-        {{ item.productName }}
+        {{ item.productName || item.eventName || item.ticketTypeName || 'Cart item' }}
         <span class="size-badge" *ngIf="item.size && item.size.toUpperCase() !== 'ONE SIZE'"> - {{ item.size }}</span>
       </h4>
       <p class="item-variant" *ngIf="item.variantDetails">{{ item.variantDetails }}</p>
+      <p class="item-variant" *ngIf="!item.variantDetails && item.ticketTypeName && item.eventName">
+        {{ item.ticketTypeName }} • {{ item.eventName }}
+      </p>
       
       <!-- Price with discount -->
       <div class="price-container">

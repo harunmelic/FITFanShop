@@ -11,28 +11,9 @@
     <!-- Navigation Links -->
     <div class="navbar-links">
       <a href="/" class="nav-link">HOME</a>
+      <a [routerLink]="['/catalog']" class="nav-link">CATALOG</a>
       
-      <!-- Catalog Dropdown -->
-<div class="nav-link-dropdown">
-        <a class="nav-link" (mouseenter)="toggleKatalogDropdown()" (click)="navigateToCatalog()">
-          CATALOG ▼
-        </a>
-        <div class="dropdown-menu" *ngIf="isKatalogDropdownOpen" (mouseleave)="closeKatalogDropdown()">
-          <a class="dropdown-item highlight" (click)="navigateToCatalog()">
-            <mat-icon>apps</mat-icon>
-            All Products
-          </a>
-          <div class="dropdown-divider"></div>
-          @for (category of categories(); track category.id) {
-            <a class="dropdown-item" (click)="navigateToCatalog(category.id)">{{ category.name }}</a>
-          }
-          @empty {
-            <span class="dropdown-item">No categories available</span>
-          }
-        </div>
-      </div>
-      
-      <a href="#" class="nav-link">EVENT</a>
+      <a [routerLink]="['/event']" class="nav-link">EVENT</a>
       <a href="#" class="nav-link" (click)="scrollToFooter(); $event.preventDefault()">ABOUT US</a>
     </div>
 

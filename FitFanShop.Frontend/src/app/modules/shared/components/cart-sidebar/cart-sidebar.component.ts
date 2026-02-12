@@ -114,4 +114,8 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  hasPhysicalProducts(): boolean {
+    return this.cartService.cartItems().some(item => !!item.productVariantId || item.isProduct === true);
+  }
 }
