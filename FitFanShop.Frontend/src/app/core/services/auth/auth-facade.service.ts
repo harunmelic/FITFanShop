@@ -171,6 +171,19 @@ export class AuthFacadeService {
     return this.storage.getRefreshToken();
   }
 
+  updateCurrentUserName(firstName: string, lastName: string): void {
+    const current = this._currentUser();
+    if (!current) {
+      return;
+    }
+
+    this._currentUser.set({
+      ...current,
+      firstName,
+      lastName
+    });
+  }
+
   // =========================================================
   // PRIVATE HELPERS
   // =========================================================

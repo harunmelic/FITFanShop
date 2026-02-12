@@ -384,6 +384,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
     console.log('🚀 Starting review submission for productId:', productId, 'currentOrderItemId:', orderItemId, 'user:', currentUser.email);
 
+    console.log('🚀 Starting review submission for productId:', productId, 'currentOrderItemId:', orderItemId, 'user:', currentUser.email);
+
     this.isSubmittingReview.set(true);
 
     // If we're using fallback orderItemId (>= 10000), try to find real orderItemId from user's orders

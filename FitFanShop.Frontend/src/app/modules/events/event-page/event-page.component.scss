@@ -68,11 +68,13 @@
       align-items: flex-start;
       gap: 1rem;
       margin-bottom: 1rem;
+      min-width: 0;
 
       h2 {
         margin: 0 0 0.35rem 0;
         font-size: 1.2rem;
         color: #111827;
+        overflow-wrap: anywhere;
       }
     }
 
@@ -121,6 +123,26 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .event-page {
+    padding: 1.25rem 0;
+
+    .event-header {
+      padding: 1.2rem;
+    }
+
+    .event-card {
+      .event-top {
+        flex-direction: column;
+      }
+
+      .badge {
+        align-self: flex-start;
+      }
     }
   }
 }

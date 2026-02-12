@@ -16,16 +16,16 @@ public sealed class RefreshTokenCommandHandler(
                 !x.IsDeleted, ct);
         var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
         if (rt is null || rt.ExpiresAtUtc <= nowUtc)
-            throw new FitFanShopConflictException("Refresh token je nevažeæi ili je istekao.");
+            throw new FitFanShopConflictException("Refresh token is invalid or expired.");
         if (rt.Fingerprint is not null &&
             request.Fingerprint is not null &&
             rt.Fingerprint != request.Fingerprint)
         {
-            throw new FitFanShopConflictException("Neispravan klijentski otisak.");
+            throw new FitFanShopConflictException("Invalid client fingerprint.");
         }
         var user = rt.User;
         if (user is null || !user.IsEnabled || user.IsDeleted)
-            throw new FitFanShopConflictException("Korisnièki nalog je nevažeæi.");
+            throw new FitFanShopConflictException("User account is invalid.");
         rt.IsRevoked = true;
         rt.RevokedAtUtc = nowUtc;
         var pair = jwt.IssueTokens(user);

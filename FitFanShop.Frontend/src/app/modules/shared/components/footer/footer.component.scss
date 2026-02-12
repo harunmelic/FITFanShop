@@ -1,6 +1,7 @@
 .footer {
   background-color: #f8f8f8;
   border-top: 1px solid #e0e0e0;
+  overflow-x: hidden;
 }
 
 .footer-main {
@@ -9,8 +10,10 @@
 
 .footer-container {
   max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 120px;
+  box-sizing: border-box;
 }
 
 .footer-main .footer-container {
@@ -90,6 +93,7 @@
       color: #666;
       font-size: 14px;
       transition: color 0.3s;
+      overflow-wrap: anywhere;
 
       &:hover {
         color: #333;
@@ -115,6 +119,7 @@
     font-weight: 500;
     margin-bottom: 16px;
     line-height: 1.4;
+    overflow-wrap: anywhere;
 
     &:hover {
       text-decoration: underline;
@@ -159,11 +164,38 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .footer-container {
+    padding: 0 48px;
+  }
+
+  .footer-main .footer-container {
+    grid-template-columns: 1.5fr 1fr 1fr 1.4fr;
+    gap: 28px;
+  }
+}
+
+@media (max-width: 992px) {
+  .footer-container {
+    padding: 0 28px;
+  }
+
+  .footer-main .footer-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
 @media (max-width: 768px) {
   .footer-container {
     grid-template-columns: 1fr;
     gap: 40px;
     padding: 0 24px;
+  }
+
+  .footer-main .footer-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 
   .footer-main {
@@ -173,5 +205,18 @@
   .bottom-content {
     flex-direction: column;
     gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-container {
+    padding: 0 16px;
+  }
+
+  .footer-brand {
+    .social-icons {
+      flex-wrap: wrap;
+      row-gap: 8px;
+    }
   }
 }

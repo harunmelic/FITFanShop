@@ -54,10 +54,25 @@ export class NavbarComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.profile-dropdown')) {
+    if (!this.isClickInsideProfileDropdown(event)) {
       this.isProfileDropdownOpen = false;
     }
+  }
+
+  private isClickInsideProfileDropdown(event: MouseEvent): boolean {
+    const path = (event.composedPath?.() ?? []) as Array<EventTarget>;
+    for (const node of path) {
+      if (!(node instanceof HTMLElement)) {
+        continue;
+      }
+
+      if (node.classList.contains('profile-dropdown')) {
+        return true;
+      }
+    }
+
+    const target = event.target as HTMLElement | null;
+    return !!target?.closest('.profile-dropdown');
   }
 
   openLoginDialog(): void {

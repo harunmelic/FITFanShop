@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { PageResult } from '../../core/models/paging/page-result';
 import { 
   UserOrderDto, 
   CanReviewResponse, 
@@ -66,6 +67,37 @@ export interface UpdateOrderStatusCommand {
   status: string; // "Pending", "Confirmed", "Cancelled", "Delivered"
 }
 
+export interface MyOrderHistoryItemDto {
+  id: number;
+  productVariantId: number;
+  productName: string;
+  variantSize: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface MyOrderHistoryTicketDto {
+  id: number;
+  ticketTypeId: number;
+  ticketTypeName: string;
+  eventName: string;
+  eventDate: string;
+  pricePaid: number;
+  qrCode: string;
+  seatNumber: string;
+}
+
+export interface MyOrderHistoryDto {
+  id: number;
+  userId: number;
+  status: string;
+  totalAmount: number;
+  createdAt: string;
+  items: MyOrderHistoryItemDto[];
+  tickets: MyOrderHistoryTicketDto[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -118,5 +150,14 @@ export class OrderApiService {
    */
   updateOrderStatus(orderId: number, status: string): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${orderId}/status`, { status });
+  }
+
+  getMyOrderHistory(page = 1, pageSize = 10): Observable<PageResult<MyOrderHistoryDto>> {
+    return this.http.get<PageResult<MyOrderHistoryDto>>(`${this.apiUrl}/my-orders`, {
+      params: {
+        page: page.toString(),
+        pageSize: pageSize.toString()
+      }
+    });
   }
 }

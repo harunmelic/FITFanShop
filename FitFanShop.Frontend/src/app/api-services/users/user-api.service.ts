@@ -6,7 +6,10 @@ import {
   UserDto,
   CreateUserCommand,
   UpdateUserCommand,
-  UpdateUserPasswordCommand
+  UpdateUserPasswordCommand,
+  UserProfileDto,
+  UpdateMyProfileCommand,
+  ChangeMyPasswordCommand
 } from './user-api.model';
 
 @Injectable({
@@ -62,5 +65,17 @@ export class UserApiService {
    */
   updatePassword(id: number, payload: UpdateUserPasswordCommand): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/password`, payload);
+  }
+
+  getMyProfile(): Observable<UserProfileDto> {
+    return this.http.get<UserProfileDto>(`${this.apiUrl}/me`);
+  }
+
+  updateMyProfile(payload: UpdateMyProfileCommand): Observable<UserProfileDto> {
+    return this.http.put<UserProfileDto>(`${this.apiUrl}/me`, payload);
+  }
+
+  changeMyPassword(payload: ChangeMyPasswordCommand): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/me/change-password`, payload);
   }
 }

@@ -7,16 +7,19 @@
   right: 0;
   z-index: 1000;
   height: 70px;
+  overflow-x: clip;
 }
 
 .navbar-container {
   max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 24px;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .navbar-logo {
@@ -47,6 +50,7 @@
   gap: 32px;
   flex: 1;
   justify-content: center;
+  min-width: 0;
 
   .nav-link {
     text-decoration: none;
@@ -56,6 +60,7 @@
     letter-spacing: 0.5px;
     transition: color 0.2s;
     cursor: pointer;
+    white-space: nowrap;
 
     &:hover {
       color: #666;
@@ -68,6 +73,7 @@
   gap: 8px;
   align-items: center;
   flex-shrink: 0;
+  min-width: max-content;
 
   .icon-button {
     position: relative;
@@ -89,6 +95,7 @@
     font-weight: 500;
     color: #333;
     margin-left: -4px;
+    white-space: nowrap;
   }
 
   // Profile Dropdown
@@ -318,6 +325,88 @@
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1100px) {
+  .navbar-container {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .navbar-logo {
+    .logo-text {
+      font-size: 16px;
+    }
+  }
+
+  .navbar-links {
+    gap: 14px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-link {
+      font-size: 13px;
+    }
+  }
+}
+
+@media (max-width: 760px) {
+  .navbar {
+    overflow-x: hidden;
+  }
+
+  .navbar-container {
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .navbar-logo {
+    .logo-text {
+      display: none;
+    }
+
+    .logo-img {
+      height: 32px;
+    }
+  }
+
+  .navbar-icons {
+    gap: 2px;
+
+    .cart-count {
+      display: none;
+    }
+  }
+
+  .navbar-links {
+    min-width: 0;
+    max-width: 100%;
+
+    .nav-link {
+      font-size: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .hide-mobile {
+      display: none;
+    }
+  }
+
+  .search-bar-container,
+  .search-empty,
+  .search-results-grid {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .results-grid {
+    gap: 12px;
   }
 }
 

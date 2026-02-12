@@ -45,3 +45,24 @@ export interface UpdateUserPasswordCommand {
   newPassword: string;
   confirmPassword: string;
 }
+
+export interface UserProfileDto {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isMember: boolean;
+  isAdmin: boolean;
+  registrationDate: string;
+}
+
+export interface UpdateMyProfileCommand {
+  firstName: string;
+  lastName: string;
+}
+
+export interface ChangeMyPasswordCommand {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}

@@ -14,7 +14,7 @@
       <a [routerLink]="['/catalog']" class="nav-link">CATALOG</a>
       
       <a [routerLink]="['/event']" class="nav-link">EVENT</a>
-      <a href="#" class="nav-link" (click)="scrollToFooter(); $event.preventDefault()">ABOUT US</a>
+      <a href="#" class="nav-link hide-mobile" (click)="scrollToFooter(); $event.preventDefault()">ABOUT US</a>
     </div>
 
     <!-- Icons -->
@@ -57,7 +57,7 @@
             </div>
           </div>
           <div class="profile-menu-divider"></div>
-          <a class="profile-menu-item" (click)="closeProfileDropdown()">
+          <a class="profile-menu-item" [routerLink]="['/profile']" (click)="closeProfileDropdown()">
             <mat-icon>account_circle</mat-icon>
             <span>My Profile</span>
           </a>
