@@ -1,0 +1,344 @@
+.profile-page {
+  .profile-header {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.5rem;
+
+    h1 {
+      margin: 0 0 0.4rem 0;
+      color: #1f2937;
+      font-size: 1.8rem;
+    }
+
+    p {
+      margin: 0;
+      color: #6b7280;
+    }
+  }
+
+  .loading-state {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .profile-content {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .profile-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    mat-card-header {
+      margin-bottom: 0.5rem;
+    }
+
+    mat-card-title {
+      color: #111827;
+      font-size: 1.15rem;
+    }
+
+    mat-card-subtitle {
+      color: #6b7280;
+    }
+  }
+
+  .profile-overview-card {
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .overview-item {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      .label {
+        color: #6b7280;
+        font-size: 0.78rem;
+        font-weight: 500;
+      }
+
+      .value {
+        color: #111827;
+        font-size: 0.92rem;
+        font-weight: 600;
+        display: flex;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+    }
+  }
+
+  .profile-sections-card {
+    .section-switcher {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+
+      button {
+        border-radius: 999px;
+      }
+
+      button.active {
+        background: #111827;
+        color: #fff;
+        border-color: #111827;
+      }
+    }
+
+    .section-heading {
+      margin-bottom: 0.8rem;
+
+      h3 {
+        margin: 0 0 0.2rem;
+        color: #111827;
+        font-size: 1.05rem;
+      }
+
+      p {
+        margin: 0;
+        color: #6b7280;
+      }
+    }
+
+    .orders-section {
+      .orders-loading,
+      .orders-empty {
+        border: 1px dashed #d1d5db;
+        border-radius: 10px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        color: #6b7280;
+      }
+
+      .orders-list {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .order-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 0.9rem;
+        background: #fff;
+      }
+
+      .order-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.7rem;
+        min-width: 0;
+
+        h4 {
+          margin: 0;
+          color: #111827;
+          font-size: 0.98rem;
+        }
+
+        p {
+          margin: 0.2rem 0 0;
+          color: #6b7280;
+          font-size: 0.8rem;
+          overflow-wrap: anywhere;
+        }
+
+        .order-top-right {
+          text-align: right;
+          display: grid;
+          gap: 0.25rem;
+
+          strong {
+            color: #111827;
+          }
+        }
+      }
+
+      .status-chip {
+        display: inline-flex;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        background: #f3f4f6;
+        color: #374151;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .order-lines {
+        margin-top: 0.6rem;
+        display: grid;
+        gap: 0.35rem;
+
+        .line-title {
+          color: #6b7280;
+          font-size: 0.78rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .line-item {
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          color: #1f2937;
+          font-size: 0.87rem;
+          border-top: 1px solid #f3f4f6;
+          padding-top: 0.35rem;
+
+          span {
+            min-width: 0;
+            overflow-wrap: anywhere;
+          }
+        }
+      }
+
+      .orders-pagination {
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+
+        span {
+          color: #6b7280;
+          font-size: 0.85rem;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
+  .profile-form {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .form-row {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.2rem;
+
+    .meta-item {
+      border-radius: 999px;
+      padding: 0.3rem 0.6rem;
+      background: #f3f4f6;
+      color: #374151;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      min-width: 160px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+    }
+  }
+}
+
+@media (max-width: 960px) {
+  .profile-page {
+    .profile-overview-card {
+      .overview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-page {
+    .profile-header {
+      padding: 1.2rem;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .profile-overview-card {
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .profile-sections-card {
+      .section-switcher {
+        flex-direction: column;
+      }
+
+      .orders-section {
+        .order-top {
+          flex-direction: column;
+
+          .order-top-right {
+            text-align: left;
+          }
+        }
+
+        .order-lines {
+          .line-item {
+            flex-direction: column;
+            gap: 0.2rem;
+          }
+        }
+
+        .orders-pagination {
+          justify-content: space-between;
+
+          button {
+            flex: 1 1 45%;
+            min-width: 0;
+          }
+
+          span {
+            width: 100%;
+            text-align: center;
+            order: -1;
+          }
+        }
+      }
+    }
+  }
+}

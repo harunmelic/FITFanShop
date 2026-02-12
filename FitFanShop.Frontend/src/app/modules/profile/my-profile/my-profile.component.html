@@ -1,0 +1,217 @@
+<div class="profile-page">
+  <div class="profile-header">
+    <h1>My Profile</h1>
+    <p>Manage your personal information and account security.</p>
+  </div>
+
+  <div class="loading-state" *ngIf="isProfileLoading()">
+    <mat-spinner diameter="36"></mat-spinner>
+    <p>Loading profile...</p>
+  </div>
+
+  <div class="profile-content" *ngIf="!isProfileLoading() && profile() as currentProfile">
+    <mat-card class="profile-card profile-overview-card">
+      <mat-card-content>
+        <div class="overview-grid">
+          <div class="overview-item">
+            <span class="label">Full Name</span>
+            <span class="value">{{ currentProfile.firstName }} {{ currentProfile.lastName }}</span>
+          </div>
+          <div class="overview-item">
+            <span class="label">Email</span>
+            <span class="value">{{ currentProfile.email }}</span>
+          </div>
+          <div class="overview-item">
+            <span class="label">Account Type</span>
+            <span class="value">
+              <span class="meta-item" *ngIf="currentProfile.isMember">Member</span>
+              <span class="meta-item" *ngIf="!currentProfile.isMember">Standard</span>
+              <span class="meta-item" *ngIf="currentProfile.isAdmin">Admin</span>
+            </span>
+          </div>
+          <div class="overview-item">
+            <span class="label">Member Since</span>
+            <span class="value">{{ currentProfile.registrationDate | date: 'dd.MM.yyyy' }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="profile-card profile-sections-card">
+      <mat-card-content>
+        <div class="section-switcher">
+          <button
+            mat-stroked-button
+            type="button"
+            [class.active]="activeSection() === 'info'"
+            (click)="showInfoSection()"
+          >
+            Personal Info
+          </button>
+          <button
+            mat-stroked-button
+            type="button"
+            [class.active]="activeSection() === 'security'"
+            (click)="showSecuritySection()"
+          >
+            Security
+          </button>
+          <button
+            mat-stroked-button
+            type="button"
+            [class.active]="activeSection() === 'orders'"
+            (click)="showOrdersSection()"
+          >
+            Order History
+          </button>
+        </div>
+
+        <div *ngIf="activeSection() === 'info'">
+          <div class="section-heading">
+            <h3>Personal Information</h3>
+            <p>Update your first and last name.</p>
+          </div>
+
+          <form [formGroup]="profileForm" class="profile-form" (ngSubmit)="saveProfile()">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName" autocomplete="given-name">
+                <mat-error *ngIf="firstNameControl.hasError('required')">First name is required.</mat-error>
+                <mat-error *ngIf="firstNameControl.hasError('maxlength')">Max 100 characters.</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName" autocomplete="family-name">
+                <mat-error *ngIf="lastNameControl.hasError('required')">Last name is required.</mat-error>
+                <mat-error *ngIf="lastNameControl.hasError('maxlength')">Max 100 characters.</mat-error>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" readonly>
+            </mat-form-field>
+
+            <div class="actions">
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="profileForm.invalid || isProfileSaving()"
+              >
+                <mat-spinner *ngIf="isProfileSaving()" diameter="18"></mat-spinner>
+                <span *ngIf="!isProfileSaving()">Save Changes</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div *ngIf="activeSection() === 'security'">
+          <div class="section-heading">
+            <h3>Change Password</h3>
+            <p>Use a strong password for better account security.</p>
+          </div>
+
+          <form [formGroup]="passwordForm" class="profile-form" (ngSubmit)="savePassword()">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Current Password</mat-label>
+              <input matInput type="password" formControlName="currentPassword" autocomplete="current-password">
+              <mat-error *ngIf="currentPasswordControl.hasError('required')">Current password is required.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>New Password</mat-label>
+              <input matInput type="password" formControlName="newPassword" autocomplete="new-password">
+              <mat-error *ngIf="newPasswordControl.hasError('required')">New password is required.</mat-error>
+              <mat-error *ngIf="newPasswordControl.hasError('minlength')">At least 8 characters.</mat-error>
+              <mat-error *ngIf="newPasswordControl.hasError('pattern')">Must include upper, lower and number.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Confirm New Password</mat-label>
+              <input matInput type="password" formControlName="confirmNewPassword" autocomplete="new-password">
+              <mat-error *ngIf="confirmNewPasswordControl.hasError('required')">Confirm your new password.</mat-error>
+            </mat-form-field>
+
+            <div class="actions">
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="passwordForm.invalid || isPasswordSaving()"
+              >
+                <mat-spinner *ngIf="isPasswordSaving()" diameter="18"></mat-spinner>
+                <span *ngIf="!isPasswordSaving()">Update Password</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div *ngIf="activeSection() === 'orders'" class="orders-section">
+          <div class="section-heading">
+            <h3>Order History</h3>
+            <p>Review your recent purchases and order statuses.</p>
+          </div>
+
+          <div class="orders-loading" *ngIf="isOrdersLoading()">
+            <mat-spinner diameter="30"></mat-spinner>
+            <span>Loading orders...</span>
+          </div>
+
+          <div class="orders-empty" *ngIf="!isOrdersLoading() && orders().length === 0">
+            <mat-icon>receipt_long</mat-icon>
+            <p>No orders found yet.</p>
+          </div>
+
+          <div class="orders-list" *ngIf="!isOrdersLoading() && orders().length > 0">
+            <div class="order-card" *ngFor="let order of orders()">
+              <div class="order-top">
+                <div>
+                  <h4>Order #{{ order.id }}</h4>
+                  <p>{{ order.createdAt | date: 'dd.MM.yyyy HH:mm' }}</p>
+                </div>
+                <div class="order-top-right">
+                  <span class="status-chip">{{ order.status }}</span>
+                  <strong>{{ order.totalAmount | number: '1.2-2' }} KM</strong>
+                </div>
+              </div>
+
+              <div class="order-lines" *ngIf="order.items.length > 0">
+                <div class="line-title">Products</div>
+                <div class="line-item" *ngFor="let item of order.items">
+                  <span>{{ item.productName }} ({{ item.variantSize }}) × {{ item.quantity }}</span>
+                  <span>{{ item.totalPrice | number: '1.2-2' }} KM</span>
+                </div>
+              </div>
+
+              <div class="order-lines" *ngIf="order.tickets.length > 0">
+                <div class="line-title">Tickets</div>
+                <div class="line-item" *ngFor="let ticket of order.tickets">
+                  <span>{{ ticket.eventName }} - {{ ticket.ticketTypeName }}</span>
+                  <span>{{ ticket.pricePaid | number: '1.2-2' }} KM</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="orders-pagination" *ngIf="ordersTotalPages() > 1">
+              <button mat-stroked-button type="button" (click)="prevOrdersPage()" [disabled]="ordersPage() <= 1">
+                Previous
+              </button>
+              <span>Page {{ ordersPage() }} / {{ ordersTotalPages() }}</span>
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="nextOrdersPage()"
+                [disabled]="ordersPage() >= ordersTotalPages()"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
