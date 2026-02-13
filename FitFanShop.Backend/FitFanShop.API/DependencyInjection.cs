@@ -54,12 +54,7 @@ public static class DependencyInjection
                 ClockSkew = TimeSpan.Zero
             };
         });
-        services.AddAuthorization(o =>
-        {
-            o.FallbackPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-        });
+        services.AddAuthorization();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {

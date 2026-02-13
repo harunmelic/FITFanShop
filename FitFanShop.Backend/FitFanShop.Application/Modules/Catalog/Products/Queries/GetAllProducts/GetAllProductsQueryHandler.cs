@@ -51,6 +51,7 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, L
             Name = p.Name,
             Description = p.Description,
             Price = p.Price,
+            ImageUrl = p.Image,
             IsEnabled = p.IsEnabled,
             Exclusive = p.Exclusive,
             CategoryIds = p.ProductCategories

@@ -103,6 +103,9 @@
       <div class="form-group">
         <label>Image URL</label>
         <input type="text" formControlName="imageUrl" placeholder="https://example.com/image.jpg">
+        <div class="image-preview" *ngIf="f['imageUrl'].value">
+          <img [src]="f['imageUrl'].value" [alt]="f['name'].value || 'Product image'" (error)="$event.target.src=''; $event.target.style.display='none'">
+        </div>
       </div>
 
       <!-- Is Enabled -->

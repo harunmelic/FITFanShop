@@ -16,6 +16,7 @@ public class UpdateProductCommand : IRequest<ProductDto>
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
+    public string? ImageUrl { get; set; }
     public List<int>? CategoryIds { get; set; }
     public List<UpdateProductVariantDto>? Variants { get; set; }
     public bool IsEnabled { get; set; } = true;

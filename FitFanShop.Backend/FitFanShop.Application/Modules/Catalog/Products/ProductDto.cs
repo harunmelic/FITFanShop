@@ -6,11 +6,12 @@ public class ProductDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
+    public string? ImageUrl { get; set; }
     public bool IsEnabled { get; set; }
     public bool Exclusive { get; set; }
     public List<int> CategoryIds { get; set; } = new();
     public List<ProductVariantDto> Variants { get; set; } = new();
-    
+
     // Review Statistics
     public int ReviewCount { get; set; }
     public decimal AverageRating { get; set; }

@@ -31,6 +31,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,
+            ImageUrl = product.Image,
             IsEnabled = product.IsEnabled,
             Exclusive = product.Exclusive,
             CategoryIds = product.ProductCategories

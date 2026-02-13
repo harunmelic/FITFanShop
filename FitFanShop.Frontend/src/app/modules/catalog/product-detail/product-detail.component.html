@@ -13,7 +13,8 @@
     <!-- Product Image -->
     <div class="product-image-section">
       <div class="product-image">
-        <div class="image-placeholder"></div>
+        <img *ngIf="product()!.imageUrl" [src]="product()!.imageUrl" [alt]="product()!.name">
+        <div *ngIf="!product()!.imageUrl" class="image-placeholder"></div>
         <div class="product-badge" *ngIf="product()!.exclusive">
           <span>EXCLUSIVE</span>
         </div>
@@ -170,7 +171,8 @@
     <div class="products-grid">
       <div *ngFor="let relatedProduct of relatedProducts()" class="related-product-card" [routerLink]="['/catalog/product', relatedProduct.id]">
         <div class="product-image-small">
-          <div class="image-placeholder-small"></div>
+          <img *ngIf="relatedProduct.imageUrl" [src]="relatedProduct.imageUrl" [alt]="relatedProduct.name">
+          <div *ngIf="!relatedProduct.imageUrl" class="image-placeholder-small"></div>
         </div>
         <h4>{{ relatedProduct.name }}</h4>
         <p class="price">{{ relatedProduct.price | number:'1.2-2' }} KM</p>

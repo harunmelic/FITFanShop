@@ -11,7 +11,8 @@
       <div class="products-grid">
         <div class="product-card" *ngFor="let product of slide.products" (click)="goToProduct(product.id)">
           <div class="product-image">
-            <div class="placeholder"></div>
+            <img *ngIf="product.imageUrl" [src]="product.imageUrl" [alt]="product.name">
+            <div *ngIf="!product.imageUrl" class="placeholder"></div>
             <button class="add-to-cart" (click)="addToCart(product); $event.stopPropagation()">
               ADD TO CART
             </button>

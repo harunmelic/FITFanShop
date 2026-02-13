@@ -151,7 +151,8 @@
       <div *ngIf="!isLoading() && paginatedProducts().length > 0" class="products-grid">
         <div *ngFor="let product of paginatedProducts()" class="product-card">
           <div class="product-image" (click)="goToProduct(product.id)">
-            <div class="image-placeholder"></div>
+            <img *ngIf="product.imageUrl" [src]="product.imageUrl" [alt]="product.name">
+            <div *ngIf="!product.imageUrl" class="image-placeholder"></div>
             <div class="product-badge" *ngIf="product.exclusive">
               <span>EXCLUSIVE</span>
             </div>

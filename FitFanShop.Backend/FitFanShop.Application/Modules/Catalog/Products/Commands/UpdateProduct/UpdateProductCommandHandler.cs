@@ -28,6 +28,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         product.Name = command.Name;
         product.Description = command.Description;
         product.Price = command.Price;
+        product.Image = command.ImageUrl;
         product.IsEnabled = command.IsEnabled;
         product.Exclusive = command.Exclusive;
 
@@ -141,6 +142,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,
+            ImageUrl = product.Image,
             IsEnabled = product.IsEnabled,
             Exclusive = product.Exclusive,
             CategoryIds = product.ProductCategories.Where(pc => !pc.IsDeleted).Select(pc => pc.CategoryId).ToList(),
