@@ -31,12 +31,24 @@
         <table class="users-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
+              <th class="sortable" (click)="sortBy('id')">
+                ID <span class="sort-icon">{{ getSortIcon('id') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('firstName')">
+                First Name <span class="sort-icon">{{ getSortIcon('firstName') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('lastName')">
+                Last Name <span class="sort-icon">{{ getSortIcon('lastName') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('email')">
+                Email <span class="sort-icon">{{ getSortIcon('email') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('role')">
+                Role <span class="sort-icon">{{ getSortIcon('role') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('status')">
+                Status <span class="sort-icon">{{ getSortIcon('status') }}</span>
+              </th>
               <th>Actions</th>
             </tr>
           </thead>

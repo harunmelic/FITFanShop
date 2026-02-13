@@ -18,6 +18,8 @@ export class UsersComponent implements OnInit {
   users: UserDto[] = [];
   isLoading = false;
   errorMessage = '';
+  sortColumn: string = 'id';
+  sortDirection: 'asc' | 'desc' = 'asc';
   private currentUserEmailCache: string | null | undefined = undefined;
 
   constructor(
@@ -166,5 +168,67 @@ export class UsersComponent implements OnInit {
       this.currentUserEmailCache = null;
       return null;
     }
+  }
+
+  // Sort users by column
+  sortBy(column: string): void {
+    if (this.sortColumn === column) {
+      // Toggle direction if same column
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Set new column and default to ascending
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.users.sort((a, b) => {
+      let valueA: any;
+      let valueB: any;
+
+      switch (column) {
+        case 'id':
+          valueA = a.id;
+          valueB = b.id;
+          break;
+        case 'firstName':
+          valueA = a.firstName?.toLowerCase() || '';
+          valueB = b.firstName?.toLowerCase() || '';
+          break;
+        case 'lastName':
+          valueA = a.lastName?.toLowerCase() || '';
+          valueB = b.lastName?.toLowerCase() || '';
+          break;
+        case 'email':
+          valueA = a.email?.toLowerCase() || '';
+          valueB = b.email?.toLowerCase() || '';
+          break;
+        case 'role':
+          valueA = a.role?.toLowerCase() || '';
+          valueB = b.role?.toLowerCase() || '';
+          break;
+        case 'status':
+          valueA = a.isActive ? 1 : 0;
+          valueB = b.isActive ? 1 : 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (valueA < valueB) {
+        return this.sortDirection === 'asc' ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return this.sortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
+  // Get sort icon for column header
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) {
+      return '⇅';
+    }
+    return this.sortDirection === 'asc' ? '↑' : '↓';
   }
 }
