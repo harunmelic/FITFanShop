@@ -31,13 +31,25 @@
         <table class="products-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
+              <th class="sortable" (click)="sortBy('id')">
+                ID <span class="sort-icon">{{ getSortIcon('id') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('name')">
+                Name <span class="sort-icon">{{ getSortIcon('name') }}</span>
+              </th>
               <th>Description</th>
-              <th>Price</th>
-              <th>Category</th>
-              <th>Stock</th>
-              <th>Status</th>
+              <th class="sortable" (click)="sortBy('price')">
+                Price <span class="sort-icon">{{ getSortIcon('price') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('category')">
+                Category <span class="sort-icon">{{ getSortIcon('category') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('stock')">
+                Stock <span class="sort-icon">{{ getSortIcon('stock') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('status')">
+                Status <span class="sort-icon">{{ getSortIcon('status') }}</span>
+              </th>
               <th>Actions</th>
             </tr>
           </thead>

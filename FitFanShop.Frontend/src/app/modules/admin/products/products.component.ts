@@ -16,6 +16,8 @@ export class ProductsComponent implements OnInit {
   products: Product[] = [];
   isLoading = false;
   errorMessage = '';
+  sortColumn: string = 'id';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(
     private productsApiService: ProductsApiService,
@@ -130,5 +132,67 @@ export class ProductsComponent implements OnInit {
       .map(v => v.stockUnit)
       .filter((unit, index, self) => unit && self.indexOf(unit) === index);
     return units.length > 0 ? ` ${units.join(', ')}` : '';
+  }
+
+  // Sort products by column
+  sortBy(column: string): void {
+    if (this.sortColumn === column) {
+      // Toggle direction if same column
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Set new column and default to ascending
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.products.sort((a, b) => {
+      let valueA: any;
+      let valueB: any;
+
+      switch (column) {
+        case 'id':
+          valueA = a.id;
+          valueB = b.id;
+          break;
+        case 'name':
+          valueA = a.name?.toLowerCase() || '';
+          valueB = b.name?.toLowerCase() || '';
+          break;
+        case 'price':
+          valueA = a.price || 0;
+          valueB = b.price || 0;
+          break;
+        case 'category':
+          valueA = a.categoryName?.toLowerCase() || '';
+          valueB = b.categoryName?.toLowerCase() || '';
+          break;
+        case 'stock':
+          valueA = this.getTotalStock(a);
+          valueB = this.getTotalStock(b);
+          break;
+        case 'status':
+          valueA = a.isEnabled ? 1 : 0;
+          valueB = b.isEnabled ? 1 : 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (valueA < valueB) {
+        return this.sortDirection === 'asc' ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return this.sortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
+  // Get sort icon for column header
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) {
+      return '↕️';
+    }
+    return this.sortDirection === 'asc' ? '↑' : '↓';
   }
 }
